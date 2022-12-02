@@ -1,0 +1,17 @@
+# sensitive data (except example files)
+instance/*
+!instance/example_*
+
+# cache
+__pycache__/*
+.cache
+
+# compiled files
+*.pyc
+
+# ide
+.idea
+
+#tests
+tests/cover/*
+tests/.coverage
