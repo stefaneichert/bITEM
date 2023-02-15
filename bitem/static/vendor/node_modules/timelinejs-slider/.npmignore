@@ -1,0 +1,8 @@
+# misc
+.tmp
+.DS_Store
+.sass-cache
+.idea
+
+# dependencies
+node_modules

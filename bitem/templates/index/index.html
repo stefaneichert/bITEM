@@ -1,1 +1,27 @@
-<h1> Hello world</h1>
+{% extends "layout.html" %}
+{% block content %}
+
+
+<main>
+    <div class="container text-center" id="modelcont">
+
+        <model-viewer
+                class="indexmodel" alt="Moa"
+                src="/static/3dmodels/{{ model }}"
+                shadow-intensity="1"
+                auto-rotate
+                auto-rotate-delay="0"
+        ></model-viewer>
+
+        <div id="typetext" class="text-center"></div>
+        <a type="button" class="btn btn-lg btn-outline-light bitem-btn" href="{{ url_for('about') }}">Learn more</a>
+
+    </div>
+
+</main>
+<script src="/static/js/functions.js"></script>
+<script src="/static/js/index.js"></script>
+
+{% include 'footer.html' %}
+
+{% endblock %}
