@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<script src="/static/js/functions.js"></script>
+<script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
+<link rel="stylesheet" href="/static/css/entities.css"/>
+
+<script> query_params = {{ query_params|tojson }}; </script>
+
+<main>
+    <div class="loading">
+        <div class="spinner-grow text-light" role="status">
+            <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
+        </div>
+    </div>
+    <div class="grid"></div>
+</main>
+
+<script src="/static/js/entities.js"></script>
+
+{% include 'footer.html' %}
+{% endblock %}

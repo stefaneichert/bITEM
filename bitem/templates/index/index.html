@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
 <main>
     <div class="container text-center" id="modelcont">
 
@@ -9,16 +8,19 @@
                 class="indexmodel" alt="Moa"
                 src="/static/3dmodels/{{ model }}"
                 shadow-intensity="1"
+                loading="lazy"
                 auto-rotate
                 auto-rotate-delay="0"
         ></model-viewer>
 
-        <div id="typetext" class="text-center"></div>
-        <a type="button" class="btn btn-lg btn-outline-light bitem-btn" href="{{ url_for('about') }}">Learn more</a>
-
+        <div id="typetext-container"><span id="typetext" class="text-center"></span></div>
+                <a id="learnmore" class="grow line-fade line-fade-m fadeabout text-center" href="{{ url_for('about') }}">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            <span>{{_('learn more')}}</span>
+        </a>
     </div>
-
 </main>
+
 <script src="/static/js/functions.js"></script>
 <script src="/static/js/index.js"></script>
 

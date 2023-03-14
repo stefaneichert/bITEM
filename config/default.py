@@ -2,13 +2,19 @@ import os
 DEBUG = False
 
 # Database
-DATABASE_NAME = 'openatlas'
+DATABASE_NAME = 'openatlas_thanados'
 DATABASE_USER = 'openatlas'
 DATABASE_HOST = 'localhost'
 DATABASE_PORT = 5432
 DATABASE_PASS = 'CHANGE ME'
 
 SECRET_KEY = 'CHANGE ME'
+# add to your app.config or config.py file
+
+LANGUAGES = {
+    'en': 'English',
+    'de': 'Deutsch'
+}
 
 # Path
 WEB_FOLDER_PATH = '/static/images/entities'
@@ -18,7 +24,8 @@ UPLOAD_JPG_FOLDER_PATH = os.path.dirname(__file__) + '/../bitem' + JPG_FOLDER_PA
 
 OPENATLAS_URL = 'https://thanados.openatlas.eu/update/'
 
-API_URL = 'https://thanados.openatlas.eu/api/0.2/entity/'
+API_URL = 'https://thanados.openatlas.eu/api/'
+API_SUFFIX = 'format=loud'
 API_FILE_DISPLAY = 'https://thanados.openatlas.eu/api/display/'
 
 GEONAMES_USERNAME = 'yourgeonamesusername'

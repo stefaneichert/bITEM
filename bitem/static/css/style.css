@@ -3,7 +3,6 @@ body {
     background: rgba(0, 0, 0, 1);
     background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 30%, rgb(184, 184, 184));
     min-height: 100vh;
-    /*font-family: 'Quicksand', sans-serif; */
 }
 
 .footercontent {
@@ -24,12 +23,12 @@ body {
     width: auto;
 }
 
-#typetext {
+#typetext-container {
     font-size: 4rem;
     color: #f5f5f5;
 }
 
-#modelcont {
+#modelcont, #learnmore {
     opacity: 0;
 }
 
@@ -59,5 +58,63 @@ body {
     height: calc(100vh - 3.5rem);
 }
 
+.line-fade {
+    position: relative;
+}
+
+.line-fade:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #f5f5f5;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.line-fade:hover:before {
+    visibility: visible;
+    width: 100%;
+}
+
+.line-fade-m {
+    color: whitesmoke;
+    text-decoration: none;
+    font-size: 1.6rem;
+    padding-bottom: 0.3rem;
+}
+
+.line-fade-m:before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px !important;
+    bottom: 0;
+    left: 0;
+    background-color: #FFF;
+    visibility: hidden;
+    transform: scaleX(0);
+    transition: all 0.3s ease-in-out;
+}
+
+.line-fade-m:hover:before {
+    visibility: visible;
+    transform: scaleX(1);
+}
+
+.line-fade-m:hover {
+    color: white;
+    transition: 0.3s;
+}
+
+.grow {
+    transition: font-size .6s ease-in-out;
+}
+
+.grow:hover {
+    font-size: 1.7rem;
+}
 
 
