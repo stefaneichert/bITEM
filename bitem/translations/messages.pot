@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-09 16:59+0100\n"
+"POT-Creation-Date: 2023-03-17 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,28 +17,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:34
+#: bitem/templates/layout.html:35
 msgid "items"
 msgstr ""
 
-#: bitem/templates/layout.html:37
+#: bitem/templates/layout.html:38
 msgid "persons"
 msgstr ""
 
-#: bitem/templates/layout.html:40
+#: bitem/templates/layout.html:41
+msgid "groups"
+msgstr ""
+
+#: bitem/templates/layout.html:44
+msgid "events"
+msgstr ""
+
+#: bitem/templates/layout.html:47
 msgid "networks"
 msgstr ""
 
-#: bitem/templates/layout.html:43
+#: bitem/templates/layout.html:50
 msgid "map"
 msgstr ""
 
-#: bitem/templates/layout.html:46
+#: bitem/templates/layout.html:53
 msgid "about"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:10 bitem/templates/item/view.html:21
+#: bitem/templates/entity/entities.html:14 bitem/templates/item/view.html:21
 msgid "loading"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:20
+msgid "enter search term"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:23
+#: bitem/templates/entity/entities.html:24
+#: bitem/templates/entity/entities.html:25
+#: bitem/templates/entity/entities.html:26
+msgid "sort by"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:23
+msgid "name"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:24
+msgid "type"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:25
+msgid "begin"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:26
+msgid "end"
 msgstr ""
 
 #: bitem/templates/index/index.html:19

@@ -1,7 +1,7 @@
 body {
     padding-top: 3.5rem;
     background: rgba(0, 0, 0, 1);
-    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 30%, rgb(184, 184, 184));
+    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgb(80, 80, 80) 30%, rgb(151, 151, 151));
     min-height: 100vh;
 }
 

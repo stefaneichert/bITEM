@@ -8,6 +8,7 @@
     "muuri": "^0.9.5",
     "timelinejs-slider": "^0.1.0",
     "typed.js": "^2.0.12",
+    "vanilla-lazyload": "^17.8.3",
     "vis-network": "^9.1.2"
   }
 }

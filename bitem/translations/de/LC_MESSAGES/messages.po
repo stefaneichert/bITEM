@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-09 16:59+0100\n"
+"POT-Creation-Date: 2023-03-17 11:31+0100\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -18,29 +18,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:34
+#: bitem/templates/layout.html:35
 msgid "items"
 msgstr "Objekte"
 
-#: bitem/templates/layout.html:37
+#: bitem/templates/layout.html:38
 msgid "persons"
 msgstr "Personen"
 
-#: bitem/templates/layout.html:40
+#: bitem/templates/layout.html:41
+msgid "groups"
+msgstr "Gruppen"
+
+#: bitem/templates/layout.html:44
+msgid "events"
+msgstr "Ereignisse"
+
+#: bitem/templates/layout.html:47
 msgid "networks"
 msgstr "Netzwerke"
 
-#: bitem/templates/layout.html:43
+#: bitem/templates/layout.html:50
 msgid "map"
 msgstr "Karte"
 
-#: bitem/templates/layout.html:46
+#: bitem/templates/layout.html:53
 msgid "about"
 msgstr "Über"
 
-#: bitem/templates/entity/entities.html:10 bitem/templates/item/view.html:21
+#: bitem/templates/entity/entities.html:14 bitem/templates/item/view.html:21
 msgid "loading"
 msgstr "lade"
+
+#: bitem/templates/entity/entities.html:20
+msgid "enter search term"
+msgstr "Suchbegriff eingeben"
+
+#: bitem/templates/entity/entities.html:23
+#: bitem/templates/entity/entities.html:24
+#: bitem/templates/entity/entities.html:25
+#: bitem/templates/entity/entities.html:26
+msgid "sort by"
+msgstr "sortieren nach"
+
+#: bitem/templates/entity/entities.html:23
+msgid "name"
+msgstr "Name"
+
+#: bitem/templates/entity/entities.html:24
+msgid "type"
+msgstr "Typus"
+
+#: bitem/templates/entity/entities.html:25
+msgid "begin"
+msgstr "Beginn"
+
+#: bitem/templates/entity/entities.html:26
+msgid "end"
+msgstr "Ende"
 
 #: bitem/templates/index/index.html:19
 msgid "learn more"
@@ -54,4 +89,7 @@ msgstr "Details"
 
 #~ msgid "actors"
 #~ msgstr "Akteure"
+
+#~ msgid "enter search term"
+#~ msgstr "Suchbegriff eingeben"
 

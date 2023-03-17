@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<script src="/static/js/functions.js"></script>
+<script src="/static/js/functions.js" xmlns="http://www.w3.org/1999/html"></script>
 <script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
 <link rel="stylesheet" href="/static/css/entities.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shave/2.5.9/shave.min.js"
+        integrity="sha512-so7wvmDSYsuNpVdh8PdO1oJ3XkFdDHCKnmgh9Zbpr7GKn0wy1K0fw+sLanHQoFB0O4uI40n6gYQ3n32Ss+4WAA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<script> query_params = {{ query_params|tojson }}; </script>
+<script> data = {{ data | tojson}}; </script>
 
 <main>
     <div class="loading">
@@ -13,7 +16,26 @@
             <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
         </div>
     </div>
-    <div class="grid"></div>
+
+    <div class="row ps-2 pe-2 ms-3 me-3 mt-3">
+        <div class="col-sm-6 mt-2">
+            <input id="searchField" type="text" class="form-control" placeholder="{{_('enter search term')}}">
+        </div>
+        <div class="col-sm-6 mt-2 bitem-text">
+          <span class="sortbuttons">
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')" title="{{_('sort by')}} {{_('name')}}"><i class="bi bi-clock me-2"></i><i
+          class="bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('types')" title="{{_('sort by')}} {{_('type')}}"><i class="bi bi-clock me-2"></i><i
+          class="bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('begin')" title="{{_('sort by')}} {{_('begin')}}"><i class="bi bi-clock me-2"></i><i
+          class="bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('end')" title="{{_('sort by')}} {{_('end')}}"><i class="bi bi-clock me-2"></i><i
+          class="bi bi-arrow-down-up"></i></a>
+      </span></div>
+    </div>
+    <div class="grid">
+
+    </div>
 </main>
 
 <script src="/static/js/entities.js"></script>

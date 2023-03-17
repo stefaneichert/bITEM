@@ -1,11 +1,7 @@
 .grid {
     position: relative;
-    opacity: 0;
-    transition: opacity 0.8s linear 1s;
-}
-
-.images-loaded .grid {
     opacity: 1;
+    transition: opacity 0.1s linear 0.1s;
 }
 
 .item {

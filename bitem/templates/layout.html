@@ -14,6 +14,7 @@
     <script type="module" src="/static/vendor/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
     <link href="/static/vendor/node_modules/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="/static/vendor/node_modules/typed.js/lib/typed.min.js"></script>
+    <script src="/static/vendor/node_modules/vanilla-lazyload/dist/lazyload.min.js"></script>
 
 </head>
 
@@ -37,6 +38,12 @@
                         <a class="nav-link line-fade" href="{{ url_for('persons') }}">{{_('persons')|uc_first}}</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link line-fade" href="{{ url_for('groups') }}">{{_('groups')|uc_first}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link line-fade" href="{{ url_for('events') }}">{{_('events')|uc_first}}</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link line-fade" href="#">{{_('networks')|uc_first}}</a>
                     </li>
                     <li class="nav-item">
@@ -57,8 +64,8 @@
                             <span id="language">{{language[0]}}</span>
                         </a>
                     </li>
-                        {% endif %}
-                        {% endfor %}
+                    {% endif %}
+                    {% endfor %}
 
                 </ul>
             </div>
@@ -67,7 +74,11 @@
 </header>
 <script>
     language = document.getElementById("language").textContent;
-    if (language === 'en') {language = 'de'} else {language = 'en'}
+    if (language === 'en') {
+        language = 'de'
+    } else {
+        language = 'en'
+    }
     console.log(language)
 </script>
 {% block content %}

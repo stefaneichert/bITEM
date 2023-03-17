@@ -1,5 +1,3 @@
-from flask import g
-
 from bitem import app
 import requests
 import json
@@ -16,5 +14,5 @@ def query_ids(class_, filter):
     data = response_API.text
     parse_json = json.loads(data)
     print(parse_json)
-    return parse_json['results']
+    return parse_json
 
