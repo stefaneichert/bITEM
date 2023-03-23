@@ -37,5 +37,7 @@ META_ORG_URL = 'https://nhm-wien.ac.at'
 META_ORG_WD = 'https://www.wikidata.org/wiki/Q688704'
 META_LICENSE = 'https://creativecommons.org/licenses/by/4.0/'
 
+CASE_STUDY = 12345
+
 
 

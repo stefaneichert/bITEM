@@ -33,13 +33,27 @@
                     <h4><i id="viewbutton" class="ms-1 bi bi-list-ul"></i></h4></a>
       </span></div>
             <div class="col-md-auto mt-2 d-inline-flex">
-                <select class="bg-black form-select me-2 bitem-text custom-select" aria-label="case study select" title="{{_('filter by case study')}}">
-                    <option selected>bITEM</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                <select id="case-select" class="bg-black form-select me-2 bitem-text custom-select" aria-label="case study select" title="{{_('filter by case study')}}">
+                    {% if CURRENT_LANGUAGE == 'de' and csNames[0].de %}
+                    <option value="{{csNames[0].name}}">{{csNames[0].de}}</option>
+                    {% elif CURRENT_LANGUAGE == 'en' and csNames[0].en %}
+                    <option value="{{csNames[0].name}}">{{csNames[0].en}}</option>
+                    {% else %}
+                    <option value="{{csNames[0].name}}">{{csNames[0].name}}</option>
+                    {% endif %}
+                    {% for row in csNames%}
+                        {% if row.sortorder == 2 and CURRENT_LANGUAGE == 'de' and row.de %}
+                        <option value="{{row.name}}">{{row.de}}</option>
+                        {% elif row.sortorder == 2 and CURRENT_LANGUAGE == 'en' and row.en %}
+                        <option value="{{row.name}}">{{row.en}}</option>
+                        {% elif row.sortorder == 2 %}
+                        <option value="{{row.name}}">{{row.name}}</option>
+                        {% endif %}
+                    {% endfor %}
+
+
                 </select>
-                <input id="searchField" type="search" class="form-control bg-black bitem-text" placeholder="{{_('enter search term')}}">
+                <input id="searchField" type="search" class="form-control bg-black bitem-text" placeholder="{{_('search term')}}...">
 
             </div>
 

@@ -20,17 +20,23 @@ grid = new Muuri('.grid', {
         end: function (item, element) {
             return element.getAttribute('data-end').toUpperCase();
         },
+        casestudies: function (item, element) {
+            return element.getAttribute('data-casestudies').toUpperCase();
+        },
     },
 });
 
 //search/filter functionality
 var searchField = document.getElementById("searchField");
+var selectField = document.getElementById("case-select");
 var searchFieldValue;
+var selectFieldValue;
 
 searchField.value = '';
 searchFieldValue = searchField.value.toLowerCase();
 searchField.addEventListener('search', searchupdate);
-searchField.addEventListener('keyup',searchupdate);
+searchField.addEventListener('keyup', searchupdate);
+selectField.addEventListener('change', select)
 
 function searchupdate() {
     var newSearch = searchField.value.toLowerCase();
@@ -38,6 +44,17 @@ function searchupdate() {
         searchFieldValue = newSearch;
         filter();
     }
+}
+
+function select() {
+    selectFieldValue = selectField.value.toLowerCase();
+    console.log(selectFieldValue)
+    grid.filter(function (item) {
+        var element = item.getElement();
+        var isSelectMatch = !selectFieldValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectFieldValue) > -1;
+        return isSelectMatch;
+    });
+
 }
 
 function filter() {
@@ -97,6 +114,8 @@ function createMuuriElems(json) {
 
 function addMuuri(data) {
 
+    data._label = getLabelTranslation(data)
+
     //initiate DOM element
     var itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
@@ -104,6 +123,7 @@ function addMuuri(data) {
     itemTemplate.setAttribute("data-begin", null)
     itemTemplate.setAttribute("data-end", null)
     itemTemplate.setAttribute("data-name", data._label)
+    itemTemplate.setAttribute("data-casestudies", data.casestudies)
 
     dataAll = data._label + ' '
 
@@ -162,6 +182,7 @@ function addMuuri(data) {
     return (itemTemplate)
 }
 
+//get translation for description
 function getLanguage(data) {
     if (data.content) {
         var text = data.content;
@@ -178,6 +199,15 @@ function getLanguage(data) {
         return ''
     }
 }
+
+//get translation for names/labels
+function getLabelTranslation(data) {
+    returnlabel = data._label
+    eval('if (typeof (data._label' + language.toUpperCase()+ ') !== "undefined")' +
+                    'returnlabel = data._label' + language.toUpperCase())
+    return returnlabel
+}
+
 
 function getImages(data) {
     //return '/static/images/test/' + iter + '.jpg'
