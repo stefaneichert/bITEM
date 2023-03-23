@@ -29,22 +29,25 @@ var searchFieldValue;
 
 searchField.value = '';
 searchFieldValue = searchField.value.toLowerCase();
-searchField.addEventListener('keyup', function () {
+searchField.addEventListener('search', searchupdate);
+searchField.addEventListener('keyup',searchupdate);
+
+function searchupdate() {
     var newSearch = searchField.value.toLowerCase();
     if (searchFieldValue !== newSearch) {
         searchFieldValue = newSearch;
         filter();
     }
-});
+}
 
 function filter() {
     grid.filter(function (item) {
-      var element = item.getElement();
-      var isSearchMatch = !searchFieldValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchFieldValue) > -1;
-      return isSearchMatch;
+        var element = item.getElement();
+        var isSearchMatch = !searchFieldValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchFieldValue) > -1;
+        return isSearchMatch;
     });
 
-  }
+}
 
 
 //grid refresh after images loaded, loading spinner removed
@@ -52,7 +55,6 @@ window.onload = function () {
     shave('.card-text', 200)
     grid.refreshItems().layout();
     document.body.classList.add('images-loaded');
-
 };
 
 createMuuriElems(data)
@@ -143,6 +145,7 @@ function addMuuri(data) {
         '            <div class="item-content">\n' +
         '                <div class="card">\n' +
         '                    <div class="card-body">\n' +
+        ((images) ? '                   <div class="list-col-8">\n' : '') +
         '                        <h5 class="card-title">' + data._label + '</h5>\n' +
         ((typestrue) ? '<p class="card-title">' + data.types[0].type + '</p>' : '') +
         ((both) ? '<p class="card-title">' + data.first + ' - ' + data.last + '</p>' : '') +
@@ -150,6 +153,8 @@ function addMuuri(data) {
         ((last) ? '<p class="card-title">' + data.last + '</p>' : '') +
         ((images) ? '<img src="' + getImages(data.images) + '" loading="eager" class="image-content">' : '') +
         '                        <p class="card-text mt-2">' + getLanguage(data) + '</p>\n' +
+        ((images) ? '</div>' : '') +
+        ((images) ? '<div class="list-col-4"><img src="' + getImages(data.images) + '" loading="lazy" class="float-end img-fluid list-image d-none"></div>' : '') +
         '                    </div>\n' +
         '                </div>\n' +
         '            </div>';
@@ -177,4 +182,45 @@ function getLanguage(data) {
 function getImages(data) {
     //return '/static/images/test/' + iter + '.jpg'
     return 'https://thanados.openatlas.eu/api/display/' + data[0]
+}
+
+//switch from tiles to list and back
+
+tiles = document.getElementById("tiles");
+
+function listSwitch() {
+    tiles.classList.toggle("list");
+    tilesthere = false
+    exchangeListClass()
+    shave('.card-text', 200)
+    grid.refreshItems().layout();
+
+}
+
+col8 = document.getElementsByClassName('list-col-8')
+col4 = document.getElementsByClassName('list-col-4')
+listimages = document.getElementsByClassName('list-image')
+listrow = document.getElementsByClassName('card-body')
+
+function exchangeListClass() {
+    Array.from(col8).forEach(function (obj) {
+        obj.classList.toggle("col-10")
+    })
+
+    Array.from(col4).forEach(function (obj) {
+        obj.classList.toggle("col-2")
+    })
+
+    Array.from(listimages).forEach(function (obj) {
+        obj.classList.toggle("d-none")
+    })
+
+    Array.from(listrow).forEach(function (obj) {
+        obj.classList.toggle("row")
+    })
+
+    var button = document.getElementById('viewbutton')
+    button.classList.toggle("bi-list-ul")
+    button.classList.toggle("bi-layout-wtf")
+
 }

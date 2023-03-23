@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-17 11:31+0100\n"
+"POT-Creation-Date: 2023-03-21 09:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,35 +45,39 @@ msgstr ""
 msgid "about"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:14 bitem/templates/item/view.html:21
+#: bitem/templates/entity/entities.html:16 bitem/templates/item/view.html:21
 msgid "loading"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:20
+#: bitem/templates/entity/entities.html:21
 msgid "enter search term"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:23
-#: bitem/templates/entity/entities.html:24
 #: bitem/templates/entity/entities.html:25
-#: bitem/templates/entity/entities.html:26
+#: bitem/templates/entity/entities.html:27
+#: bitem/templates/entity/entities.html:29
+#: bitem/templates/entity/entities.html:31
 msgid "sort by"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:23
+#: bitem/templates/entity/entities.html:25
 msgid "name"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:24
+#: bitem/templates/entity/entities.html:27
 msgid "type"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:25
+#: bitem/templates/entity/entities.html:29
 msgid "begin"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:26
+#: bitem/templates/entity/entities.html:31
 msgid "end"
+msgstr ""
+
+#: bitem/templates/entity/entities.html:33
+msgid "switch view"
 msgstr ""
 
 #: bitem/templates/index/index.html:19

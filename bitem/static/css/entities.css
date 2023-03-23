@@ -1,10 +1,16 @@
-.grid {
+body {
+    padding-top: 3.5rem;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgb(0, 0, 0) 15%, rgb(21, 21, 21) 50%, rgb(115, 115, 115) 95%, rgb(151, 151, 151));
+    min-height: 100vh;
+}
+
+.fade-me {
     position: relative;
     opacity: 0;
     transition: opacity 0.5s linear 0.5s;
 }
 
-.images-loaded .grid {
+.images-loaded .fade-me {
     opacity: 1;
 }
 
@@ -51,6 +57,15 @@
     min-height: 45vh;
 }
 
+@media screen and (max-width: 400px) {
+    .sortbuttons {
+        display: inline !important;
+    }
+
+    #tiles {
+        margin-top: 16rem !important;
+    }
+}
 
 @media screen and (max-width: 600px) {
     .item-content > * {
@@ -64,9 +79,26 @@
     }
 }
 
+@media screen and (max-width: 768px) {
+    #tiles {
+        margin-top: 10rem;
+    }
+}
+
 @media screen and (min-width: 769px) {
     .item-content > * {
         width: calc(33vw - (3rem + 7px));
+
+    }
+
+    #tiles {
+        margin-top: 6rem;
+    }
+}
+
+@media screen and (min-width: 947px) {
+    #tiles {
+        margin-top: 4rem;
     }
 }
 
@@ -81,6 +113,19 @@
         width: calc(20vw - (3rem + 3px));
     }
 }
+
+.list .item-content > * {
+    width: calc(100vw - (3rem + 15px));
+}
+
+.list .item-content .image-content {
+    display: none;
+}
+
+.list-image {
+    max-height: 150px;
+}
+
 
 .loading {
     display: flex;
@@ -110,5 +155,31 @@
     display: inline-flex;
     padding-top: 5px;
     font-size: larger;
+    text-align: center;
 }
 
+.fixed-second {
+    position: fixed;
+    top: 56px;
+    background: linear-gradient(180deg, rgba(0, 0, 0) 0%, rgb(0, 0, 0) 90%, rgb(0, 0, 0, 0) 100%);
+    z-index: 500;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: whitesmoke;
+            opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: whitesmoke;;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+            color: whitesmoke;;
+ }
+
+.custom-select {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='whitesmoke' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E")
+}

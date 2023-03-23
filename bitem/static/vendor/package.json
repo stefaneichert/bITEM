@@ -10,5 +10,8 @@
     "typed.js": "^2.0.12",
     "vanilla-lazyload": "^17.8.3",
     "vis-network": "^9.1.2"
+  },
+  "devDependencies": {
+    "shave": "^5.0.2"
   }
 }

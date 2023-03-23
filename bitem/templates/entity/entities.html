@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<script>data={{_data|tojson}}</script>
 <script src="/static/js/functions.js" xmlns="http://www.w3.org/1999/html"></script>
 <script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
-<link rel="stylesheet" href="/static/css/entities.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shave/2.5.9/shave.min.js"
-        integrity="sha512-so7wvmDSYsuNpVdh8PdO1oJ3XkFdDHCKnmgh9Zbpr7GKn0wy1K0fw+sLanHQoFB0O4uI40n6gYQ3n32Ss+4WAA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/static/vendor/node_modules/shave/dist/shave.min.js"></script>
 
-<script> data = {{ data | tojson}}; </script>
+<link rel="stylesheet" href="/static/css/entities.css"/>
+
+
 
 <main>
     <div class="loading">
@@ -16,26 +16,39 @@
             <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
         </div>
     </div>
-
-    <div class="row ps-2 pe-2 ms-3 me-3 mt-3">
-        <div class="col-sm-6 mt-2">
-            <input id="searchField" type="text" class="form-control" placeholder="{{_('enter search term')}}">
-        </div>
-        <div class="col-sm-6 mt-2 bitem-text">
+    <div class="fixed-second">
+        <div class="fade-me justify-content-between row ps-2 pe-2 ms-3 me-3 mt-3">
+            <div class="col-md-auto mt-2 me-4"><h3 class="bitem-text">{{title|uc_first}}</h3></div>
+            <div class="col-md-auto mt-2 bitem-text">
           <span class="sortbuttons">
-  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')" title="{{_('sort by')}} {{_('name')}}"><i class="bi bi-clock me-2"></i><i
-          class="bi bi-arrow-down-up"></i></a>
-  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('types')" title="{{_('sort by')}} {{_('type')}}"><i class="bi bi-clock me-2"></i><i
-          class="bi bi-arrow-down-up"></i></a>
-  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('begin')" title="{{_('sort by')}} {{_('begin')}}"><i class="bi bi-clock me-2"></i><i
-          class="bi bi-arrow-down-up"></i></a>
-  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('end')" title="{{_('sort by')}} {{_('end')}}"><i class="bi bi-clock me-2"></i><i
-          class="bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')" title="{{_('sort by')}} {{_('name')}}">{{_('name')|uc_first}}<i
+          class="ms-1 bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('types')" title="{{_('sort by')}} {{_('type')}}">{{_('type')|uc_first}}<i
+          class="ms-1 bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('begin')" title="{{_('sort by')}} {{_('begin')}}">{{_('begin')|uc_first}}<i
+          class="ms-1 bi bi-arrow-down-up"></i></a>
+  <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('end')" title="{{_('sort by')}} {{_('end')}}">{{_('end')|uc_first}}<i
+          class="ms-1 bi bi-arrow-down-up"></i></a>
+                <a class="nav-link line-fade ms-3" href="#" onclick="listSwitch()" title="{{_('switch view')}}">
+                    <h4><i id="viewbutton" class="ms-1 bi bi-list-ul"></i></h4></a>
       </span></div>
-    </div>
-    <div class="grid">
+            <div class="col-md-auto mt-2 d-inline-flex">
+                <select class="bg-black form-select me-2 bitem-text custom-select" aria-label="case study select" title="{{_('filter by case study')}}">
+                    <option selected>bITEM</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+                <input id="searchField" type="search" class="form-control bg-black bitem-text" placeholder="{{_('enter search term')}}">
 
+            </div>
+
+        </div>
     </div>
+
+    <div id="tiles" class="grid fade-me">
+    </div>
+
 </main>
 
 <script src="/static/js/entities.js"></script>
