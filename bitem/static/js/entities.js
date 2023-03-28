@@ -27,10 +27,13 @@ grid = new Muuri('.grid', {
 });
 
 //search/filter functionality
+var countField = document.getElementById("item-count");
+document.getElementById("item-total").innerText = data.length;
 var searchField = document.getElementById("searchField");
 var selectField = document.getElementById("case-select");
 var searchFieldValue;
 var selectFieldValue;
+var countFieldValue;
 
 searchField.value = '';
 searchFieldValue = searchField.value.toLowerCase();
@@ -43,6 +46,7 @@ function searchupdate() {
     if (searchFieldValue !== newSearch) {
         searchFieldValue = newSearch;
         filter();
+        updateCount();
     }
 }
 
@@ -54,6 +58,7 @@ function select() {
         var isSelectMatch = !selectFieldValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectFieldValue) > -1;
         return isSelectMatch;
     });
+    updateCount();
 
 }
 
@@ -66,12 +71,20 @@ function filter() {
 
 }
 
+function updateCount() {
+    var activeItems = grid.getItems().filter(function (item) {
+        return item.isActive();
+    });
+    countField.innerText = activeItems.length
+}
+
 
 //grid refresh after images loaded, loading spinner removed
 window.onload = function () {
     shave('.card-text', 200)
     grid.refreshItems().layout();
     document.body.classList.add('images-loaded');
+    countField.innerText = data.length
 };
 
 createMuuriElems(data)
@@ -203,8 +216,8 @@ function getLanguage(data) {
 //get translation for names/labels
 function getLabelTranslation(data) {
     returnlabel = data._label
-    eval('if (typeof (data._label' + language.toUpperCase()+ ') !== "undefined")' +
-                    'returnlabel = data._label' + language.toUpperCase())
+    eval('if (typeof (data._label' + language.toUpperCase() + ') !== "undefined")' +
+        'returnlabel = data._label' + language.toUpperCase())
     return returnlabel
 }
 

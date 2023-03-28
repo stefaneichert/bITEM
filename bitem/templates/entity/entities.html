@@ -18,7 +18,12 @@
     </div>
     <div class="fixed-second">
         <div class="fade-me justify-content-between row ps-2 pe-2 ms-3 me-3 mt-3">
-            <div class="col-md-auto mt-2 me-4"><h3 class="bitem-text">{{title|uc_first}}</h3></div>
+            <div class="col-md-auto mt-2 me-4"><h3 class="bitem-text">{{title|uc_first}} <span class="counter"> (
+                <span id="item-count"></span>
+                <span> {{_('of')}} </span>
+                <span id="item-total"></span> )
+            </span>
+            </h3></div>
             <div class="col-md-auto mt-2 bitem-text">
           <span class="sortbuttons">
   <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')" title="{{_('sort by')}} {{_('name')}}">{{_('name')|uc_first}}<i
