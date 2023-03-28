@@ -35,19 +35,19 @@
             <div class="col-md-auto mt-2 d-inline-flex">
                 <select id="case-select" class="bg-black form-select me-2 bitem-text custom-select" aria-label="case study select" title="{{_('filter by case study')}}">
                     {% if CURRENT_LANGUAGE == 'de' and csNames[0].de %}
-                    <option value="{{csNames[0].name}}">{{csNames[0].de}}</option>
+                    <option value="{{csNames[0].id}}">{{csNames[0].de}}</option>
                     {% elif CURRENT_LANGUAGE == 'en' and csNames[0].en %}
-                    <option value="{{csNames[0].name}}">{{csNames[0].en}}</option>
+                    <option value="{{csNames[0].id}}">{{csNames[0].en}}</option>
                     {% else %}
-                    <option value="{{csNames[0].name}}">{{csNames[0].name}}</option>
+                    <option value="{{csNames[0].id}}">{{csNames[0].name}}</option>
                     {% endif %}
                     {% for row in csNames%}
                         {% if row.sortorder == 2 and CURRENT_LANGUAGE == 'de' and row.de %}
-                        <option value="{{row.name}}">{{row.de}}</option>
+                        <option value="{{row.id}}">{{row.de}}</option>
                         {% elif row.sortorder == 2 and CURRENT_LANGUAGE == 'en' and row.en %}
-                        <option value="{{row.name}}">{{row.en}}</option>
+                        <option value="{{row.id}}">{{row.en}}</option>
                         {% elif row.sortorder == 2 %}
-                        <option value="{{row.name}}">{{row.name}}</option>
+                        <option value="{{row.id}}">{{row.name}}</option>
                         {% endif %}
                     {% endfor %}
 

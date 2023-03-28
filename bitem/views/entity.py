@@ -13,9 +13,11 @@ def persons():
 
     title = _('persons')
 
-    data = datamapper.getlist(('person',''), casestudies)
+    openAtlasClass = ('person','')
 
-    csNames = datamapper.caseStudyNames()
+    data = datamapper.getlist(openAtlasClass, casestudies)
+
+    csNames = datamapper.caseStudyNames(casestudies, openAtlasClass)
 
     return render_template("/entity/entities.html", _data=data, title=title, csNames = csNames)
 
@@ -26,9 +28,11 @@ def groups():
 
     title = _('groups')
 
-    data = datamapper.getlist(('','group'), casestudies)
+    openAtlasClass = ('','group')
 
-    csNames = datamapper.caseStudyNames()
+    data = datamapper.getlist(openAtlasClass, casestudies)
+
+    csNames = datamapper.caseStudyNames(casestudies, openAtlasClass)
 
     return render_template("/entity/entities.html", _data=data, title=title, csNames = csNames)
 
@@ -39,9 +43,11 @@ def events():
 
     title = _('events')
 
-    data = datamapper.getlist(('acquisition','event', 'activity', 'creation', 'move', 'production'), casestudies)
+    openAtlasClass = ('acquisition','event', 'activity', 'creation', 'move', 'production')
 
-    csNames = datamapper.caseStudyNames()
+    data = datamapper.getlist(openAtlasClass, casestudies)
+
+    csNames = datamapper.caseStudyNames(casestudies, openAtlasClass)
 
     return render_template("/entity/entities.html", _data=data, title=title, csNames = csNames)
 
@@ -53,8 +59,10 @@ def items():
     
     title = _('items')
 
-    data = datamapper.getlist(('artifact',''), casestudies)
+    openAtlasClass = ('artifact','')
 
-    csNames = datamapper.caseStudyNames()
+    data = datamapper.getlist(openAtlasClass, casestudies)
+
+    csNames = datamapper.caseStudyNames(casestudies, openAtlasClass)
 
     return render_template("/entity/entities.html", _data=data, title=title, csNames = csNames)

@@ -131,8 +131,8 @@ function addMuuri(data) {
     typestrue = false;
     if (data.types) {
         typestrue = true;
-        itemTemplate.setAttribute("data-type", data.types[0].type)
-        dataAll += data.types[0].type + ' '
+        itemTemplate.setAttribute("data-type", data.types)
+        dataAll += data.types + ' '
     }
 
     //check if timespan available
@@ -167,7 +167,7 @@ function addMuuri(data) {
         '                    <div class="card-body">\n' +
         ((images) ? '                   <div class="list-col-8">\n' : '') +
         '                        <h5 class="card-title">' + data._label + '</h5>\n' +
-        ((typestrue) ? '<p class="card-title">' + data.types[0].type + '</p>' : '') +
+        ((typestrue) ? '<p class="card-title">' + data.types + '</p>' : '') +
         ((both) ? '<p class="card-title">' + data.first + ' - ' + data.last + '</p>' : '') +
         ((first) ? '<p class="card-title">' + data.first + '</p>' : '') +
         ((last) ? '<p class="card-title">' + data.last + '</p>' : '') +
