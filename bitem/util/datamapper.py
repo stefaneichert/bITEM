@@ -26,7 +26,13 @@ def getCases(root_):
 
     g.cursor.execute(sql, {'root_': root_})
     result = (g.cursor.fetchone())
-    caseStudies = tuple(result.ids)
+
+    if result.ids:
+        caseStudies = tuple(result.ids)
+    else:
+        caseStudies = (root_,)
+    print ('casestudies')
+    print (caseStudies)
     return caseStudies
 
 
@@ -198,5 +204,22 @@ def caseStudyNames(casestudies, openAtlasClass):
     g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_, 'openAtlasClass': openAtlasClass})
 
     result = g.cursor.fetchall()
+    if result:
+        print(result)
+    else:
+        sql = """
+        SELECT 
+        id,
+        name,
+        (SELECT description FROM model.link WHERE range_id = e.id AND domain_id = 197088) AS en,
+        (SELECT description FROM model.link WHERE range_id = e.id AND domain_id = 197086) AS de,
+        CASE id WHEN %(root_)s THEN 1 ELSE 2 END AS sortorder
+      FROM model.entity e
+      WHERE id IN %(casestudies)s
+        """
+        g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_, 'openAtlasClass': openAtlasClass})
+        result = g.cursor.fetchall()
+        print(result)
+
     return(result)
 
