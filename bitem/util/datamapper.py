@@ -1,5 +1,22 @@
-from flask import g
+from flask import g, render_template
 from bitem import app
+from flask_babel import lazy_gettext as _
+
+
+def getData(selection):
+    viewclasses = app.config['VIEW_CLASSES']
+
+    for key in viewclasses:
+        if key == selection:
+            openAtlasClass = viewclasses[key]
+
+    casestudies = getCases(app.config['CASE_STUDY'])
+
+    return render_template("/entity/entities.html",
+                           _data=getlist(openAtlasClass, casestudies),
+                           title=_(selection),
+                           csNames=getCaseStudyNames(casestudies,
+                                                     openAtlasClass))
 
 
 def getCases(root_):
@@ -31,19 +48,20 @@ def getCases(root_):
         caseStudies = tuple(result.ids)
     else:
         caseStudies = (root_,)
-    print ('casestudies')
-    print (caseStudies)
     return caseStudies
 
 
 def getlist(openAtlasClass, caseStudies):
-
     sql = """
     SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
         'id', id,
         '_label', name,
+        -- language begin
+        -- add/remove the desired languages (the code e.g. DE needs to be the 
+        -- same as the session language code
         '_labelDE', germanName,
         '_labelEN', englishName,
+        -- language end
         'content', description,
         'first', first,
         'last', last,
@@ -55,8 +73,11 @@ def getlist(openAtlasClass, caseStudies):
 (SELECT DISTINCT 
        a.id,
        a.name,
+       -- language begin
+       -- add/remove the desired languages (the code e.g. DE needs to be the 
        b.germanName,
        c.englishName,
+       -- language end
        a.description,
        (LEAST(a.begin_from, a.begin_to)::DATE)::TEXT AS first,
        (GREATEST(a.end_from, a.end_to)::DATE)::TEXT  AS last,
@@ -70,15 +91,24 @@ FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, 
         AND l.property_code = 'P2'
         AND l.range_id IN %(caseStudies)s )a
 
-         LEFT JOIN (SELECT range_id, description AS germanName FROM model.link WHERE domain_id = 197086) b
+       -- language begin
+       -- add/remove the desired languages (the name e.g. germanName 
+       -- needs to be the same as in the query above and the id must
+       -- defined in config.py 
+         LEFT JOIN (SELECT range_id, description AS germanName FROM model.link WHERE domain_id = %(de)s) b
                    ON b.range_id = a.id
 
-         LEFT JOIN (SELECT range_id, description AS englishName FROM model.link WHERE domain_id = 197091) c
+         LEFT JOIN (SELECT range_id, description AS englishName FROM model.link WHERE domain_id = %(en)s) c
                    ON c.range_id = a.id
+        --language end
 
-         LEFT JOIN (SELECT e.name AS maintype, l.domain_id
+         LEFT JOIN (SELECT jsonb_strip_nulls(jsonb_build_object('name', e.name, 'DE', de.description, 'EN', en.description)) AS maintype, l.domain_id
                     FROM model.entity e
                              JOIN model.link l ON e.id = l.range_id
+                    LEFT JOIN (SELECT range_id, description FROM model.link WHERE domain_id = %(de)s) de
+                   ON de.range_id = e.id
+                    LEFT JOIN (SELECT range_id, description FROM model.link WHERE domain_id = %(en)s) en
+                   ON en.range_id = e.id
                     WHERE e.id IN (WITH RECURSIVE subcategories AS (SELECT domain_id, range_id
                                                                     FROM model.link
                                                                     WHERE range_id IN
@@ -143,13 +173,16 @@ FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, 
                            GROUP BY ents.id ) a) f
                    ON f.id = a.id) final
     """
-
-    g.cursor.execute(sql, {'openAtlasClass': openAtlasClass, 'caseStudies': caseStudies, 'root': app.config['CASE_STUDY']})
+    lan = app.config['TRANSLATION_IDS']
+    g.cursor.execute(sql, {'openAtlasClass': openAtlasClass,
+                           'caseStudies': caseStudies,
+                           'root': app.config['CASE_STUDY'], 'de': lan['de'],
+                           'en': lan['en']})
     result = g.cursor.fetchone()
-    return(result.list)
+    return (result.list)
 
-def caseStudyNames(casestudies, openAtlasClass):
 
+def getCaseStudyNames(casestudies, openAtlasClass):
     root_ = app.config['CASE_STUDY']
 
     sql = """
@@ -201,7 +234,8 @@ def caseStudyNames(casestudies, openAtlasClass):
     
     """
 
-    g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_, 'openAtlasClass': openAtlasClass})
+    g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_,
+                           'openAtlasClass': openAtlasClass})
 
     result = g.cursor.fetchall()
     if result:
@@ -217,9 +251,9 @@ def caseStudyNames(casestudies, openAtlasClass):
       FROM model.entity e
       WHERE id IN %(casestudies)s
         """
-        g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_, 'openAtlasClass': openAtlasClass})
+        g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_,
+                               'openAtlasClass': openAtlasClass})
         result = g.cursor.fetchall()
         print(result)
 
-    return(result)
-
+    return (result)

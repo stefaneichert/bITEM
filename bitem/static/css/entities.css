@@ -96,7 +96,7 @@ body {
     }
 }
 
-@media screen and (min-width: 947px) {
+@media screen and (min-width: 1177px) {
     #tiles {
         margin-top: 4rem;
     }

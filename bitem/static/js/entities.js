@@ -122,6 +122,7 @@ function createMuuriElems(json) {
         elems.push(addMuuri(obj));
     });
     var newItemsA = grid.add(elems);
+    grid.sort('names')
     grid.refreshItems().layout();
 }
 
@@ -144,8 +145,8 @@ function addMuuri(data) {
     typestrue = false;
     if (data.types) {
         typestrue = true;
-        itemTemplate.setAttribute("data-type", data.types)
-        dataAll += data.types + ' '
+        itemTemplate.setAttribute("data-type", getTypeTranslation(data.types))
+        dataAll += getTypeTranslation(data.types) + ' '
     }
 
     //check if timespan available
@@ -180,7 +181,7 @@ function addMuuri(data) {
         '                    <div class="card-body">\n' +
         ((images) ? '                   <div class="list-col-8">\n' : '') +
         '                        <h5 class="card-title">' + data._label + '</h5>\n' +
-        ((typestrue) ? '<p class="card-title">' + data.types + '</p>' : '') +
+        ((typestrue) ? '<p class="card-title">' + getTypeTranslation(data.types) + '</p>' : '') +
         ((both) ? '<p class="card-title">' + data.first + ' - ' + data.last + '</p>' : '') +
         ((first) ? '<p class="card-title">' + data.first + '</p>' : '') +
         ((last) ? '<p class="card-title">' + data.last + '</p>' : '') +
@@ -218,7 +219,17 @@ function getLabelTranslation(data) {
     returnlabel = data._label
     eval('if (typeof (data._label' + language.toUpperCase() + ') !== "undefined")' +
         'returnlabel = data._label' + language.toUpperCase())
+    console.log(returnlabel)
+    console.log(data._label)
+    console.log(language)
     return returnlabel
+}
+
+function getTypeTranslation(data) {
+    returntype = data.name
+    eval('if (typeof (data.' + language.toUpperCase() + ') !== "undefined")' +
+        'returntype = data.' + language.toUpperCase())
+    return returntype
 }
 
 
