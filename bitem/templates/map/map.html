@@ -3,9 +3,21 @@
  <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
 
 <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
+  <link href="/static/css/map.css" rel="stylesheet">
 <main>
-    <div id="map">
+
+  <div class="row">
+    <div class="col-xl" id="map">
     </div>
+    <div class="col-xl bitem-text">
+
+      {% for row in data %}
+      <h4>{{ row._label}}</h4>
+      {% endfor %}
+
+    </div>
+  </div>
 </main>
 <script src="/static/js/map.js"></script>
+
 {% endblock %}

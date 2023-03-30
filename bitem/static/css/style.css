@@ -54,10 +54,6 @@ body {
     opacity: 0;
 }
 
-#map {
-    height: calc(100vh - 3.5rem);
-}
-
 .line-fade {
     position: relative;
 }

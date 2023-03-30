@@ -2,6 +2,11 @@ from flask import g, render_template
 from bitem import app
 from flask_babel import lazy_gettext as _
 
+def getPlaces():
+    openAtlasClass = ('place', )
+    casestudies = getCases(app.config['CASE_STUDY'])
+    _data = getlist(openAtlasClass, casestudies)
+    return _data
 
 def getData(selection):
     viewclasses = app.config['VIEW_CLASSES']
