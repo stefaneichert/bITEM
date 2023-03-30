@@ -38,7 +38,7 @@ UPLOAD_JPG_FOLDER_PATH = os.path.dirname(__file__) + '/../bitem' + JPG_FOLDER_PA
 
 OPENATLAS_URL = 'https://thanados.openatlas.eu/update/'
 
-API_URL = 'http://127.0.0.1:8000/api/'
+API_URL = 'http://thanados/api/'
 API_SUFFIX = 'format=loud'
 API_FILE_DISPLAY = 'https://thanados.openatlas.eu/api/display/'
 
