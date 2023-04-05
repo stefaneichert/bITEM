@@ -6,8 +6,6 @@ from flask_babel import Babel
 app = Flask(__name__, instance_relative_config=True)
 babel = Babel(app)
 
-
-
 csrf = CSRFProtect(app)  # Make sure all forms are CSRF protected
 csrf.init_app(app)
 
@@ -15,10 +13,9 @@ app.config.from_object('config.default')  # Load config/INSTANCE_NAME.py
 app.config.from_pyfile('production.py')  # Load instance/INSTANCE_NAME.py
 
 from bitem.views import (
-    index, about, map, item, entities, entity)
+    index, about, map, item, entities, entity, iiif)
 
 from bitem.util.util import uc_first
-
 
 
 @babel.localeselector
@@ -27,6 +24,7 @@ def get_locale() -> str:
         return session['language']
     best_match = request.accept_languages.best_match(app.config['LANGUAGES'])
     return best_match
+
 
 def connect():
     try:
@@ -49,15 +47,24 @@ def before_request():
     g.cursor = g.db.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
     session['language'] = get_locale()
 
+
 @app.teardown_request
 def teardown_request(exception):
     g.db.close()
+
 
 @app.route('/language/<language>')
 def set_language(language=None):
     session['language'] = language
     return redirect(request.referrer)
 
+
 @app.context_processor
 def inject_conf_var():
-    return dict(AVAILABLE_LANGUAGES=app.config['LANGUAGES'], CURRENT_LANGUAGE=session.get('language', request.accept_languages.best_match(app.config['LANGUAGES'].keys())))
+    return dict(AVAILABLE_LANGUAGES=app.config['LANGUAGES'],
+                CURRENT_LANGUAGE=session.get('language',
+                                             request.accept_languages.best_match(
+                                                 app.config[
+                                                     'LANGUAGES'].keys())),
+                IIIF_URL=app.config['IIIF_URL'],
+                IIIF_BASE = app.config['IIIF_BASE'])

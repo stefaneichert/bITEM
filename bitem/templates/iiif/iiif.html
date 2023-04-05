@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<script src="https://unpkg.com/mirador@latest/dist/mirador.min.js"></script>
+<link rel="stylesheet" href="/static/css/iiif.css"/>
+
+<main>
+<div id="my-mirador"/>
+</main>
+<script>
+
+var mirador = Mirador.viewer({
+    "selectedTheme": "dark",
+    "id": "my-mirador",
+    "windows": [
+        {
+            "manifestId": "{{img_manifest}}"
+        }
+    ],
+});
+</script>
+
+
+{% include 'footer.html' %}
+{% endblock %}%}

@@ -30,19 +30,19 @@ VIEW_CLASSES = {
     'places': ('place')
 }
 
-# Path
-WEB_FOLDER_PATH = '/static/images/entities'
+# Paths
 JPG_FOLDER_PATH = '/static/images/jpgs'
-UPLOAD_FOLDER_PATH = os.path.dirname(__file__) + '/../bitem' + WEB_FOLDER_PATH
-UPLOAD_JPG_FOLDER_PATH = os.path.dirname(__file__) + '/../bitem' + JPG_FOLDER_PATH
+ROOT_PATH = os.path.dirname(__file__) + '/../bitem'
 
 OPENATLAS_URL = 'https://thanados.openatlas.eu/update/'
+
+IIIF_BASE = 'http://127.0.0.1:8182/iiif/'
+IIIF_VERSION = '3'
+IIIF_URL = IIIF_BASE + IIIF_VERSION + '/'
 
 API_URL = 'http://thanados.openatlas.eu/api/'
 API_SUFFIX = '&format=loud'
 API_FILE_DISPLAY = 'https://thanados.openatlas.eu/api/display/'
-
-GEONAMES_USERNAME = 'yourgeonamesusername'
 
 META_RESOLVE_URL = 'https://bitem.at'
 META_PUBLISHER = 'bITEM'

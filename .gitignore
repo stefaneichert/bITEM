@@ -11,7 +11,17 @@ __pycache__/*
 
 # ide
 .idea
+venv
 
 #tests
 tests/cover/*
 tests/.coverage
+
+#vendor
+bitem/static/vendor/*
+!bitem/static/vendor/*.json
+
+#files
+bitem/static/images/jpgs/*
+
+

@@ -52,7 +52,6 @@ function searchupdate() {
 
 function select() {
     selectFieldValue = selectField.value.toLowerCase();
-    console.log(selectFieldValue)
     grid.filter(function (item) {
         var element = item.getElement();
         var isSelectMatch = !selectFieldValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectFieldValue) > -1;
@@ -116,7 +115,6 @@ function sortGrid(key, order = 'asc') {
 }
 
 function createMuuriElems(json) {
-    console.log(json)
     elems = []
     json.forEach(function (obj) {
         elems.push(addMuuri(obj));
@@ -219,9 +217,6 @@ function getLabelTranslation(data) {
     returnlabel = data._label
     eval('if (typeof (data._label' + language.toUpperCase() + ') !== "undefined")' +
         'returnlabel = data._label' + language.toUpperCase())
-    console.log(returnlabel)
-    console.log(data._label)
-    console.log(language)
     return returnlabel
 }
 
@@ -233,9 +228,25 @@ function getTypeTranslation(data) {
 }
 
 
+async function getData(url) {
+    const response = await fetch(url);
+    return response.json();
+
+}
+
+
 function getImages(data) {
-    //return '/static/images/test/' + iter + '.jpg'
-    return 'https://thanados.openatlas.eu/api/display/' + data[0]
+    var string = iiifUrl + data + '.jpg/full/max/0/default.jpg'
+    return string
+}
+
+function setMax(width, height) {
+    let string = 'max';
+    if (width > 300 && height > 500) string = '^!300,500';
+    if (width > 300 && height < 500) string = '300,';
+    if (width < 300 && height > 500) string = ',500,';
+    var imgstring = iiifUrl + data + '.jpg/full/' + string + '/0/default.jpg';
+    return imgstring
 }
 
 //switch from tiles to list and back

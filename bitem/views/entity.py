@@ -8,7 +8,7 @@ from bitem.util import api
 def entity(entity_id: int):
 
     data = api.query_ids(entity_id)
-    if data:
-        return json.dumps(data)
+    #if data:
+    #    return json.dumps(data)
 
     return render_template("/entity/entity.html", data=data)
