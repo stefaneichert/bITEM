@@ -4,31 +4,18 @@ body {
     min-height: 100vh;
 }
 
-.fade-me {
-    position: relative;
-    opacity: 0;
-    transition: opacity 0.5s linear 0.5s;
+
+
+.headline {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    color: white;
 }
 
-.images-loaded .fade-me {
-    opacity: 1;
+.fadein-container-about{
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
 
-.item-content > * {
-    background: rgb(245 245 245 / 15%);
-    color: whitesmoke;
-    border-radius: 6px;
-    --bs-card-border-width: none;
-    box-shadow: 0 0 5px 5px rgb(245 245 245 / 15%);
-    transition: background 1s, box-shadow 1s;
-}
+.coll-3
 
-.item-content:hover > * {
-    background: rgb(245 245 245 / 26%);
-    box-shadow: 0 0 5px 5px rgb(245 245 245 / 26%);
-    transition: background 1s, box-shadow 1s;
-}
-
-.item-content > model-viewer {
-    min-height: 45vh;
-}
