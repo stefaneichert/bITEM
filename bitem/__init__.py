@@ -13,7 +13,7 @@ app.config.from_object('config.default')  # Load config/INSTANCE_NAME.py
 app.config.from_pyfile('production.py')  # Load instance/INSTANCE_NAME.py
 
 from bitem.views import (
-    index, about, map, item, entities, entity, iiif)
+    index, about, item, entities, entity, iiif)
 
 from bitem.util.util import uc_first
 

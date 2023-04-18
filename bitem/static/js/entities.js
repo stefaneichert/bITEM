@@ -8,6 +8,9 @@ grid = new Muuri('.grid', {
         fillGaps: true,
     },
     sortData: {
+        id: function (item, element) {
+            return element.getAttribute('data-id');
+        },
         types: function (item, element) {
             return element.getAttribute('data-type').toUpperCase();
         },
@@ -26,74 +29,51 @@ grid = new Muuri('.grid', {
     },
 });
 
-//search/filter functionality
-var countField = document.getElementById("item-count");
-document.getElementById("item-total").innerText = data.length;
-var searchField = document.getElementById("searchField");
-var selectField = document.getElementById("case-select");
-var searchFieldValue;
-var selectFieldValue;
-var countFieldValue;
+const countField = document.getElementById("item-count");
+const itemTotalField = document.getElementById("item-total");
+const searchField = document.getElementById("searchField");
+const selectField = document.getElementById("case-select");
+const switchList = document.getElementById("list-switch");
 
 searchField.value = '';
-searchFieldValue = searchField.value.toLowerCase();
-searchField.addEventListener('search', searchupdate);
-searchField.addEventListener('keyup', searchupdate);
-selectField.addEventListener('change', select)
+itemTotalField.innerText = data.length;
 
-function searchupdate() {
-    var newSearch = searchField.value.toLowerCase();
-    if (searchFieldValue !== newSearch) {
-        searchFieldValue = newSearch;
-        filter();
-        updateCount();
-    }
+searchField.addEventListener('search', applyFilters);
+searchField.addEventListener('keyup', applyFilters);
+selectField.addEventListener('change', applyFilters);
+switchList.addEventListener('click', listSwitch);
+
+function applyFilters() {
+    const searchValue = searchField.value.toLowerCase();
+    const selectValue = selectField.value.toLowerCase();
+    const filteredItems = grid.getItems().filter(item => {
+        const element = item.getElement();
+        const isSelectMatch = !selectValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectValue) > -1;
+        const isSearchMatch = !searchValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchValue) > -1;
+        return isSelectMatch && isSearchMatch;
+    });
+    grid.filter(item => filteredItems.includes(item));
+    updateCount(filteredItems);
 }
 
-function select() {
-    selectFieldValue = selectField.value.toLowerCase();
-    grid.filter(function (item) {
-        var element = item.getElement();
-        var isSelectMatch = !selectFieldValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectFieldValue) > -1;
-        return isSelectMatch;
-    });
-    updateCount();
-
-}
-
-function filter() {
-    grid.filter(function (item) {
-        var element = item.getElement();
-        var isSearchMatch = !searchFieldValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchFieldValue) > -1;
-        return isSearchMatch;
-    });
-
-}
-
-function updateCount() {
-    var activeItems = grid.getItems().filter(function (item) {
-        return item.isActive();
-    });
-    countField.innerText = activeItems.length
+function updateCount(filteredItems) {
+    const activeItemsCount = filteredItems.filter(item => item.isActive()).length;
+    countField.innerText = activeItemsCount;
 }
 
 
 //grid refresh after images loaded, loading spinner removed
 window.onload = function () {
     shave('.card-text', 200)
+    countField.innerText = data.length;
     grid.refreshItems().layout();
-    document.body.classList.add('images-loaded');
-    countField.innerText = data.length
+
+
+        document.body.classList.add('images-loaded');
+
 };
 
 createMuuriElems(data)
-
-/*fetch('https://thanados.openatlas.eu/api/query/?system_classes=' + query_params[0] + '&type_id=' + query_params[1] +
-    '&show=geometry&show=types&show=geonames&show=relations&show=names&show=links&show=geometry&format=loud')
-    .then(response => response.json())
-    .then(json => createMuuriElems(json))
-    .catch(error => console.error(error))*/
-
 
 //define variables for sort order
 sortorder = {
@@ -115,177 +95,150 @@ function sortGrid(key, order = 'asc') {
 }
 
 function createMuuriElems(json) {
-    elems = []
-    json.forEach(function (obj) {
-        elems.push(addMuuri(obj));
-    });
-    var newItemsA = grid.add(elems);
-    grid.sort('names')
+    const elems = json.map(obj => addMuuri(obj));
+    grid.add(elems);
+    grid.sort('names');
     grid.refreshItems().layout();
 }
 
 function addMuuri(data) {
-
-    data._label = getLabelTranslation(data)
-
-    //initiate DOM element
-    var itemTemplate = document.createElement('div');
+    data._label = getLabelTranslation(data);
+    const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
-    itemTemplate.setAttribute("data-type", null)
-    itemTemplate.setAttribute("data-begin", null)
-    itemTemplate.setAttribute("data-end", null)
-    itemTemplate.setAttribute("data-name", data._label)
-    itemTemplate.setAttribute("data-casestudies", data.casestudies)
+    itemTemplate.dataset.type = null;
+    itemTemplate.dataset.id = data.id;
+    itemTemplate.dataset.begin = null;
+    itemTemplate.dataset.end = null;
+    itemTemplate.dataset.name = data._label;
+    itemTemplate.dataset.casestudies = data.casestudies;
 
-    dataAll = data._label + ' '
+    let dataAll = data._label + ' ';
 
-    //check if types available
-    typestrue = false;
     if (data.types) {
-        typestrue = true;
-        itemTemplate.setAttribute("data-type", getTypeTranslation(data.types))
-        dataAll += getTypeTranslation(data.types) + ' '
+        itemTemplate.dataset.type = getTypeTranslation(data.types);
+        dataAll += getTypeTranslation(data.types) + ' ';
     }
 
-    //check if timespan available
-    first = false;
-    last = false;
-    both = false;
-    if (typeof (data.first) != 'undefined') {
+    let first = false;
+    let last = false;
+    let both = false;
+
+    if (data.first !== undefined) {
         first = true;
-        itemTemplate.setAttribute("data-begin", data.first);
-        dataAll += data.first
+        itemTemplate.dataset.begin = data.first;
+        dataAll += data.first;
     }
-    if (typeof (data.last) != 'undefined') {
+
+    if (data.last !== undefined) {
         last = true;
-        itemTemplate.setAttribute("data-end", data.last)
-        dataAll += data.last
+        itemTemplate.dataset.end = data.last;
+        dataAll += data.last;
     }
+
     if (first && last) {
         first = false;
         last = false;
-        both = true
+        both = true;
     }
 
-    //check if image available
-    images = false
-    if (data.images) images = true
+    const images = Boolean(data.images);
 
-    //build HTML elements
+    const buttons = `
+    <div class="btn-panel text-end">
+      ${images ? `<a href="/iiif/${data.image.id}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}
+      <a class="line-fade info-buttons" href="/view/${data.id}"><i class="bi bi-info-circle"></i></a>
+    </div>
+  `;
 
-    itemTemplate.innerHTML = '' +
-        '            <div class="item-content">\n' +
-        '                <div class="card">\n' +
-        '                    <div class="card-body">\n' +
-        ((images) ? '                   <div class="list-col-8">\n' : '') +
-        '                        <h5 class="card-title">' + data._label + '</h5>\n' +
-        ((typestrue) ? '<p class="card-title">' + getTypeTranslation(data.types) + '</p>' : '') +
-        ((both) ? '<p class="card-title">' + data.first + ' - ' + data.last + '</p>' : '') +
-        ((first) ? '<p class="card-title">' + data.first + '</p>' : '') +
-        ((last) ? '<p class="card-title">' + data.last + '</p>' : '') +
-        ((images) ? '<img src="' + getImages(data.images) + '" loading="eager" class="image-content">' : '') +
-        '                        <p class="card-text mt-2">' + getLanguage(data) + '</p>\n' +
-        ((images) ? '</div>' : '') +
-        ((images) ? '<div class="list-col-4"><img src="' + getImages(data.images) + '" loading="lazy" class="float-end img-fluid list-image d-none"></div>' : '') +
-        '                    </div>\n' +
-        '                </div>\n' +
-        '            </div>';
-    itemTemplate.setAttribute("data-all", dataAll)
-    return (itemTemplate)
+    itemTemplate.innerHTML = `
+    <div class="item-content">
+      <div class="card">
+        <div class="card-body">
+          ${images ? '<div class="list-col-8">' : ''}
+            <h5 class="card-title">${data._label}</h5>
+            ${data.types ? `<p class="card-title">${getTypeTranslation(data.types)}</p>` : ''}
+            ${both ? `<p class="card-title">${data.first} - ${data.last}</p>` : ''}
+            ${first ? `<p class="card-title">${data.first}</p>` : ''}
+            ${last ? `<p class="card-title">${data.last}</p>` : ''}
+            ${images ? `<div><img src="${data.image.path}" loading="eager" class="image-content"></div>` : ''}
+            <p class="card-text mt-2">${getLanguage(data)}</p>
+            ${buttons}
+          ${images ? '</div>' : ''}
+          ${images ? `<div class="list-col-4"><img src="${data.image.path}" loading="lazy" class="float-end img-fluid list-image d-none"></div>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+
+    itemTemplate.dataset.all = dataAll;
+
+    return itemTemplate;
 }
 
-//get translation for description
 function getLanguage(data) {
     if (data.content) {
-        var text = data.content;
+        let text = data.content;
         if (text.includes('_##')) {
-            var mySubString = text.substring(
-                text.indexOf('##' + language + '_##') + 7,
-                text.lastIndexOf('##_' + language + '##')
+            const mySubString = text.substring(
+                text.indexOf(`##${language}_##`) + 7,
+                text.lastIndexOf(`##_${language}##`)
             );
             text = mySubString;
         }
-        dataAll += ' ' + text
-        return text
+        return text;
     } else {
-        return ''
+        return '';
     }
 }
 
-//get translation for names/labels
 function getLabelTranslation(data) {
-    returnlabel = data._label
-    eval('if (typeof (data._label' + language.toUpperCase() + ') !== "undefined")' +
-        'returnlabel = data._label' + language.toUpperCase())
-    return returnlabel
+    let label = data._label;
+    const languageLabel = data._label[language.toUpperCase()];
+    if (typeof languageLabel !== "undefined") {
+        label = languageType;
+    }
+    return label;
 }
+
 
 function getTypeTranslation(data) {
-    returntype = data.name
-    eval('if (typeof (data.' + language.toUpperCase() + ') !== "undefined")' +
-        'returntype = data.' + language.toUpperCase())
-    return returntype
-}
-
-
-async function getData(url) {
-    const response = await fetch(url);
-    return response.json();
-
-}
-
-
-function getImages(data) {
-    var string = iiifUrl + data + '.jpg/full/max/0/default.jpg'
-    return string
-}
-
-function setMax(width, height) {
-    let string = 'max';
-    if (width > 300 && height > 500) string = '^!300,500';
-    if (width > 300 && height < 500) string = '300,';
-    if (width < 300 && height > 500) string = ',500,';
-    var imgstring = iiifUrl + data + '.jpg/full/' + string + '/0/default.jpg';
-    return imgstring
+    let typeName = data.name;
+    const languageType = data[language.toUpperCase()];
+    if (typeof languageType !== "undefined") {
+        typeName = languageType;
+    }
+    return typeName;
 }
 
 //switch from tiles to list and back
 
-tiles = document.getElementById("tiles");
+const tiles = document.getElementById("tiles");
 
 function listSwitch() {
     tiles.classList.toggle("list");
-    tilesthere = false
-    exchangeListClass()
-    shave('.card-text', 200)
+    exchangeListClass();
+    shave('.card-text', 200);
     grid.refreshItems().layout();
-
 }
 
-col8 = document.getElementsByClassName('list-col-8')
-col4 = document.getElementsByClassName('list-col-4')
-listimages = document.getElementsByClassName('list-image')
-listrow = document.getElementsByClassName('card-body')
+const col8 = document.querySelectorAll('.list-col-8');
+const col4 = document.querySelectorAll('.list-col-4');
+const infobuttons = document.querySelectorAll('.btn-panel');
+const listimages = document.querySelectorAll('.list-image');
+const listrow = document.querySelectorAll('.card-body');
+
+function toggleClass(elements, className) {
+    elements.forEach(element => element.classList.toggle(className));
+}
 
 function exchangeListClass() {
-    Array.from(col8).forEach(function (obj) {
-        obj.classList.toggle("col-10")
-    })
+    toggleClass(col8, "col-10");
+    toggleClass(infobuttons, "text-end");
+    toggleClass(col4, "col-2");
+    toggleClass(listimages, "d-none");
+    toggleClass(listrow, "row");
 
-    Array.from(col4).forEach(function (obj) {
-        obj.classList.toggle("col-2")
-    })
-
-    Array.from(listimages).forEach(function (obj) {
-        obj.classList.toggle("d-none")
-    })
-
-    Array.from(listrow).forEach(function (obj) {
-        obj.classList.toggle("row")
-    })
-
-    var button = document.getElementById('viewbutton')
-    button.classList.toggle("bi-list-ul")
-    button.classList.toggle("bi-layout-wtf")
-
+    const button = document.getElementById('viewbutton');
+    button.classList.toggle("bi-list-ul");
+    button.classList.toggle("bi-layout-wtf");
 }

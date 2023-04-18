@@ -90,13 +90,15 @@ body {
         width: calc(33vw - (3rem + 7px));
 
     }
+}
 
+@media screen and (min-width: 769px) and (max-width: 1275px) {
     #tiles {
         margin-top: 6rem;
     }
 }
 
-@media screen and (min-width: 1177px) {
+@media screen and (min-width: 1276px) {
     #tiles {
         margin-top: 4rem;
     }
@@ -140,6 +142,7 @@ body {
     transition: opacity 0.5s linear 0.5s;
     color: whitesmoke;
     max-height: 50vh;
+    z-index: 10000;
 }
 
 .images-loaded .loading {

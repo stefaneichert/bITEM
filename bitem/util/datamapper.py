@@ -12,11 +12,20 @@ def getData(selection):
 
     casestudies = getCases(app.config['CASE_STUDY'])
 
-    return render_template("/entity/entities.html",
-                           _data=getlist(openAtlasClass, casestudies),
+    _data = getlist(openAtlasClass, casestudies)
+
+    csNames = getCaseStudyNames(casestudies,openAtlasClass)
+
+    if selection != 'places':
+        return render_template("/entity/entities.html",
+                           _data=_data,
                            title=_(selection),
-                           csNames=getCaseStudyNames(casestudies,
-                                                     openAtlasClass))
+                           csNames=csNames)
+    else:
+        return render_template("/map/map.html",
+                           _data=_data,
+                           title=_(selection),
+                           csNames=csNames)
 
 
 def getCases(root_):
@@ -67,6 +76,7 @@ def getlist(openAtlasClass, caseStudies):
         'last', last,
         'types', type,
         'images', image,
+        'geom', geometry,
         'casestudies', caseStudiesAll
                ))) as list
     FROM
@@ -83,7 +93,8 @@ def getlist(openAtlasClass, caseStudies):
        (GREATEST(a.end_from, a.end_to)::DATE)::TEXT  AS last,
        d.maintype                                    AS type,
        e.mainimage                                   AS image,
-       f.caseStudiesAll                              AS caseStudiesAll
+       f.caseStudiesAll                              AS caseStudiesAll,
+       g.geometry
 FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, e.end_to
       FROM model.entity e
                JOIN model.link l ON e.id = l.domain_id
@@ -101,6 +112,48 @@ FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, 
          LEFT JOIN (SELECT range_id, description AS englishName FROM model.link WHERE domain_id = %(en)s) c
                    ON c.range_id = a.id
         --language end
+        
+        LEFT JOIN (SELECT id,
+               jsonb_build_object(
+                   'type', 'feature',
+                   'geometry', jsonb_build_object(
+                       'type', 'GeometryCollection',
+                       'geometries', geom
+                   )) AS geometry
+        FROM
+         (SELECT g.id, g.name, jsonb_agg(ST_AsGeoJSON(g.geom)::jsonb) AS geom FROM
+            (SELECT e.id,e.name,
+                     CASE
+                         WHEN g.geom_point IS NOT NULL THEN 'point'
+                         WHEN g.geom_linestring IS NOT NULL THEN 'linestring'
+                         WHEN g.geom_polygon IS NOT NULL THEN 'polygon'
+                         END AS type,
+                     CASE
+                         WHEN g.geom_point IS NOT NULL THEN (g.geom_point)
+                         WHEN g.geom_linestring IS NOT NULL THEN (g.geom_linestring)
+                         WHEN g.geom_polygon IS NOT NULL THEN (g.geom_polygon)
+                         END AS geom
+              FROM model.entity e
+                       JOIN model.link l ON l.domain_id = e.id
+                       JOIN model.gis g ON g.entity_id = l.range_id
+              WHERE l.property_code = 'P53'
+                AND e.openatlas_class_name = 'place'
+              UNION ALL
+              SELECT e.id,e.name,
+                     CASE
+                         WHEN g.geom_linestring IS NOT NULL THEN 'centerpoint'
+                         WHEN g.geom_polygon IS NOT NULL THEN 'centerpoint'
+                         END AS type,
+                     CASE
+                         WHEN g.geom_linestring IS NOT NULL THEN (st_pointonsurface(g.geom_linestring))
+                         WHEN g.geom_polygon IS NOT NULL THEN (st_pointonsurface(g.geom_polygon))
+                         END AS geom
+              FROM model.entity e
+                       JOIN model.link l ON l.domain_id = e.id
+                       JOIN model.gis g ON g.entity_id = l.range_id
+              WHERE l.property_code = 'P53'
+                  AND e.openatlas_class_name = 'place' AND g.geom_linestring IS NOT NULL
+                 OR l.property_code = 'P53' AND e.openatlas_class_name = 'place' AND g.geom_polygon IS NOT NULL) g GROUP BY g.id, g.name) b) g ON g.id = a.id
 
          LEFT JOIN (SELECT jsonb_strip_nulls(jsonb_build_object('name', e.name, 'DE', de.description, 'EN', en.description)) AS maintype, l.domain_id
                     FROM model.entity e
@@ -179,7 +232,8 @@ FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, 
                            'root': app.config['CASE_STUDY'], 'de': lan['de'],
                            'en': lan['en']})
     result = g.cursor.fetchone()
-    return (result.list)
+    result = imageIIIF(result.list)
+    return (result)
 
 
 def getCaseStudyNames(casestudies, openAtlasClass):
@@ -239,7 +293,7 @@ def getCaseStudyNames(casestudies, openAtlasClass):
 
     result = g.cursor.fetchall()
     if result:
-        print(result)
+        return result
     else:
         sql = """
         SELECT 
@@ -254,6 +308,31 @@ def getCaseStudyNames(casestudies, openAtlasClass):
         g.cursor.execute(sql, {'casestudies': casestudies, 'root_': root_,
                                'openAtlasClass': openAtlasClass})
         result = g.cursor.fetchall()
-        print(result)
+
 
     return (result)
+
+def imageIIIF(data):
+    import urllib.request, json
+
+    iiifUrl =  app.config['IIIF_URL']
+    for row in data:
+        if 'images' in row:
+            img = str(row['images'][0])
+            with urllib.request.urlopen(iiifUrl + img + '.jpg') as url:
+                info = json.load(url)
+                w = info['width']
+                h = info['height']
+            string = 'max'
+            if w > 300 and h > 500:
+                string = '^!300,500'
+            if w > 300 and h < 500:
+                string = '300,'
+            if w < 300 and h > 500:
+                string = ',500'
+            imgstring = iiifUrl + img + '.jpg/full/' + string + '/0/default.jpg'
+            image = {}
+            image['path'] = imgstring
+            image['id'] = row['images'][0]
+            row['image'] = image
+    return(data)

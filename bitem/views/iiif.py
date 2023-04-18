@@ -7,13 +7,11 @@ def getManifest(img_id):
 
     from iiif_prezi3 import Manifest, config
 
-    print(session['language'])
-
     config.configs['helpers.auto_fields.AutoLang'].auto_lang = session['language']
 
     manifest = Manifest(
         id=path,
-        label="myimage3")
+        label=str(img_id))
     canvas = manifest.make_canvas_from_iiif(
         url=app.config['IIIF_URL'] + str(img_id) + ".jpg")
 

@@ -1,11 +1,48 @@
 {% extends "layout.html" %}
 {% block content %}
- <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
+
+<script>data={{_data|tojson}}</script>
+
+<script src="/static/js/functions.js" xmlns="http://www.w3.org/1999/html"></script>
+<script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
+<script src="/static/vendor/node_modules/shave/dist/shave.min.js"></script>
+
 
 <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
+<script src="/static/vendor/node_modules/leaflet-sidebar/src/L.Control.Sidebar.js"></script>
+<script src="/static/vendor/node_modules/leaflet-active-area/src/leaflet.activearea.js"></script>
+
+<link rel="stylesheet" href="/static/css/map.css"/>
+
+{% include 'submenu.html' %}
+
+
 <main>
-    <div id="map">
+    <div class="fixheight">
+
+        <div id="sidebar">
+
+            <div class="sidebar-bg">
+
+                <div id="tiles" class="grid fade-me"></div>
+                <div class="footer-container">
+                    {% include 'footer.html' %}
+                </div>
+            </div>
+        </div>
+        <div class="nogaps content-items" id="map">
+        </div>
+        <button id="barswitch" type="button" class="btn btn-light mapbuttons barswitch-middle"
+                onclick="toggleSidebar('left')"><i class="bi bi-chevron-left"></i></button>
+        <button id="mapswitch" type="button" class="btn btn-light mapbuttons mapswitch-middle"
+                onclick="toggleSidebar('right')"><i class="bi bi-chevron-right"></i></button>
     </div>
+    </div>
+
 </main>
+
+
+<script src="/static/js/entities.js"></script>
 <script src="/static/js/map.js"></script>
 {% endblock %}

@@ -27,7 +27,7 @@ VIEW_CLASSES = {
     'groups': ('group',),
     'events': ('acquisition', 'event', 'activity', 'creation', 'move',
             'production'),
-    'places': ('place')
+    'places': ('place',)
 }
 
 # Paths

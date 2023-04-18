@@ -1,0 +1,348 @@
+/*custom css for sidebar*/
+.leaflet-sidebar {
+    position: absolute;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 2000;
+}
+
+.leaflet-sidebar.left {
+    transition: left 0.5s, width 0.5s;
+    padding-right: 0;
+}
+
+
+.leaflet-sidebar > .leaflet-control {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 8px 24px;
+    font-size: 1.1em;
+    background: white;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.65);
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.leaflet-touch .leaflet-sidebar > .leaflet-control {
+    box-shadow: none;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    background-clip: padding-box;
+}
+
+
+.leaflet-left {
+    transition: left 0.5s;
+}
+
+.leaflet-right {
+    transition: right 0.5s;
+}
+
+/* end of sidebar css*/
+
+#sidebar {
+    background: black;
+    overflow-x: hidden;
+    font-family: system-ui;
+    border: none;
+    border-radius: 0;
+}
+
+.leaflet-sidebar > .leaflet-control {
+    padding: 0;
+}
+
+.footer-container {
+    min-height: 15rem;
+    padding-top: 8rem !important;
+    background: linear-gradient(180deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgb(45, 45, 45) 15%,
+    rgb(126, 126, 126) 30%,
+    rgb(166, 166, 166) 80%,
+    rgb(229 229 229));
+    padding-bottom: 5rem !important;
+}
+
+.leaflet-sidebar {
+    padding: 0px;
+}
+
+.map-both {
+    left: 50vw;
+}
+
+.map-no {
+    left: 100vw;
+}
+
+.map-only {
+    left: 0vw;
+}
+
+.sb-both {
+    width: 50vw;
+}
+
+.sb-only {
+    width: 100vw;
+}
+
+.sb-no {
+    width: 0vw;
+}
+
+.mapbuttons {
+    z-index: 5000;
+    position: absolute;
+    max-width: 26px;
+    height: 3.5rem;
+}
+
+.mapbuttons > i {
+    position: absolute;
+    top: 1rem;
+    left: 0.3rem;
+}
+
+#mapswitch {
+    top: 50%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    opacity: 1;
+    transition: left 0.5s;
+}
+
+.activemap-50 {
+    position: absolute;
+    right: 0px;
+    left: 50%;
+}
+
+.activemap-100 {
+    position: absolute;
+    left: 0vw;
+    width: 100vw;
+}
+
+.mapswitch-left {
+    left: 0vw;
+}
+
+.mapswitch-right {
+    left: 100vw;
+}
+
+.mapswitch-middle {
+    left: 50vw;
+}
+
+.barswitch-left {
+    right: calc(100vw + 10px);
+}
+
+.barswitch-right {
+    right: calc(0vw + 10px);
+}
+
+.barswitch-middle {
+    right: calc(50vw + 10px);
+}
+
+#barswitch {
+    top: 50%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    opacity: 1;
+    transition: right 0.5s;
+}
+
+#switchbtn {
+    position: absolute;
+    right: 1rem;
+    z-index: 5001;
+    top: 1rem;
+    display: none;
+}
+
+.list-item-50 {
+    width: 43vw !important;
+}
+
+.list-item-100 {
+    width: 90vw !important;
+}
+
+
+.fixheight {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    overflow-x: hidden !important;
+}
+
+.nogaps {
+    margin: 0;
+    padding: 0;
+}
+
+.item {
+    position: absolute;
+    margin-left: 2rem;
+    margin-top: 2rem;
+    z-index: 1;
+}
+
+.item.muuri-item-hidden {
+    z-index: 0;
+}
+
+.item.muuri-item-releasing {
+    z-index: 2;
+}
+
+.item.muuri-item-dragging {
+    z-index: 3;
+}
+
+.item-content {
+    position: relative;
+    cursor: pointer;
+}
+
+.item-content > * {
+    background: rgb(245 245 245 / 15%);
+    color: whitesmoke;
+    border-radius: 6px;
+    --bs-card-border-width: none;
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 15%);
+    transition: background 1s, box-shadow 1s;
+}
+
+.item-content:hover > * {
+    background: rgb(245 245 245 / 26%);
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 26%);
+    transition: background 1s, box-shadow 1s;
+}
+
+@media screen and (max-width: 400px) {
+    .sortbuttons {
+        display: inline !important;
+    }
+
+    .content-items, .activemap-50, .activemap-100 {
+        height: calc(100vh - 21.5rem);
+    }
+}
+
+@media screen and (min-width: 401px) and (max-width: 768px) {
+    .content-items, .activemap-50, .activemap-100 {
+        height: calc(100vh - 15.5rem);
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .content-items, .activemap-50, .activemap-100 {
+        height: calc(100vh - 12.5rem);
+    }
+
+    .item-content > * {
+        width: calc(22vw - 25px);
+    }
+}
+
+
+@media screen and (min-width: 1190px) {
+    .content-items, .activemap-50, .activemap-100 {
+        height: calc(100vh - 9.5rem);
+    }
+
+    .item-content > * {
+        width: calc(13vw);
+    }
+}
+
+.list .item-content .image-content {
+    display: none;
+}
+
+.list-image {
+    max-height: 150px;
+}
+
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 3.5rem;
+    bottom: 0;
+    text-transform: uppercase;
+    transition: opacity 0.5s linear 0.5s;
+    color: whitesmoke;
+    max-height: 100vh;
+    background: black;
+    z-index: 6000;
+}
+
+.images-loaded .loading {
+    display: none;
+}
+
+.image-content {
+    max-width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.sortbuttons {
+    display: inline-flex;
+    padding-top: 5px;
+    font-size: larger;
+    text-align: center;
+}
+
+.fixed-second {
+    position: fixed;
+    top: 56px;
+    background: linear-gradient(180deg, rgba(0, 0, 0) 0%, rgb(0, 0, 0) 90%, rgb(0, 0, 0, 0) 100%);
+    z-index: 500;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: whitesmoke;
+    opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: whitesmoke;;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: whitesmoke;;
+}
+
+.custom-select {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='whitesmoke' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E")
+}
+
+.counter {
+    font-size: medium;
+    vertical-align: middle;
+}
+
+
+
+

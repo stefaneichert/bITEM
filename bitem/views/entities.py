@@ -21,3 +21,8 @@ def events():
 def items():
     template = datamapper.getData(inspect.stack()[0][3])
     return template
+
+@app.route('/places')
+def places():
+    template = datamapper.getData(inspect.stack()[0][3])
+    return template

@@ -5,6 +5,8 @@ body {
     min-height: 100vh;
 }
 
+
+
 .footercontent {
     flex-wrap: wrap;
     display: flex;
@@ -47,15 +49,11 @@ body {
 }
 
 .bitem-text {
-    color: #f5f5f5!important
+    color: #f5f5f5 !important
 }
 
 .fadein {
     opacity: 0;
-}
-
-#map {
-    height: calc(100vh - 3.5rem);
 }
 
 .line-fade {
@@ -131,11 +129,43 @@ body {
 }
 
 #btn-back-to-top:hover {
-    background: #f2f2f2!important;
-    box-shadow: 0 0 5px 5px #f2f2f2!important;
+    background: #f2f2f2 !important;
+    box-shadow: 0 0 5px 5px #f2f2f2 !important;
 }
 
 #btn-back-to-top:active {
-    border-color: rgba(245, 245, 245, 0)!important;
-    box-shadow: 0 0 6px 6px rgb(245 245 245)!important;
+    border-color: rgba(245, 245, 245, 0) !important;
+    box-shadow: 0 0 6px 6px rgb(245 245 245) !important;
+}
+
+.info-buttons {
+    color: #f5f5f5 !important;
+    display: inline;
+    padding-bottom: 10px;
+}
+
+.info-buttons > * {
+    font-size: 1.2rem;
+    height: 1.2rem;
+    margin: 0.3rem;
+    vertical-align: middle;
+}
+
+::-webkit-scrollbar {
+    width: 11px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

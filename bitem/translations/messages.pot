@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-03-23 09:06+0100\n"
+"POT-Creation-Date: 2023-04-11 12:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,70 +17,68 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:35 bitem/views/entity.py:43
+#: bitem/templates/layout.html:35
 msgid "items"
 msgstr ""
 
-#: bitem/templates/layout.html:38 bitem/views/entity.py:15
+#: bitem/templates/layout.html:38
 msgid "persons"
 msgstr ""
 
-#: bitem/templates/layout.html:41 bitem/views/entity.py:24
+#: bitem/templates/layout.html:41
 msgid "groups"
 msgstr ""
 
-#: bitem/templates/layout.html:44 bitem/views/entity.py:33
+#: bitem/templates/layout.html:44
 msgid "events"
 msgstr ""
 
 #: bitem/templates/layout.html:47
-msgid "networks"
+msgid "places"
 msgstr ""
 
 #: bitem/templates/layout.html:50
-msgid "map"
-msgstr ""
-
-#: bitem/templates/layout.html:53
 msgid "about"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:16 bitem/templates/item/view.html:21
+#: bitem/templates/item/view.html:21 bitem/templates/submenu.html:3
 msgid "loading"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:24
-#: bitem/templates/entity/entities.html:26
-#: bitem/templates/entity/entities.html:28
-#: bitem/templates/entity/entities.html:30
+#: bitem/templates/submenu.html:10
+msgid "of"
+msgstr ""
+
+#: bitem/templates/submenu.html:16 bitem/templates/submenu.html:18
+#: bitem/templates/submenu.html:20 bitem/templates/submenu.html:22
 msgid "sort by"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:24
+#: bitem/templates/submenu.html:16
 msgid "name"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:26
+#: bitem/templates/submenu.html:18
 msgid "type"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:28
+#: bitem/templates/submenu.html:20
 msgid "begin"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:30
+#: bitem/templates/submenu.html:22
 msgid "end"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:32
+#: bitem/templates/submenu.html:24
 msgid "switch view"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:36
+#: bitem/templates/submenu.html:28
 msgid "filter by case study"
 msgstr ""
 
-#: bitem/templates/entity/entities.html:42
+#: bitem/templates/submenu.html:48
 msgid "search term"
 msgstr ""
 
