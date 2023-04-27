@@ -1,10 +1,33 @@
+//set initial layout based on viewport
+window.onload = function () {
+    let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    if (vw < 768) {
+        changeClasses('change', 'barswitch-middle', 'barswitch-middle', 'barswitch-right', removeClasses)
+        changeClasses('change', 'mapswitch-middle', 'mapswitch-middle', 'mapswitch-right', removeClasses)
+        changeClasses('change', 'leaflet-sidebar', 'sb-both', 'sb-only', removeClasses)
+        changeClasses('change', 'leaflet-left', 'map-both', 'map-no', removeClasses)
+    }
+
+    grid.refreshItems().layout();
+    countField.innerText = data.length;
+
+    setTimeout(function () {
+        setMarkers()
+        document.body.classList.add('images-loaded');
+    }, 500);
+
+    OpenStreetMap.addTo(map)
+
+};
+
+//Add map interaction to buttons
 searchField.addEventListener('search', setMarkers);
 searchField.addEventListener('keyup', setMarkers);
 selectField.addEventListener('change', setMarkers);
-
 let list = false
 switchList.addEventListener('click', setListWitdh);
 
+//check for currently shown Muuri items
 function getActiveItems() {
     let activeIds = [];
     var activeItems = grid.getItems().filter(function (item) {
@@ -14,38 +37,63 @@ function getActiveItems() {
     return activeIds
 }
 
-function setMarkers() {
-    if (typeof (PlaceMarker) !== 'undefined') PlaceMarker.removeFrom(map);
-    PlaceMarker = updateGeojson()
-    PlaceMarker.addTo(map)
-    let bounds = PlaceMarker.getBounds()
-    let sidebarnow = document.getElementById("sidebar")
-    let sbw = sidebarnow.clientWidth
-    if (sbw === 0) {
-        map.setActiveArea('activemap-100');
-        map.fitBounds(bounds, {
-            padding: [50, 50]
-        });
-        console.log(100)
-    } else {
-        map.setActiveArea('activemap-50');
-        map.fitBounds(bounds, {
-            padding: [50, 50]
-        });
-        console.log(50)
-    }
+///////////////////////
+// Map functionality //
+///////////////////////
+const map = L.map('map', {minZoom: 2, maxZoom: 17, worldCopyJump: false}).setView([1.505, -0.09], 5);
 
-}
+const OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+});
+
+const OpenStreetMap = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+const Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: 'abcd',
+    minZoom: 1,
+    maxZoom: 16,
+    ext: 'jpg'
+});
+
+let baseMaps = {
+    "OpenStreetMap": OpenStreetMap,
+    "OSM Humanitarian": OpenStreetMap_HOT,
+    "Stamen Watercolor": Stamen_Watercolor
+};
+
+L.control.layers(baseMaps).addTo(map);
+
+let sidebar = L.control.sidebar('sidebar', {
+    closeButton: false,
+    position: 'left'
+});
+
+map.addControl(sidebar);
+
+setTimeout(() => {
+    sidebar.show();
+    setTimeout(() => {
+        grid.refreshItems().layout();
+    }, 500);
+}, 500);
+
+//initiate sidebar/map to 50/50
+shave('.card-text', 200)
+changeClasses('add', 'leaflet-sidebar', 'sb-both')
+changeClasses('add', 'leaflet-left', 'map-both')
 
 //circle marker style
-
 let CircleStyle = {
     "color": "#324c6b",
     "weight": 1.5,
     "fillOpacity": 0.8,
     "fillColor": "#0088ce"
 };
-
 let CircleStyleHover = {
     "color": "#324c6b",
     "weight": 1.5,
@@ -53,6 +101,7 @@ let CircleStyleHover = {
     "fillColor": "#ff001f"
 };
 
+//create/update Geojson
 function updateGeojson() {
     let placeLayer = new L.geoJSON('', {
         pointToLayer: function (feature, latlng) {
@@ -90,58 +139,6 @@ function updateGeojson() {
     return placeLayer
 }
 
-function hideButtons() {
-    changeClasses('add', 'mapbuttons', 'd-none')
-    setTimeout(function () {
-        changeClasses('remove', 'mapbuttons', 'd-none')
-    }, 500);
-}
-
-const map = L.map('map', {minZoom: 2, worldCopyJump: false}).setView([51.505, -0.09], 5);
-
-const OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-});
-
-const OpenStreetMap = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
-
-const Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: 'abcd',
-    minZoom: 1,
-    maxZoom: 16,
-    ext: 'jpg'
-});
-
-let baseMaps = {
-    "OpenStreetMap": OpenStreetMap,
-    "OSM Humanitarian": OpenStreetMap_HOT,
-    "Stamen Watercolor": Stamen_Watercolor
-};
-
-L.control.layers(baseMaps).addTo(map);
-
-var sidebar = L.control.sidebar('sidebar', {
-    closeButton: false,
-    position: 'left'
-});
-
-map.addControl(sidebar);
-map.on('click', function (e) {
-    console.log("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
-});
-
-setTimeout(() => {
-    sidebar.show();
-    setTimeout(() => {
-        grid.refreshItems().layout();
-    }, 500);
-}, 500);
-
 function getCoordinates(geom) {
     if (geom.type === 'feature' && geom.geometry.type === 'GeometryCollection') {
         return geom.geometry.geometries.find(singleGeom => singleGeom.type === 'Point');
@@ -149,34 +146,69 @@ function getCoordinates(geom) {
     return null;
 }
 
-shave('.card-text', 200)
-
-changeClasses('add', 'leaflet-sidebar', 'sb-both')
-changeClasses('add', 'leaflet-left', 'map-both')
-
-const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-
-window.onload = function () {
-    if (vw < 768) {
-        changeClasses('change', 'barswitch-middle', 'barswitch-middle', 'barswitch-right', removeClasses)
-        changeClasses('change', 'mapswitch-middle', 'mapswitch-middle', 'mapswitch-right', removeClasses)
-        changeClasses('change', 'leaflet-sidebar', 'sb-both', 'sb-only', removeClasses)
-        changeClasses('change', 'leaflet-left', 'map-both', 'map-no', removeClasses)
+//change markers by selected/filtered items
+function setMarkers() {
+    let items = getActiveItems().length > 0
+    console.log(items)
+    if (typeof (PlaceMarker) !== 'undefined') PlaceMarker.removeFrom(map);
+    PlaceMarker = updateGeojson()
+    PlaceMarker.addTo(map)
+    let bounds = PlaceMarker.getBounds()
+    let sidebarnow = document.getElementById("sidebar")
+    let sbw = sidebarnow.clientWidth
+    if (sbw === 0) {
+        map.setActiveArea('activemap-100');
+        items ? map.fitBounds(bounds, {
+            padding: [50, 50]
+        }) : console.log('no places');
+    } else {
+        map.setActiveArea('activemap-50');
+        items ? map.fitBounds(bounds, {
+            padding: [50, 50]
+        }) : console.log('no places');
     }
+}
 
 
-    grid.refreshItems().layout();
-    countField.innerText = data.length;
+let hovermarkers = L.layerGroup().addTo(map)
+
+//functionality to highlight marker on hover over muuri
+const allMuuris = document.getElementsByClassName('muuri-item');
+Array.from(allMuuris).forEach((element) => {
+    element.addEventListener("mouseover", () => {
+        hovermarker(parseInt(element.dataset.id))
+    }, false);
+    element.addEventListener("mouseout", () => {
+        hovermarkers.clearLayers()
+    }, false);
+});
+
+function hovermarker(id) {
+    let coords;
+    data.forEach((elem) => {
+            if (elem.id === id && elem.geom) {
+                coords = getCoordinates(elem.geom);
+                hovermarkers.clearLayers()
+                let hoverpoint = L.circleMarker([coords.coordinates[1], coords.coordinates[0]], CircleStyleHover)
+                hovermarkers.addLayer(hoverpoint)
+            }
+        }
+    )
+}
+
+///////////////////////////////////////
+// functionality to switch map/items //
+///////////////////////////////////////
+
+//hide buttons on resize
+function hideButtons() {
+    changeClasses('add', 'mapbuttons', 'd-none')
     setTimeout(function () {
-        setMarkers()
-        document.body.classList.add('images-loaded');
+        changeClasses('remove', 'mapbuttons', 'd-none')
     }, 500);
+}
 
-    OpenStreetMap.addTo(map)
-
-
-};
-
+//change on resize
 const resizeHandler = () => {
     hideButtons();
     let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -195,9 +227,9 @@ const resizeHandler = () => {
     setMarkers()
 };
 
-
 window.addEventListener('resize', resizeHandler);
 
+//functionality for sidebar toggle
 let removeClasses = ["sb-no", "sb-both", "sb-only", "map-no", "map-both", "map-only"]
 
 function toggleSidebar(direction) {
@@ -262,6 +294,7 @@ function toggleSidebar(direction) {
 
 }
 
+//change classes by classname
 function changeClasses(direction, className, classToChange, classToReplace, removeAllBut) {
     const elements = document.getElementsByClassName(className);
 
@@ -291,7 +324,7 @@ function changeClasses(direction, className, classToChange, classToReplace, remo
     });
 }
 
-
+//switch from list to grid
 function setListWitdh() {
     let sidebarnow = document.getElementById("sidebar")
     let sbw = sidebarnow.clientWidth
@@ -314,33 +347,7 @@ function setListWitdh() {
     grid.refreshItems().layout()
 }
 
-const allMuuris = document.getElementsByClassName('muuri-item');
-Array.from(allMuuris).forEach((element) => {
-    element.addEventListener("mouseover", () => {
-        hovermarker(parseInt(element.dataset.id))
-    }, false);
-    element.addEventListener("mouseout", () => {
-        hovermarkers.clearLayers()
-    }, false);
-});
 
-let hovermarkers = L.layerGroup().addTo(map)
-
-function hovermarker(id) {
-    let coords;
-    data.forEach((elem) => {
-            if (elem.id === id && elem.geom) {
-
-
-                coords = getCoordinates(elem.geom);
-                hovermarkers.clearLayers()
-                let hoverpoint = L.circleMarker([coords.coordinates[1], coords.coordinates[0]], CircleStyleHover)
-                hovermarkers.addLayer(hoverpoint)
-            }
-        }
-    )
-
-}
 
 
 
