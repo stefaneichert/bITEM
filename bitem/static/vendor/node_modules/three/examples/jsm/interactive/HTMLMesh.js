@@ -36,7 +36,7 @@ class HTMLMesh extends Mesh {
 			material.dispose();
 
 			material.map.dispose();
-			
+
 			canvases.delete( dom );
 
 			this.removeEventListener( 'mousedown', onEvent );
@@ -272,6 +272,12 @@ function html2canvas( element ) {
 			context.scale( 1 / dpr, 1 / dpr );
 			context.drawImage( element, 0, 0 );
 			context.restore();
+
+		} else if ( element instanceof HTMLImageElement ) {
+
+			if ( element.style.display === 'none' ) return;
+
+			context.drawImage( element, 0, 0, element.width, element.height );
 
 		} else {
 
