@@ -19,7 +19,10 @@ tests/.coverage
 
 #vendor
 bitem/static/vendor/*
+bitem/static/vendor/node_modules/*
+bitem/static/vendor/node_modules
 !bitem/static/vendor/*.json
+**/node_modules
 
 #files
 bitem/static/images/jpgs/*
