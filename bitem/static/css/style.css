@@ -39,7 +39,6 @@ body {
     background-color: transparent;
     border-color: transparent;
     outline: 0;
-    box-shadow: var(--bs-btn-focus-box-shadow);
 }
 
 .bitem-btn:active {
@@ -168,4 +167,9 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.bitem-link {
+    color: #56b3b3;
+    text-decoration: none;
 }

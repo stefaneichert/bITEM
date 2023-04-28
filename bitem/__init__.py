@@ -23,7 +23,7 @@ def get_locale() -> str:
     if 'language' in session:
         return session['language']
     best_match = request.accept_languages.best_match(app.config['LANGUAGES'])
-    return best_match
+    return best_match or 'en'
 
 
 def connect():
@@ -42,14 +42,14 @@ def connect():
 
 
 @app.before_request
-def before_request():
+def before_request() -> None:
     g.db = connect()
     g.cursor = g.db.cursor(cursor_factory=psycopg2.extras.NamedTupleCursor)
     session['language'] = get_locale()
 
 
 @app.teardown_request
-def teardown_request(exception):
+def teardown_request(exception) -> None:
     g.db.close()
 
 
@@ -61,10 +61,11 @@ def set_language(language=None):
 
 @app.context_processor
 def inject_conf_var():
-    return dict(AVAILABLE_LANGUAGES=app.config['LANGUAGES'],
-                CURRENT_LANGUAGE=session.get('language',
-                                             request.accept_languages.best_match(
-                                                 app.config[
-                                                     'LANGUAGES'].keys())),
-                IIIF_URL=app.config['IIIF_URL'],
-                IIIF_BASE = app.config['IIIF_BASE'])
+    return dict(
+        AVAILABLE_LANGUAGES=app.config['LANGUAGES'],
+        CURRENT_LANGUAGE=session.get(
+            'language',
+            request.accept_languages.best_match(
+                app.config['LANGUAGES'].keys())),
+            IIIF_URL=app.config['IIIF_URL'],
+            IIIF_BASE = app.config['IIIF_BASE'])
