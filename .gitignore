@@ -28,3 +28,4 @@ bitem/static/vendor/node_modules
 bitem/static/images/jpgs/*
 
 
+/bitem/static/vendor/node_modules/
