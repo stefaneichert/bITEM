@@ -70,4 +70,4 @@ def inject_conf_var() -> dict[str, Any]:
             request.accept_languages.best_match(
                 app.config['LANGUAGES'].keys())),
             IIIF_URL=app.config['IIIF_URL'],
-            IIIF_BASE = app.config['IIIF_BASE'])
+            IIIF_BASE=app.config['IIIF_BASE'])
