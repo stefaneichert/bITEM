@@ -1,7 +1,11 @@
+from typing import Any, Optional
+
 import psycopg2.extras
-from flask import Flask, g, request, session, redirect
-from flask_wtf.csrf import CSRFProtect
+from flask import Flask, g, redirect, request, session
 from flask_babel import Babel
+from flask_wtf.csrf import CSRFProtect
+from psycopg2.extensions import connection
+from werkzeug.wrappers import Response
 
 app = Flask(__name__, instance_relative_config=True)
 babel = Babel(app)
@@ -12,9 +16,7 @@ csrf.init_app(app)
 app.config.from_object('config.default')  # Load config/INSTANCE_NAME.py
 app.config.from_pyfile('production.py')  # Load instance/INSTANCE_NAME.py
 
-from bitem.views import (
-    index, about, item, entities, entity, iiif)
-
+from bitem.views import index, about, item, entities, entity, iiif
 from bitem.util.util import uc_first
 
 
@@ -26,7 +28,7 @@ def get_locale() -> str:
     return best_match or 'en'
 
 
-def connect():
+def connect() -> connection:
     try:
         connection_ = psycopg2.connect(
             database=app.config['DATABASE_NAME'],
@@ -49,18 +51,18 @@ def before_request() -> None:
 
 
 @app.teardown_request
-def teardown_request(exception) -> None:
+def teardown_request(_exception: Optional[Exception]) -> None:
     g.db.close()
 
 
 @app.route('/language/<language>')
-def set_language(language=None):
+def set_language(language: str) -> Response:
     session['language'] = language
     return redirect(request.referrer)
 
 
 @app.context_processor
-def inject_conf_var():
+def inject_conf_var() -> dict[str, Any]:
     return dict(
         AVAILABLE_LANGUAGES=app.config['LANGUAGES'],
         CURRENT_LANGUAGE=session.get(
