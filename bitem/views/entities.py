@@ -1,28 +1,30 @@
-from bitem import app
-from bitem.util import mapentities
 import inspect
 
+from bitem import app
+from bitem.util import map_entities
+
+
 @app.route('/persons')
-def persons():
-    template = mapentities.getData(inspect.stack()[0][3])
+def persons() -> str:
+    template = map_entities.get_data(inspect.stack()[0][3])
     return template
 
 @app.route('/groups')
-def groups():
-    template = mapentities.getData(inspect.stack()[0][3])
+def groups() -> str:
+    template = map_entities.get_data(inspect.stack()[0][3])
     return template
 
 @app.route('/events')
-def events():
-    template = mapentities.getData(inspect.stack()[0][3])
+def events() -> str:
+    template = map_entities.get_data(inspect.stack()[0][3])
     return template
 
 @app.route('/items')
-def items():
-    template = mapentities.getData(inspect.stack()[0][3])
+def items() -> str:
+    template = map_entities.get_data(inspect.stack()[0][3])
     return template
 
 @app.route('/places')
-def places():
-    template = mapentities.getData(inspect.stack()[0][3])
+def places() -> str:
+    template = map_entities.get_data(inspect.stack()[0][3])
     return template

@@ -1,11 +1,11 @@
 from flask import g, render_template
 from bitem import app
-from bitem.util import datamapper, iiiftools
+from bitem.util import data_mapper, iiiftools
 from flask_babel import lazy_gettext as _
 
 
 def getData(ids):
-    casestudies = datamapper.getCases(app.config['CASE_STUDY'])
+    casestudies = data_mapper.get_cases(app.config['CASE_STUDY'])
 
     sql = """
     SELECT jsonb_strip_nulls(jsonb_build_object(
@@ -177,7 +177,7 @@ FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, 
     if 'images' in result[0]:
         images = result[0]['images']
         result[0]['image'] = iiiftools.setIIIFSize(
-            datamapper.getMainImage(result[0]['id'], images), 1000, 2000)
+            data_mapper.getMainImage(result[0]['id'], images), 1000, 2000)
         allimages = []
         for image in images:
             allimages.append(iiiftools.setIIIFSize(image, 1000, 2000))
@@ -264,7 +264,7 @@ def get_connections(id):
                                 entry[tkey] = language[tkey]
             if 'images' in connection:
                 connection['image'] = iiiftools.setIIIFSize(
-                    datamapper.getMainImage(connection['id'],
+                    data_mapper.getMainImage(connection['id'],
                                             connection['images']), 300, 500)
         data[row.class_] = connections
     return data

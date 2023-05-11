@@ -1,32 +1,31 @@
 from flask import g, render_template
-from bitem import app
-from bitem.util import datamapper, iiiftools
 from flask_babel import lazy_gettext as _
 
+from bitem import app
+from bitem.util import data_mapper, iiiftools
 
-def getData(selection):
+
+def get_data(selection: str) -> str:
     viewclasses = app.config['VIEW_CLASSES']
-
     for key in viewclasses:
         if key == selection:
             openAtlasClass = viewclasses[key]
-
-    casestudies = datamapper.getCases(app.config['CASE_STUDY'])
-
+    casestudies = data_mapper.get_cases(app.config['CASE_STUDY'])
     _data = getlist(openAtlasClass, casestudies)
-
-    csNames = datamapper.getCaseStudyNames(casestudies,openAtlasClass)
-
-    if selection != 'places' and selection != 'view':
-        return render_template("/entity/entities.html",
-                           _data=_data,
-                           title=_(selection),
-                           csNames=csNames)
+    csNames = data_mapper.get_case_study_names(casestudies, openAtlasClass)
+    if selection not in ['places', 'view']:
+        return render_template(
+            "/entity/entities.html",
+            _data=_data,
+            title=_(selection),
+            csNames=csNames)
     elif selection == 'places':
-        return render_template("/map/map.html",
-                           _data=_data,
-                           title=_(selection),
-                           csNames=csNames)
+        return render_template(
+            "/map/map.html",
+            _data=_data,
+            title=_(selection),
+            csNames=csNames)
+    return ''
 
 def getlist(openAtlasClass, caseStudies):
 
@@ -207,6 +206,6 @@ FROM (SELECT e.id, e.name, e.description, e.begin_from, e.begin_to, e.end_from, 
         if 'images' in row:
             print (row['images'])
             print (row['id'])
-            row['image'] = iiiftools.setIIIFSize((datamapper.getMainImage(row['id'], row['images'])), 300, 500)
+            row['image'] = iiiftools.setIIIFSize((data_mapper.getMainImage(row['id'], row['images'])), 300, 500)
         finalresult.append(row)
     return (finalresult)
