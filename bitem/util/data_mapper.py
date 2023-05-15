@@ -35,7 +35,7 @@ def get_case_study_names(case_studies: tuple[Any], openatlas_class: str):
     sql = """
     WITH case_data AS (
       SELECT 
-        id,int
+        id,
         name,
         (SELECT description FROM model.link WHERE range_id = e.id AND domain_id = 197088) AS en,
         (SELECT description FROM model.link WHERE range_id = e.id AND domain_id = 197086) AS de,
@@ -72,16 +72,7 @@ def get_case_study_names(case_studies: tuple[Any], openatlas_class: str):
                                                                                      JOIN model.link l ON t.child_id = l.range_id
                                                                                      JOIN model.entity e2 ON l.domain_id = e2.id
                                                                             WHERE l.property_code = 'P127'
-                                                          SELECT 
-            id,
-            name,
-            (SELECT description FROM model.link
-                WHERE range_id = e.id AND domain_id = 197088) AS en,
-            (SELECT description FROM model.link
-                WHERE range_id = e.id AND domain_id = 197086) AS de,
-            CASE id WHEN %(root_)s THEN 1 ELSE 2 END AS sortorder
-          FROM model.entity e
-          WHERE id IN %(case_studies)s                            AND NOT (t.path @> ARRAY [l.domain_id]))
+                                                          AND NOT (t.path @> ARRAY [l.domain_id]))
                                                  SELECT child_id AS id, array_to_json(path)::jsonb AS path
                                                  FROM my_tree) tree) t
                                           ON ents.caseid::INT = t.id
