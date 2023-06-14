@@ -23,8 +23,13 @@ def setIIIFSize(img, wmax, hmax):
 def returnIIIFMeta(id):
     img = str(id)
     iif = {}
-    with urllib.request.urlopen(iiifUrl + img + '.jpg') as url:
-        info = json.load(url)
-        iif['w'] = info['width']
-        iif['h'] = info['height']
-    return iif
+    iif['w'] = 1000
+    iif['h'] = 1000
+    try:
+        with urllib.request.urlopen(iiifUrl + img + '.jpg') as url:
+            info = json.load(url)
+            iif['w'] = info['width']
+            iif['h'] = info['height']
+        return iif
+    except Exception:
+        return iif

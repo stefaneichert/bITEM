@@ -1,7 +1,16 @@
 from typing import Any
 
 from flask import g
+
 from bitem import app
+
+
+def mark_access(id: int):
+    g.cursor.execute(
+        """
+            INSERT INTO bitem.checkaccess 
+                (access_type, entity_id) VALUES 
+                ('access', %(id)s)""", {'id':id})
 
 
 def get_cases(root: int) -> tuple[Any]:
@@ -101,26 +110,6 @@ def get_case_study_names(case_studies: tuple[Any], openatlas_class: str):
     return g.cursor.fetchall()
 
 
-def getSubProps(props):
-    sql = """
-        WITH RECURSIVE property_tree(id, super_code, sub_code, level, path) AS (
-            SELECT pi.id, pi.super_code, pi.sub_code, 1, ARRAY[pi.super_code, pi.sub_code]
-            FROM model.property_inheritance pi
-            WHERE pi.super_code IN %(props)s
-        
-            UNION ALL
-        
-            SELECT pi.id, pi.super_code, pi.sub_code, pt.level + 1, pt.path || pi.sub_code
-            FROM model.property_inheritance pi
-            JOIN property_tree pt ON pt.sub_code = pi.super_code
-        )
-        SELECT json_agg(DISTINCT sub_code) AS props FROM property_tree;
-    """
-    g.cursor.execute(sql, {'props': props})
-    result = g.cursor.fetchone()
-    return tuple(result.props)
-
-
 def getMainImage(entity_id, images):
     g.cursor.execute("""
         SELECT image_id
@@ -129,4 +118,3 @@ def getMainImage(entity_id, images):
     """, {'id': entity_id})
     result = g.cursor.fetchone()
     return result.image_id if result else images[0]
-

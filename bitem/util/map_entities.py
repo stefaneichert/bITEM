@@ -4,7 +4,6 @@ from flask_babel import lazy_gettext as _
 from bitem import app
 from bitem.util import data_mapper, iiiftools
 
-
 def get_data(selection: str) -> str:
     viewclasses = app.config['VIEW_CLASSES']
     for key in viewclasses:
