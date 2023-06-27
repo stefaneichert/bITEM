@@ -1,0 +1,496 @@
+from flask import g
+from bitem import app
+
+
+sql = """DROP SCHEMA IF EXISTS bitem CASCADE;
+CREATE SCHEMA bitem;
+
+DROP FUNCTION IF EXISTS bitem.get_entities(classes TEXT[], root INT);
+CREATE OR REPLACE FUNCTION bitem.get_entities(classes TEXT[], root INT)
+    RETURNS TABLE
+            (
+                ids INT
+            )
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT e.id
+        FROM model.entity e
+                 JOIN model.link l ON e.id = l.domain_id
+        WHERE e.openatlas_class_name = ANY (classes)
+          AND l.property_code = 'P2'
+          AND l.range_id = ANY (WITH RECURSIVE subcategories AS (SELECT domain_id, range_id
+                                                                 FROM model.link
+                                                                 WHERE range_id = root
+                                                                   AND property_code = 'P127'
+
+                                                                 UNION ALL
+
+                                                                 SELECT l.domain_id, l.range_id
+                                                                 FROM model.link l
+                                                                          INNER JOIN subcategories s ON s.domain_id = l.range_id
+                                                                 WHERE l.property_code = 'P127')
+                                SELECT caseids AS ids
+                                FROM (SELECT domain_id AS caseIDS
+                                      FROM subcategories
+                                      UNION ALL
+                                      SELECT range_id AS caseIDS
+                                      FROM subcategories) a);
+END;
+$$;
+
+DROP VIEW IF EXISTS bitem.geometries;
+CREATE VIEW bitem.geometries AS
+SELECT location_id,
+       jsonb_build_object(
+               'type', 'Feature',
+               'properties', jsonb_build_object('id', location_id),
+               'geometry', jsonb_build_object(
+                       'type', 'GeometryCollection',
+                       'geometries', geom
+                   )) AS geometry
+FROM (SELECT g.location_id, jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb) AS geom
+      FROM (SELECT g.entity_id AS location_id,
+                   CASE
+                       WHEN g.geom_point IS NOT NULL THEN 'point'
+                       WHEN g.geom_linestring IS NOT NULL THEN 'linestring'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'polygon'
+                       END     AS type,
+                   CASE
+                       WHEN g.geom_point IS NOT NULL THEN (g.geom_point)
+                       WHEN g.geom_linestring IS NOT NULL THEN (g.geom_linestring)
+                       WHEN g.geom_polygon IS NOT NULL THEN (g.geom_polygon)
+                       END     AS geom
+            FROM model.gis g
+            UNION ALL
+            SELECT g.entity_id AS location_id,
+                   CASE
+                       WHEN g.geom_linestring IS NOT NULL THEN 'point'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'point'
+                       END     AS type,
+                   CASE
+                       WHEN g.geom_linestring IS NOT NULL THEN (st_pointonsurface(g.geom_linestring))
+                       WHEN g.geom_polygon IS NOT NULL THEN (st_pointonsurface(g.geom_polygon))
+                       END     AS geom
+            FROM model.gis g
+
+            WHERE g.geom_linestring IS NOT NULL
+               OR g.geom_polygon IS NOT NULL) g
+      GROUP BY g.location_id) b;
+
+CREATE OR REPLACE FUNCTION bitem.get_place_coords(current_id INT)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    location        INT;
+    return_geometry JSONB;
+BEGIN
+    WITH RECURSIVE
+        parent_tree AS (SELECT p.parent_id, p.child_id, ARRAY [p.child_id] AS path, 1 AS depth
+                        FROM (SELECT domain_id as parent_id, range_id as child_id
+                              FROM model.link
+                              WHERE property_code = 'P46') p
+                        WHERE p.child_id = current_id
+                        UNION ALL
+                        SELECT t.parent_id, t.child_id, pt.path || ARRAY [t.child_id], pt.depth + 1
+                        FROM (SELECT domain_id as parent_id, range_id as child_id
+                              FROM model.link
+                              WHERE property_code = 'P46') t
+                                 JOIN parent_tree pt ON pt.parent_id = t.child_id),
+        root_nodes AS (SELECT DISTINCT ON (path[1]) path[1] AS child_id, parent_id AS top_level
+                       FROM parent_tree
+                       WHERE parent_id IS NOT NULL
+                       ORDER BY path[1], depth DESC)
+    SELECT l.range_id
+    INTO location
+    FROM root_nodes r
+             JOIN parent_tree a ON a.child_id = r.child_id
+             JOIN model.link l ON r.top_level = l.domain_id
+    WHERE l.domain_id = r.top_level
+      AND l.property_code = 'P53';
+
+    SELECT geometry
+    INTO return_geometry
+    FROM bitem.geometries g
+    WHERE g.location_id = location
+      AND location IN (SELECT location_id FROM bitem.geometries);
+    RETURN return_geometry;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION bitem.get_coords(current_id INT)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_geometry JSONB;
+BEGIN
+    SELECT geometry
+    INTO return_geometry
+    FROM bitem.geometries g
+    WHERE g.location_id = current_id
+      AND current_id IN (SELECT location_id FROM bitem.geometries);
+
+    RETURN return_geometry;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION bitem.get_imgs(current_id INT)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_images JSONB;
+BEGIN
+    SELECT JSONB_AGG(f.id) as images
+    FROM model.entity f
+             JOIN model.link l ON f.id = l.domain_id
+
+    WHERE l.property_code = 'P67'
+
+      AND f.openatlas_class_name = 'file'
+      AND l.range_id = current_id
+    INTO return_images;
+    RETURN return_images;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS bitem.translation CASCADE;
+CREATE OR REPLACE FUNCTION bitem.translation(current_id INT, languages INT[])
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_translation TEXT;
+    final_translation TEXT;
+    lan INT;
+    lan_label TEXT;
+
+
+BEGIN
+
+    SELECT '{ "name":"' || e.name || '"'::TEXT FROM model.entity e WHERE e.id = current_id INTO final_translation;
+    FOREACH lan IN ARRAY languages
+    LOOP
+
+        SELECT null INTO lan_label;
+        SELECT null INTO return_translation;
+        SELECT description FROM model.entity WHERE id = lan INTO lan_label;
+        SELECT l.description FROM model.link l
+        WHERE l.domain_id = lan AND l.range_id = current_id
+        INTO return_translation;
+        RAISE NOTICE '%', lan;
+        RAISE NOTICE '%', lan_label;
+        RAISE NOTICE '%', return_translation;
+        CASE WHEN return_translation IS NOT NULL THEN
+            SELECT final_translation || ', "' || lan_label || '": "' || return_translation || '"' INTO final_translation;
+            RAISE NOTICE '%', final_translation;
+        ELSE SELECT final_translation INTO final_translation;
+        END CASE;
+    END LOOP;
+
+
+    SELECT final_translation || '}' INTO final_translation;
+
+    RETURN (SELECT final_translation::JSONB);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION bitem.desc_translation(current_text text)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_translations JSONB;
+BEGIN
+    CASE
+        WHEN current_text IS NULL THEN return NULL;
+        ELSE SELECT jsonb_strip_nulls(jsonb_build_object(
+                'description', current_text, 'en', "substring"(current_text, '##en_##(.*?)##_en##'::text), 'de',
+                "substring"(current_text, '##de_##(.*?)##_de##'::text)
+            ))
+             INTO return_translations;
+
+             RETURN return_translations;
+        END CASE;
+END ;
+$$;
+
+CREATE OR REPLACE FUNCTION bitem.directionfunction(current_id INT, target_id INT, function TEXT, current_type_id INT)
+    RETURNS TEXT
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_direction TEXT;
+    left_            TEXT;
+    right_           TEXT;
+
+
+BEGIN
+    CASE
+        WHEN function LIKE '%)' THEN SELECT split_part(function, ' (', 1) INTO left_;
+                                     SELECT split_part(function, '(', 2) INTO right_;
+                                     SELECT replace(right_, ')', '') INTO right_;
+                                     SELECT right_ INTO return_direction;
+                                     CASE
+                                         WHEN EXISTS (SELECT domain_id, range_id
+                                                      FROM model.link
+                                                      WHERE domain_id = current_id
+                                                        AND range_id = target_id
+                                                        AND property_code = 'OA7'
+                                                        AND type_id = current_type_id)
+                                             THEN SELECT left_ INTO return_direction;
+                                         ELSE SELECT right_ INTO return_direction;
+                                         END CASE;
+        ELSE SELECT function INTO return_direction;
+        END CASE;
+    RETURN return_direction;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION bitem.get_maintype(current_id INT)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_maintype JSONB;
+BEGIN
+    SELECT jsonb_strip_nulls(jsonb_build_object('name', e.name, 'DE', de.description, 'EN', en.description)) AS maintype
+    FROM model.entity e
+             JOIN model.link l ON e.id = l.range_id
+             LEFT JOIN (SELECT range_id, description FROM model.link WHERE domain_id = 197086) de
+                       ON de.range_id = e.id
+             LEFT JOIN (SELECT range_id, description FROM model.link WHERE domain_id = 197088) en
+                       ON en.range_id = e.id
+    WHERE e.id IN (WITH RECURSIVE subcategories AS (SELECT domain_id, range_id
+                                                    FROM model.link
+                                                    WHERE range_id IN
+                                                          (SELECT id from web.hierarchy WHERE category = 'standard') AND
+                                                          property_code = 'P127'
+                                                       OR range_id IN (23)
+
+                                                    UNION ALL
+
+                                                    SELECT l.domain_id, l.range_id
+                                                    FROM model.link l
+                                                             INNER JOIN subcategories s ON s.domain_id = l.range_id
+                                                    WHERE l.property_code = 'P127')
+                   SELECT caseIDS as ids
+                   FROM (SELECT domain_id AS caseIDS
+                         FROM subcategories
+                         UNION ALL
+                         SELECT range_id AS caseIDS
+                         FROM subcategories) a)
+      AND l.property_code = 'P2'
+      AND l.domain_id = current_id
+    INTO return_maintype;
+
+    RETURN return_maintype;
+END ;
+$$;
+
+DROP FUNCTION IF EXISTS bitem.get_connections(current_id INT) CASCADE;
+CREATE OR REPLACE FUNCTION bitem.get_connections(current_id INT)
+    RETURNS TABLE
+            (
+                class_      TEXT,
+                connections JSONB
+
+            )
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    RETURN QUERY
+        SELECT a.openatlas_class_name as class_,
+               jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                       'link', a.link || ' - ' || a.link_name,
+                       'id', a.id,
+                       'geometry', bitem.get_coords(a.id),
+                       '_label', bitem.translation(a.id, '{197086, 197088}'),
+                       'content', bitem.desc_translation(a.descr),
+                       'images', a.image,
+                       'begin', a.mainfirst,
+                       'end', a.mainlast,
+                       'involvement', NULLIF(a.involvement, '[{}]')
+                   )))                as connections
+        FROM (SELECT DISTINCT e.id,
+                              l.property_code                               AS link,
+                              CASE
+                                  WHEN l.domain_id = e.id THEN c.name_inverse
+                                  WHEN l.range_id = e.id THEN c.name
+                                  END                                          link_name,
+
+                              e.name,
+                              NULLIF(e.description, '')                     AS descr,
+                              e.openatlas_class_name,
+                              (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT AS mainfirst,
+                              (GREATEST(e.end_from, e.end_to)::DATE)::TEXT  AS mainlast,
+                              g.image                                       AS image,
+                              jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                                      'invbegin', (LEAST(l.begin_from, l.begin_to)::DATE)::TEXT,
+                                      'invend', (GREATEST(l.end_from, l.end_to)::DATE)::TEXT,
+                                      'info', NULLIF(l.description, ''),
+                                      'qualifier', (CASE
+                                                        WHEN fu.id IN (SELECT type_id FROM model.link WHERE property_code != 'OA7')
+                                                            THEN bitem.translation(fu.id, '{197086, 197088}')
+                                                        WHEN fu.id IN (SELECT type_id FROM model.link WHERE property_code = 'OA7')
+                                                            THEN jsonb_build_object('name',
+                                                                                    bitem.directionfunction(current_id, e.id, fu.function, fu.id))
+                                          END),
+                                      'qualifierID', fu.id)))                  involvement
+              FROM model.entity e
+                       JOIN model.link l ON e.id IN (l.range_id, l.domain_id)
+                       JOIN model.property c ON c.code = l.property_code
+                       LEFT JOIN (SELECT l.range_id as ent_id, JSONB_AGG(f.id) as image
+                                  FROM model.entity f
+                                           JOIN model.link l ON f.id = l.domain_id
+
+                                  WHERE l.property_code = 'P67'
+
+                                    AND f.openatlas_class_name = 'file'
+                                  GROUP BY l.range_id) g
+                                 ON g.ent_id = e.id
+                       LEFT JOIN (SELECT DISTINCT fe.id, fe.name as function
+                                  FROM model.entity fe
+                                           JOIN model.link l2 ON fe.id IN (l2.domain_id, l2.range_id)) fu
+                                 ON fu.id = l.type_id
+              WHERE current_id IN (l.domain_id, l.range_id)
+                AND e.id != current_id
+              GROUP BY e.id, link_name, e.description, l.property_code, e.name, g.image, e.openatlas_class_name,
+                       (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT, (GREATEST(e.end_from, e.end_to)::DATE)::TEXT) a
+        GROUP BY openatlas_class_name;
+END;
+$$;
+
+DROP VIEW IF EXISTS bitem.allitems;
+CREATE VIEW bitem.allitems AS
+SELECT e.id,
+       CASE
+           WHEN e.openatlas_class_name IN ('artifact') THEN JSONB_AGG(bitem.get_place_coords(e.id))::jsonb
+           WHEN e.openatlas_class_name IN ('place') THEN (SELECT JSONB_AGG(bitem.get_coords(range_id))
+                                                          FROM model.link
+                                                          WHERE domain_id = e.id
+                                                            AND property_code = 'P53')
+           WHEN e.openatlas_class_name IN
+                ('acquisition', 'activity', 'modification', 'production', 'event', 'creation', 'move')
+               THEN (SELECT JSONB_AGG(bitem.get_coords(range_id))::jsonb
+                     FROM model.link
+                     WHERE domain_id = e.id
+                       AND property_code IN ('P7', 'P26', 'P27'))
+           WHEN e.openatlas_class_name IN ('person', 'group')
+               THEN (SELECT DISTINCT JSONB_AGG(bitem.get_coords(range_id))::jsonb
+                     FROM model.link
+                     WHERE domain_id = e.id
+                       AND property_code IN ('OA8', 'OA9', 'P74'))
+           END                                               AS geometry,
+       e.name,
+      bitem.translation(e.id, '{197086, 197088}'),
+       e.openatlas_class_name,
+       e.description,
+       bitem.get_imgs(e.id)                                  AS images,
+       (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT         AS begin,
+       (GREATEST(e.end_from, e.end_to)::DATE)::TEXT          AS end,
+       (SELECT jsonb_agg(jsonb_build_object('class',
+                                            (CASE WHEN class_ = 'object_location' THEN 'place' ELSE class_ END),
+                                            'connections', connections)) c1
+        FROM (SELECT * FROM bitem.get_connections(e.id)) c2) AS connections
+
+
+FROM model.entity e
+
+WHERE e.id IN (SELECT ids
+               FROM bitem.get_entities(
+                       ARRAY ['acquisition', 'activity', 'artifact', 'group', 'move', 'person', 'place', 'production', 'event', 'creation'],
+                       196063
+                   ))
+GROUP BY e.id, e.name, e.openatlas_class_name, e.description, (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT,
+         (GREATEST(e.end_from, e.end_to)::DATE)::TEXT;
+
+DROP TABLE IF EXISTS bitem.tbl_allitems;
+CREATE TABLE bitem.tbl_allitems AS
+SELECT id,
+       openatlas_class_name,
+       jsonb_strip_nulls(jsonb_build_object(
+               'id', id,
+               '_class', openatlas_class_name,
+               '_label', bitem.translation(id, '{197086, 197088}'),
+               'type', bitem.get_maintype(id),
+               'content', bitem.desc_translation(description),
+               'start', begin,
+               'end', "end",
+               'images', images,
+               'geometry', geometry,
+               'connections', connections
+           )) AS data
+FROM bitem.allitems;
+
+DROP TABLE IF EXISTS bitem.checkaccess;
+CREATE TABLE bitem.checkaccess
+(
+    id          serial PRIMARY KEY,
+    access_time timestamp with time zone NOT NULL DEFAULT now()::timestamp with time zone,
+    entity_id   INT,
+    access_type TEXT
+);
+
+CREATE OR REPLACE FUNCTION bitem.catch_updates()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF NEW.id IN (SELECT ids
+                  FROM bitem.get_entities(
+                          ARRAY ['acquisition', 'activity', 'artifact', 'group', 'modification', 'move', 'person', 'place', 'production', 'event', 'creation'],
+                          196063
+                      )) THEN
+        INSERT INTO bitem.checkaccess (access_type, entity_id, access_time)
+        VALUES ('update', new.id, NOW()::timestamp with time zone);
+    END IF;
+    RETURN NULL;
+END
+$$;
+
+DROP TRIGGER IF EXISTS update_catcher ON model.entity;
+CREATE TRIGGER update_catcher
+    AFTER UPDATE OR INSERT
+    ON model.entity
+    FOR EACH ROW
+EXECUTE PROCEDURE bitem.catch_updates();
+
+CREATE OR REPLACE FUNCTION bitem.catch_deletes()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    IF OLD.id IN (SELECT id FROM bitem.tbl_allitems) THEN
+        DELETE FROM bitem.tbl_allitems WHERE id = OLD.id;
+    END IF;
+    RETURN NULL;
+END
+$$;
+
+DROP TRIGGER IF EXISTS delete_catcher ON model.entity;
+CREATE TRIGGER delete_catcher
+    AFTER DELETE
+    ON model.entity
+    FOR EACH ROW
+EXECUTE PROCEDURE bitem.catch_deletes();
+
+"""
+
+g.cursor.execute(sql)

@@ -11,7 +11,7 @@ def entity(entity_id: int):
     if data:
         g.cursor.execute("INSERT INTO bitem.checkaccess (access_type, entity_id) VALUES ('access', %(entity_id)s)",{'entity_id':entity_id})
         #data[0]['connections'] = mapview.get_connections(entity_id)
-        #return json.dumps(data[0])
+        return json.dumps(data[0])
 
     return render_template("/entity/entity.html", data=data[0])
 

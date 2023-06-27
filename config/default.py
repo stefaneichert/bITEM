@@ -26,7 +26,7 @@ VIEW_CLASSES = {
     'items': ('artifact',),
     'groups': ('group',),
     'events': ('acquisition', 'event', 'activity', 'creation', 'move',
-            'production'),
+            'production', 'modification'),
     'places': ('place',)
 }
 
