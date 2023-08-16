@@ -18,17 +18,19 @@ LANGUAGES = {
 
 TRANSLATION_IDS = {
     'de': 197086,
-    'en': 197091
+    'en': 197088
 }
 
 VIEW_CLASSES = {
     'persons': ('person',),
     'items': ('artifact',),
     'groups': ('group',),
-    'events': ('acquisition', 'event', 'activity', 'creation', 'move',
-            'production', 'modification'),
-    'places': ('place',)
+    'events': ('acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'),
+    'places': ('place',),
+    'actors': ('person', 'group')
 }
+
+MEDIA_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg', '.glb', '.webp']
 
 # Paths
 JPG_FOLDER_PATH = '/static/images/jpgs'

@@ -14,7 +14,7 @@ def setIIIFSize(img, wmax, hmax):
             string = str(wmax) + ','
         if w < wmax and h > hmax:
             string = ','+ str(hmax)
-        imgstring = iiifUrl + img + '.jpg/full/' + string + '/0/default.jpg'
+        imgstring = iiifUrl + img + '/full/' + string + '/0/default.jpg'
         image = {}
         image['path'] = imgstring
         image['id'] = int(img)
@@ -27,7 +27,7 @@ def returnIIIFMeta(id):
     iiif['w'] = 1000
     iiif['h'] = 1000
     try:
-        with urllib.request.urlopen(iiifUrl + img + '.jpg') as url:
+        with urllib.request.urlopen(iiifUrl + img) as url:
             info = json.load(url)
             iiif['w'] = info['width']
             iiif['h'] = info['height']

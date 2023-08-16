@@ -45,13 +45,17 @@ switchList.addEventListener('click', listSwitch);
 
 function applyFilters() {
     const searchValue = searchField.value.toLowerCase();
+    console.log(searchValue)
     const selectValue = selectField.value.toLowerCase();
     const filteredItems = grid.getItems().filter(item => {
         const element = item.getElement();
         const isSelectMatch = !selectValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectValue) > -1;
         const isSearchMatch = !searchValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchValue) > -1;
+        console.log(isSearchMatch)
+        console.log(element.getAttribute('data-all') || '')
         return isSelectMatch && isSearchMatch;
     });
+    console.log(filteredItems)
     grid.filter(item => filteredItems.includes(item));
     updateCount(filteredItems);
 }
@@ -69,7 +73,7 @@ window.onload = function () {
     grid.refreshItems().layout();
 
 
-        document.body.classList.add('images-loaded');
+    document.body.classList.add('images-loaded');
 
 };
 
@@ -110,29 +114,33 @@ function addMuuri(data) {
     itemTemplate.dataset.begin = null;
     itemTemplate.dataset.end = null;
     itemTemplate.dataset.name = data._label;
-    itemTemplate.dataset.casestudies = data.casestudies;
+    itemTemplate.dataset.casestudies = 'Novara';
 
     let dataAll = data._label + ' ';
 
-    if (data.types) {
-        itemTemplate.dataset.type = getTypeTranslation(data.types);
-        dataAll += getTypeTranslation(data.types) + ' ';
+    if (data.content) {
+        dataAll += data.content.description + ' ';
+    }
+
+    if (data.type) {
+        itemTemplate.dataset.type = getTypeTranslation(data.type);
+        dataAll += getTypeTranslation(data.type) + ' ';
     }
 
     let first = false;
     let last = false;
     let both = false;
 
-    if (data.first !== undefined) {
+    if (data.start !== undefined) {
         first = true;
-        itemTemplate.dataset.begin = data.first;
-        dataAll += data.first;
+        itemTemplate.dataset.begin = data.start;
+        dataAll += data.start;
     }
 
-    if (data.last !== undefined) {
+    if (data.end !== undefined) {
         last = true;
-        itemTemplate.dataset.end = data.last;
-        dataAll += data.last;
+        itemTemplate.dataset.end = data.end;
+        dataAll += data.end;
     }
 
     if (first && last) {
@@ -156,12 +164,12 @@ function addMuuri(data) {
         <div class="card-body">
           ${images ? '<div class="list-col-8">' : ''}
             <h5 class="card-title">${data._label}</h5>
-            ${data.types ? `<p class="card-title">${getTypeTranslation(data.types)}</p>` : ''}
-            ${both ? `<p class="card-title">${data.first} - ${data.last}</p>` : ''}
-            ${first ? `<p class="card-title">${data.first}</p>` : ''}
-            ${last ? `<p class="card-title">${data.last}</p>` : ''}
+            ${data.type ? `<p class="card-title">${getTypeTranslation(data.type)}</p>` : ''}
+            ${both ? `<p class="card-title">${data.start} - ${data.end}</p>` : ''}
+            ${first ? `<p class="card-title">${data.start}</p>` : ''}
+            ${last ? `<p class="card-title">${data.end}</p>` : ''}
             ${images ? `<div><img src="${data.image.path}" loading="eager" class="image-content"></div>` : ''}
-            <p class="card-text mt-2">${getLanguage(data)}</p>
+            <p class="card-text mt-2">${getLanguage(data.content)}</p>
             ${buttons}
           ${images ? '</div>' : ''}
           ${images ? `<div class="list-col-4"><img src="${data.image.path}" loading="lazy" class="float-end img-fluid list-image d-none"></div>` : ''}
@@ -176,8 +184,8 @@ function addMuuri(data) {
 }
 
 function getLanguage(data) {
-    if (data.content) {
-        let text = data.content;
+    if (data) {
+        let text = data.description;
         if (text.includes('_##')) {
             const mySubString = text.substring(
                 text.indexOf(`##${language}_##`) + 7,
@@ -192,10 +200,10 @@ function getLanguage(data) {
 }
 
 function getLabelTranslation(data) {
-    let label = data._label;
+    let label = data._label.name;
     const languageLabel = data._label[language.toUpperCase()];
     if (typeof languageLabel !== "undefined") {
-        label = languageType;
+        label = languageLabel;
     }
     return label;
 }
