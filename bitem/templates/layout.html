@@ -100,6 +100,17 @@
     }
     iiifUrl = '{{IIIF_URL}}'
     iiifBase = '{{IIIF_BASE}}'
+    refSys = {{REFERENCE_SYSTEMS|tojson}}
+
+    languageTranslations = {
+        "_until": "{{_('until')}}",
+        "_as": "{{_('as')}}",
+        "_actors": "{{_('actors')|uc_first}}",
+        "_openInViewer": "{{_('open image in viewer')}}",
+        "_events": "{{_('events')|uc_first}}",
+        "_items": "{{_('items')|uc_first}}",
+    }
+
 </script>
 {% block content %}
 {% endblock %}

@@ -12,38 +12,39 @@ def get_data(selection: str) -> str:
     casestudies = data_mapper.get_cases(app.config['CASE_STUDY'])
     _data = getlist(openAtlasClass)
     csNames = data_mapper.get_case_study_names(casestudies, openAtlasClass)
-    if selection not in ['places', 'view']:
-        return render_template(
-            "/entity/entities.html",
-            _data=_data,
-            title=_(selection),
-            csNames=csNames)
-    elif selection == 'places':
-        return render_template(
+    return render_template(
             "/map/map.html",
             _data=_data,
             title=_(selection),
             csNames=csNames)
     return ''
 
-def getlist(openAtlasClass):
+def getlist(openAtlasClass = None, id = 0):
 
     sql = """
     SELECT data FROM bitem.tbl_allitems WHERE openatlas_class_name IN %(openAtlasClass)s 
     """
-    lan = app.config['TRANSLATION_IDS']
-    g.cursor.execute(sql, {'openAtlasClass': openAtlasClass})
+
+    if id != 0:
+        sql = """
+            SELECT data FROM bitem.tbl_allitems WHERE id = %(id)s 
+            """
+
+
+    g.cursor.execute(sql, {'openAtlasClass': openAtlasClass, 'id':id})
     result = g.cursor.fetchall()
     finalresult = []
+    images = []
     for row in result:
-        print('')
-        print('')
-        #print(row.data)
-        print('')
-        print('')
         if 'images' in row.data:
             print (row.data['images'])
             print (row.data['id'])
             row.data['image'] = iiiftools.setIIIFSize((data_mapper.getMainImage(row.data['id'], row.data['images'])), 300, 500)
+
+            for img in row.data['images']:
+                print(img)
+                images.append(iiiftools.setIIIFSize(img, 400, 700))
+            row.data['images'] = images
         finalresult.append(row.data)
+
     return (finalresult)

@@ -6,6 +6,7 @@
     "leaflet": "^1.9.3",
     "leaflet-active-area": "^1.2.1",
     "leaflet-sidebar": "^0.2.4",
+    "leaflet.markercluster": "^1.5.3",
     "mirador": "^3.3.0",
     "muuri": "^0.9.5",
     "shave": "^5.0.2",

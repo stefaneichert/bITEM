@@ -1,4 +1,5 @@
 import os
+
 DEBUG = False
 
 # Database
@@ -15,6 +16,13 @@ LANGUAGES = {
     'en': 'English',
     'de': 'Deutsch'
 }
+
+REFERENCE_SYSTEMS = [
+    {'id': 155980, 'url': 'https://www.geonames.org/'},
+    {'id': 158071, 'url': 'http://vocab.getty.edu/page/aat/'},
+    {'id': 196361, 'url': 'https://d-nb.info/gnd/'},
+    {'id': 156149, 'url': 'https://www.wikidata.org/entity/'}
+]
 
 TRANSLATION_IDS = {
     'de': 197086,
@@ -54,6 +62,3 @@ META_ORG_WD = 'https://www.wikidata.org/wiki/Q688704'
 META_LICENSE = 'https://creativecommons.org/licenses/by/4.0/'
 
 CASE_STUDY = 12345
-
-
-

@@ -40,31 +40,8 @@ function getActiveItems() {
 ///////////////////////
 // Map functionality //
 ///////////////////////
+
 const map = L.map('map', {minZoom: 2, maxZoom: 17, worldCopyJump: false}).setView([1.505, -0.09], 5);
-
-const OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
-});
-
-const OpenStreetMap = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
-
-const Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    subdomains: 'abcd',
-    minZoom: 1,
-    maxZoom: 16,
-    ext: 'jpg'
-});
-
-let baseMaps = {
-    "OpenStreetMap": OpenStreetMap,
-    "OSM Humanitarian": OpenStreetMap_HOT,
-    "Stamen Watercolor": Stamen_Watercolor
-};
 
 L.control.layers(baseMaps).addTo(map);
 
@@ -87,69 +64,14 @@ shave('.card-text', 200)
 changeClasses('add', 'leaflet-sidebar', 'sb-both')
 changeClasses('add', 'leaflet-left', 'map-both')
 
-//circle marker style
-let CircleStyle = {
-    "color": "#324c6b",
-    "weight": 1.5,
-    "fillOpacity": 0.8,
-    "fillColor": "#0088ce"
-};
-let CircleStyleHover = {
-    "color": "#324c6b",
-    "weight": 1.5,
-    "fillOpacity": 0.8,
-    "fillColor": "#ff001f"
-};
+
 
 //create/update Geojson
-function updateGeojson() {
-    let placeLayer = new L.geoJSON('', {
-        pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, CircleStyle);
-        },
-        onEachFeature: function (feature, layer) {
-            layer.bindPopup(feature.properties.popupContent);
-        },
-    });
 
-    data.forEach((element) => {
-        const label = getLabelTranslation(element);
-        const type = getTypeTranslation(element.types);
-        const geom = element.geom;
-
-        if (!geom) return;
-
-        if (getActiveItems().includes(element.id)) {
-
-            const popupContent = `<a href="/view/${element.id}"><b>${label}</b></a><br>${type}`;
-            const geojsonFeature = {
-                type: "Feature",
-                id: element.id,
-                properties: {
-                    name: label,
-                    type: type,
-                    popupContent: popupContent,
-                    casestudies: element.casestudies,
-                },
-                geometry: getCoordinates(geom),
-            };
-            placeLayer.addData(geojsonFeature);
-        }
-    });
-    return placeLayer
-}
-
-function getCoordinates(geom) {
-    if (geom.type === 'feature' && geom.geometry.type === 'GeometryCollection') {
-        return geom.geometry.geometries.find(singleGeom => singleGeom.type === 'Point');
-    }
-    return null;
-}
 
 //change markers by selected/filtered items
 function setMarkers() {
     let items = getActiveItems().length > 0
-    console.log(items)
     if (typeof (PlaceMarker) !== 'undefined') PlaceMarker.removeFrom(map);
     PlaceMarker = updateGeojson()
     PlaceMarker.addTo(map)
@@ -185,12 +107,18 @@ Array.from(allMuuris).forEach((element) => {
 
 function hovermarker(id) {
     let coords;
+    hovermarkers.clearLayers()
     data.forEach((elem) => {
-            if (elem.id === id && elem.geom) {
-                coords = getCoordinates(elem.geom);
-                hovermarkers.clearLayers()
-                let hoverpoint = L.circleMarker([coords.coordinates[1], coords.coordinates[0]], CircleStyleHover)
-                hovermarkers.addLayer(hoverpoint)
+            if (elem.id === id && elem.geometry) {
+                elem.geometry.forEach((elem) => {
+                    if (elem) {
+                        coords = elem.geometry.geometries.find(singleGeom => singleGeom.type === 'Point')
+                        let hoverpoint = L.circleMarker([coords.coordinates[1], coords.coordinates[0]], CircleStyleHover)
+                        hovermarkers.addLayer(hoverpoint)
+                    }
+                })
+
+
             }
         }
     )
@@ -329,9 +257,6 @@ function setListWitdh() {
     let sidebarnow = document.getElementById("sidebar")
     let sbw = sidebarnow.clientWidth
     let vpw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    console.log(sbw)
-    console.log(vpw)
-    console.log(list)
     if (!list) {
         if ((sbw + 100) < vpw) {
             changeClasses('add', 'card', 'list-item-50', 'list-item-100')

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-11 12:09+0200\n"
+"POT-Creation-Date: 2023-09-18 13:11+0200\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -18,31 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:35
+#: bitem/templates/layout.html:52 bitem/templates/layout.html:111
 msgid "items"
 msgstr "Objekte"
 
-#: bitem/templates/layout.html:38
+#: bitem/templates/layout.html:55
 msgid "persons"
 msgstr "Personen"
 
-#: bitem/templates/layout.html:41
+#: bitem/templates/layout.html:58
 msgid "groups"
 msgstr "Gruppen"
 
-#: bitem/templates/layout.html:44
+#: bitem/templates/layout.html:61 bitem/templates/layout.html:110
 msgid "events"
 msgstr "Ereignisse"
 
-#: bitem/templates/layout.html:47
+#: bitem/templates/layout.html:64
 msgid "places"
 msgstr "Orte"
 
-#: bitem/templates/layout.html:50
+#: bitem/templates/layout.html:67
 msgid "about"
 msgstr "Über"
 
-#: bitem/templates/item/view.html:21 bitem/templates/submenu.html:3
+#: bitem/templates/layout.html:106
+msgid "until"
+msgstr "bis"
+
+#: bitem/templates/layout.html:107
+msgid "as"
+msgstr "als"
+
+#: bitem/templates/layout.html:108
+msgid "actors"
+msgstr "Akteure"
+
+#: bitem/templates/layout.html:109
+msgid "open image in viewer"
+msgstr "Bild in Viewer öffnen"
+
+#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
+#: bitem/templates/submenu.html:3
 msgid "loading"
 msgstr "lade"
 
@@ -92,4 +109,31 @@ msgstr "mehr"
 #: bitem/templates/item/view.html:159
 msgid "open details"
 msgstr "Details"
+
+#~ msgid "items"
+#~ msgstr "Objekte"
+
+#~ msgid "persons"
+#~ msgstr "Personen"
+
+#~ msgid "groups"
+#~ msgstr "Gruppen"
+
+#~ msgid "events"
+#~ msgstr "Ereignisse"
+
+#~ msgid "places"
+#~ msgstr "Orte"
+
+#~ msgid "about"
+#~ msgstr "Über"
+
+#~ msgid "until"
+#~ msgstr "bis"
+
+#~ msgid "as"
+#~ msgstr "als"
+
+#~ msgid "actors"
+#~ msgstr "Akteure"
 

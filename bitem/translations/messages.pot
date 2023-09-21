@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-11 12:09+0200\n"
+"POT-Creation-Date: 2023-09-18 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,31 +17,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:35
+#: bitem/templates/layout.html:52 bitem/templates/layout.html:111
 msgid "items"
 msgstr ""
 
-#: bitem/templates/layout.html:38
+#: bitem/templates/layout.html:55
 msgid "persons"
 msgstr ""
 
-#: bitem/templates/layout.html:41
+#: bitem/templates/layout.html:58
 msgid "groups"
 msgstr ""
 
-#: bitem/templates/layout.html:44
+#: bitem/templates/layout.html:61 bitem/templates/layout.html:110
 msgid "events"
 msgstr ""
 
-#: bitem/templates/layout.html:47
+#: bitem/templates/layout.html:64
 msgid "places"
 msgstr ""
 
-#: bitem/templates/layout.html:50
+#: bitem/templates/layout.html:67
 msgid "about"
 msgstr ""
 
-#: bitem/templates/item/view.html:21 bitem/templates/submenu.html:3
+#: bitem/templates/layout.html:106
+msgid "until"
+msgstr ""
+
+#: bitem/templates/layout.html:107
+msgid "as"
+msgstr ""
+
+#: bitem/templates/layout.html:108
+msgid "actors"
+msgstr ""
+
+#: bitem/templates/layout.html:109
+msgid "open image in viewer"
+msgstr ""
+
+#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
+#: bitem/templates/submenu.html:3
 msgid "loading"
 msgstr ""
 

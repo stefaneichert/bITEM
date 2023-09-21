@@ -3,17 +3,20 @@ import json
 from flask import render_template, g
 
 from bitem import app
-from bitem.util import mapview
+from bitem.util import map_entities
 @app.route('/view/<int:entity_id>')
 def entity(entity_id: int):
 
-    data = mapview.getData((entity_id,))
-    if data:
-        g.cursor.execute("INSERT INTO bitem.checkaccess (access_type, entity_id) VALUES ('access', %(entity_id)s)",{'entity_id':entity_id})
-        #data[0]['connections'] = mapview.get_connections(entity_id)
-        return json.dumps(data[0])
+    data = map_entities.getlist(None, entity_id)[0]
 
-    return render_template("/entity/entity.html", data=data[0])
+    #if data:
+        #g.cursor.execute("INSERT INTO bitem.checkaccess (access_type, entity_id) VALUES ('access', %(entity_id)s)",{'entity_id':entity_id})
+        #data[0]['connections'] = mapview.get_connections(entity_id)
+    #    return json.dumps(data)
+
+
+
+    return render_template("/entity/entity.html", data=data)
 
 @app.route('/update')
 def update():

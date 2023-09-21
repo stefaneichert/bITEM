@@ -45,17 +45,13 @@ switchList.addEventListener('click', listSwitch);
 
 function applyFilters() {
     const searchValue = searchField.value.toLowerCase();
-    console.log(searchValue)
     const selectValue = selectField.value.toLowerCase();
     const filteredItems = grid.getItems().filter(item => {
         const element = item.getElement();
         const isSelectMatch = !selectValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectValue) > -1;
         const isSearchMatch = !searchValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchValue) > -1;
-        console.log(isSearchMatch)
-        console.log(element.getAttribute('data-all') || '')
         return isSelectMatch && isSearchMatch;
     });
-    console.log(filteredItems)
     grid.filter(item => filteredItems.includes(item));
     updateCount(filteredItems);
 }
@@ -106,20 +102,19 @@ function createMuuriElems(json) {
 }
 
 function addMuuri(data) {
-    data._label = getLabelTranslation(data);
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.type = null;
     itemTemplate.dataset.id = data.id;
     itemTemplate.dataset.begin = null;
     itemTemplate.dataset.end = null;
-    itemTemplate.dataset.name = data._label;
-    itemTemplate.dataset.casestudies = 'Novara';
+    itemTemplate.dataset.name = getLabelTranslation(data);
+    itemTemplate.dataset.casestudies = data.casestudies;
 
-    let dataAll = data._label + ' ';
+    let dataAll = getLabelTranslation(data) + ' ';
 
     if (data.content) {
-        dataAll += data.content.description + ' ';
+        dataAll += getLanguage(data.content) + ' ';
     }
 
     if (data.type) {
@@ -163,11 +158,11 @@ function addMuuri(data) {
       <div class="card">
         <div class="card-body">
           ${images ? '<div class="list-col-8">' : ''}
-            <h5 class="card-title">${data._label}</h5>
+            <h5 class="card-title">${getLabelTranslation(data)}</h5>
             ${data.type ? `<p class="card-title">${getTypeTranslation(data.type)}</p>` : ''}
-            ${both ? `<p class="card-title">${data.start} - ${data.end}</p>` : ''}
-            ${first ? `<p class="card-title">${data.start}</p>` : ''}
-            ${last ? `<p class="card-title">${data.end}</p>` : ''}
+            ${both ? `<p class="card-title">${makeLocalDate(data.start)} - ${makeLocalDate(data.end)}</p>` : ''}
+            ${first ? `<p class="card-title">${makeLocalDate(data.start)}</p>` : ''}
+            ${last ? `<p class="card-title">${makeLocalDate(data.end)}</p>` : ''}
             ${images ? `<div><img src="${data.image.path}" loading="eager" class="image-content"></div>` : ''}
             <p class="card-text mt-2">${getLanguage(data.content)}</p>
             ${buttons}
@@ -181,41 +176,6 @@ function addMuuri(data) {
     itemTemplate.dataset.all = dataAll;
 
     return itemTemplate;
-}
-
-function getLanguage(data) {
-    if (data) {
-        let text = data.description;
-        if (text.includes('_##')) {
-            const mySubString = text.substring(
-                text.indexOf(`##${language}_##`) + 7,
-                text.lastIndexOf(`##_${language}##`)
-            );
-            text = mySubString;
-        }
-        return text;
-    } else {
-        return '';
-    }
-}
-
-function getLabelTranslation(data) {
-    let label = data._label.name;
-    const languageLabel = data._label[language.toUpperCase()];
-    if (typeof languageLabel !== "undefined") {
-        label = languageLabel;
-    }
-    return label;
-}
-
-
-function getTypeTranslation(data) {
-    let typeName = data.name;
-    const languageType = data[language.toUpperCase()];
-    if (typeof languageType !== "undefined") {
-        typeName = languageType;
-    }
-    return typeName;
 }
 
 //switch from tiles to list and back

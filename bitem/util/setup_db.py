@@ -78,20 +78,147 @@ def setup_db():
                                           FROM subcategories) a);
     END;
     $$;
+    
+    DROP FUNCTION IF EXISTS bitem.translation CASCADE;
+    CREATE OR REPLACE FUNCTION bitem.translation(current_id INT, languages INT[])
+        RETURNS JSONB
+        LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE
+        return_translation TEXT;
+        final_translation  TEXT;
+        lan                INT;
+        lan_label          TEXT;
+        crm_class          TEXT;
+
+
+    BEGIN
+        SELECT cidoc_class_code FROM model.entity WHERE id = current_id INTO crm_class;
+        CASE 
+            WHEN crm_class = 'E55'
+                THEN SELECT '{ "name":"' || replace(replace(replace(e.name, '\', '\\'), '"', '\\"'), '{', '\{') || '", "id": '|| current_id::TEXT FROM model.entity e WHERE e.id = current_id INTO final_translation;
+        
+            ELSE SELECT '{ "name":"' || replace(replace(replace(e.name, '\', '\\'), '"', '\\"'), '{', '\{') || '"'::TEXT FROM model.entity e WHERE e.id = current_id INTO final_translation;
+        END CASE;
+        FOREACH lan IN ARRAY languages
+            LOOP
+
+                SELECT null INTO lan_label;
+                SELECT null INTO return_translation;
+                SELECT description FROM model.entity WHERE id = lan INTO lan_label;
+                SELECT replace(replace(replace(l.description, '\', '\\'), '"', '\\"'), '{', '\{')
+                FROM model.link l
+                WHERE l.domain_id = lan
+                  AND l.range_id = current_id
+                INTO return_translation;
+
+                CASE
+                    WHEN return_translation IS NOT NULL
+                        THEN SELECT final_translation || ',"' || lan_label || '":"' || return_translation || '"'
+                             INTO final_translation;
+
+                    ELSE SELECT final_translation INTO final_translation;
+                    END CASE;
+            END LOOP;
+
+
+        SELECT final_translation || '}' INTO final_translation;
+
+        RETURN (SELECT final_translation::JSONB);
+    END;
+    $$;
+    
+    DROP FUNCTION IF EXISTS bitem.get_all_supertypes CASCADE;
+    CREATE OR REPLACE FUNCTION bitem.get_all_supertypes(current_id INT, languages INT[])
+        RETURNS JSONB
+        LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE
+        supertypes JSONB;
+    BEGIN
+
+    WITH RECURSIVE supercategories AS (SELECT domain_id, range_id
+                                       FROM model.link
+                                       WHERE domain_id = current_id
+                                         AND property_code = 'P127'
+    
+                                       UNION ALL
+    
+                                       SELECT l.domain_id, l.range_id
+                                       FROM model.link l
+                                                INNER JOIN supercategories s ON s.range_id = l.domain_id
+                                       WHERE l.property_code = 'P127')
+    SELECT jsonb_agg(bitem.translation(caseIDS, languages)) AS ids
+    FROM (SELECT DISTINCT caseIDS
+          FROM (SELECT range_id AS caseIDS
+                FROM supercategories
+                UNION ALL
+                SELECT domain_id AS caseIDS
+                FROM supercategories
+                ) a) b  WHERE caseIDS != current_id AND caseIDS NOT IN (SELECT id FROM web.hierarchy) INTO supertypes;
+            RETURN (SELECT supertypes::JSONB);
+        END;
+        $$;
+
+    
+    CREATE OR REPLACE FUNCTION bitem.get_maintype(current_id INT)
+        RETURNS JSONB
+        LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE
+        return_maintype JSONB;
+    BEGIN
+        SELECT bitem.translation(e.id, '""" + language_ids + """') || jsonb_build_object('supertypes', bitem.get_all_supertypes(e.id, '""" + language_ids + """')) AS maintype
+        FROM model.entity e
+                 JOIN model.link l ON e.id = l.range_id
+                 WHERE e.id IN (WITH RECURSIVE subcategories AS (SELECT domain_id, range_id
+                                                        FROM model.link
+                                                        WHERE range_id IN
+                                                              (SELECT id from web.hierarchy WHERE category = 'standard') AND
+                                                              property_code = 'P127'
+                                                           OR range_id IN (23)
+
+                                                        UNION ALL
+
+                                                        SELECT l.domain_id, l.range_id
+                                                        FROM model.link l
+                                                                 INNER JOIN subcategories s ON s.domain_id = l.range_id
+                                                        WHERE l.property_code = 'P127')
+                       SELECT caseIDS as ids
+                       FROM (SELECT domain_id AS caseIDS
+                             FROM subcategories
+                             UNION ALL
+                             SELECT range_id AS caseIDS
+                             FROM subcategories) a)
+          AND l.property_code = 'P2'
+          AND l.domain_id = current_id
+        INTO return_maintype;
+
+        RETURN return_maintype;
+    END;
+    $$;
+
 
     -- predefined view of GeoJSON geometries per location id
-    DROP VIEW IF EXISTS bitem.geometries;
-    CREATE VIEW bitem.geometries AS
+    DROP TABLE IF EXISTS bitem.geometries;
+    CREATE TABLE bitem.geometries AS
     SELECT location_id,
+           place_id,
+           place_name,
            jsonb_build_object(
                    'type', 'Feature',
-                   'properties', jsonb_build_object('id', location_id),
+                   'properties', jsonb_build_object('id', location_id, 'place_id', place_id, '_label', bitem.translation(place_id, '""" + language_ids + """'), 'type', bitem.get_maintype(place_id)),
                    'geometry', jsonb_build_object(
                            'type', 'GeometryCollection',
                            'geometries', geom
                        )) AS geometry
-    FROM (SELECT g.location_id, jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb) AS geom
+    FROM (SELECT g.location_id, g.place_id, g.place_name, jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb) AS geom
           FROM (SELECT g.entity_id AS location_id,
+                       l.domain_id AS place_id,
+                       e.name AS place_name,
                        CASE
                            WHEN g.geom_point IS NOT NULL THEN 'point'
                            WHEN g.geom_linestring IS NOT NULL THEN 'linestring'
@@ -102,9 +229,12 @@ def setup_db():
                            WHEN g.geom_linestring IS NOT NULL THEN (g.geom_linestring)
                            WHEN g.geom_polygon IS NOT NULL THEN (g.geom_polygon)
                            END     AS geom
-                FROM model.gis g
+                FROM model.gis g JOIN model.link l ON g.entity_id = l.range_id JOIN model.entity e ON e.id = l.domain_id
+                WHERE l.property_code = 'P53'
                 UNION ALL
                 SELECT g.entity_id AS location_id,
+                       l.domain_id AS place_id,
+                       e.name AS place_name,
                        CASE
                            WHEN g.geom_linestring IS NOT NULL THEN 'point'
                            WHEN g.geom_polygon IS NOT NULL THEN 'point'
@@ -113,11 +243,15 @@ def setup_db():
                            WHEN g.geom_linestring IS NOT NULL THEN (st_pointonsurface(g.geom_linestring))
                            WHEN g.geom_polygon IS NOT NULL THEN (st_pointonsurface(g.geom_polygon))
                            END     AS geom
-                FROM model.gis g
+                FROM model.gis g JOIN model.link l ON g.entity_id = l.range_id JOIN model.entity e ON e.id = l.domain_id
 
-                WHERE g.geom_linestring IS NOT NULL
-                   OR g.geom_polygon IS NOT NULL) g
-          GROUP BY g.location_id) b;
+                WHERE g.geom_linestring IS NOT NULL AND l.property_code = 'P53'
+                   OR g.geom_polygon IS NOT NULL AND l.property_code = 'P53') g
+          GROUP BY g.location_id, g.place_id, g.place_name) b WHERE place_id IN (SELECT ids
+                   FROM bitem.get_entities(
+                           ARRAY """ + all_classes + """,
+                           """ + root + """
+                       ));
 
     -- get place coordinates from children nodes
     CREATE OR REPLACE FUNCTION bitem.get_place_coords(current_id INT)
@@ -189,8 +323,7 @@ def setup_db():
                       )
         LANGUAGE plpgsql
     AS
-    $$
-    
+    $$    
     DECLARE
         cases JSONB;
     BEGIN
@@ -238,56 +371,7 @@ def setup_db():
     END;
     $$;
     
-        DROP FUNCTION IF EXISTS bitem.translation CASCADE;
-    CREATE OR REPLACE FUNCTION bitem.translation(current_id INT, languages INT[])
-        RETURNS JSONB
-        LANGUAGE plpgsql
-    AS
-    $$
-    DECLARE
-        return_translation TEXT;
-        final_translation  TEXT;
-        lan                INT;
-        lan_label          TEXT;
-        crm_class          TEXT;
-
-
-    BEGIN
-        SELECT cidoc_class_code FROM model.entity WHERE id = current_id INTO crm_class;
-        CASE 
-            WHEN crm_class = 'E55'
-                THEN SELECT '{ "name":"' || replace(replace(replace(e.name, '\', '\\'), '"', '\\"'), '{', '\{') || '", "id": '|| current_id::TEXT FROM model.entity e WHERE e.id = current_id INTO final_translation;
-        
-            ELSE SELECT '{ "name":"' || replace(replace(replace(e.name, '\', '\\'), '"', '\\"'), '{', '\{') || '"'::TEXT FROM model.entity e WHERE e.id = current_id INTO final_translation;
-        END CASE;
-        FOREACH lan IN ARRAY languages
-            LOOP
-
-                SELECT null INTO lan_label;
-                SELECT null INTO return_translation;
-                SELECT description FROM model.entity WHERE id = lan INTO lan_label;
-                SELECT replace(replace(replace(l.description, '\', '\\'), '"', '\\"'), '{', '\{')
-                FROM model.link l
-                WHERE l.domain_id = lan
-                  AND l.range_id = current_id
-                INTO return_translation;
-
-                CASE
-                    WHEN return_translation IS NOT NULL
-                        THEN SELECT final_translation || ',"' || lan_label || '":"' || return_translation || '"'
-                             INTO final_translation;
-
-                    ELSE SELECT final_translation INTO final_translation;
-                    END CASE;
-            END LOOP;
-
-
-        SELECT final_translation || '}' INTO final_translation;
-
-        RETURN (SELECT final_translation::JSONB);
-    END;
-    $$;
-
+    
     DROP FUNCTION IF EXISTS bitem.desc_translation CASCADE;
     CREATE OR REPLACE FUNCTION bitem.desc_translation(current_text text, languages INT[])
         RETURNS JSONB
@@ -328,39 +412,7 @@ def setup_db():
     END;
     $$;
     
-    DROP FUNCTION IF EXISTS bitem.get_all_supertypes CASCADE;
-    CREATE OR REPLACE FUNCTION bitem.get_all_supertypes(current_id INT, languages INT[])
-        RETURNS JSONB
-        LANGUAGE plpgsql
-    AS
-    $$
-    DECLARE
-        supertypes JSONB;
-    BEGIN
-
-    WITH RECURSIVE supercategories AS (SELECT domain_id, range_id
-                                       FROM model.link
-                                       WHERE domain_id = current_id
-                                         AND property_code = 'P127'
     
-                                       UNION ALL
-    
-                                       SELECT l.domain_id, l.range_id
-                                       FROM model.link l
-                                                INNER JOIN supercategories s ON s.range_id = l.domain_id
-                                       WHERE l.property_code = 'P127')
-    SELECT jsonb_agg(bitem.translation(caseIDS, languages)) AS ids
-    FROM (SELECT DISTINCT caseIDS
-          FROM (SELECT range_id AS caseIDS
-                FROM supercategories
-                UNION ALL
-                SELECT domain_id AS caseIDS
-                FROM supercategories
-                ) a) b  WHERE caseIDS != current_id AND caseIDS NOT IN (SELECT id FROM web.hierarchy) INTO supertypes;
-            RETURN (SELECT supertypes::JSONB);
-        END;
-        $$;
-
 
 
     -- get function name if directed property in OA7
@@ -397,42 +449,115 @@ def setup_db():
     END;
     $$;
 
-
-    CREATE OR REPLACE FUNCTION bitem.get_maintype(current_id INT)
+    
+    DROP FUNCTION IF EXISTS bitem.get_toplocationid CASCADE;
+    CREATE OR REPLACE FUNCTION bitem.get_toplocationid(current_id INT)
+        RETURNS INT
+        LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE
+        return_id INT;
+        class TEXT;
+    BEGIN
+        SELECT openatlas_class_name FROM model.entity WHERE id = current_id INTO class;
+        CASE WHEN class = 'place' THEN
+            SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53' INTO return_id;
+            ELSE WITH RECURSIVE
+            parent_tree AS (SELECT p.parent_id, p.child_id, ARRAY [p.child_id] AS path, 1 AS depth
+                            FROM (SELECT domain_id as parent_id, range_id as child_id
+                                  FROM model.link
+                                  WHERE property_code = 'P46') p
+                            WHERE p.child_id = current_id
+                            UNION ALL
+                            SELECT t.parent_id, t.child_id, pt.path || ARRAY [t.child_id], pt.depth + 1
+                            FROM (SELECT domain_id as parent_id, range_id as child_id
+                                  FROM model.link
+                                  WHERE property_code = 'P46') t
+                                     JOIN parent_tree pt ON pt.parent_id = t.child_id),
+            root_nodes AS (SELECT DISTINCT ON (path[1]) path[1] AS child_id, parent_id AS top_level
+                           FROM parent_tree
+                           WHERE parent_id IS NOT NULL
+                           ORDER BY path[1], depth DESC)
+        SELECT l.range_id INTO return_id
+        FROM root_nodes r
+                 JOIN parent_tree a ON a.child_id = r.child_id
+                 JOIN model.link l ON r.top_level = l.domain_id
+        WHERE l.domain_id = r.top_level
+          AND l.property_code = 'P53';
+        END CASE;
+        CASE WHEN return_id ISNULL THEN SELECT 0 into return_id;
+        ELSE SELECT return_id INTO return_id;
+        END CASE;
+        RETURN return_id;
+    END;
+    $$;
+    
+    DROP FUNCTION IF EXISTS bitem.all_subtypes CASCADE;
+    CREATE OR REPLACE FUNCTION bitem.all_subtypes(root INT)
         RETURNS JSONB
         LANGUAGE plpgsql
     AS
     $$
     DECLARE
-        return_maintype JSONB;
+        return_cases JSONB;
+    
     BEGIN
-        SELECT bitem.translation(e.id, '""" + language_ids + """') || jsonb_build_object('supertypes', bitem.get_all_supertypes(e.id, '""" + language_ids + """')) AS maintype
-        FROM model.entity e
-                 JOIN model.link l ON e.id = l.range_id
-                 WHERE e.id IN (WITH RECURSIVE subcategories AS (SELECT domain_id, range_id
-                                                        FROM model.link
-                                                        WHERE range_id IN
-                                                              (SELECT id from web.hierarchy WHERE category = 'standard') AND
-                                                              property_code = 'P127'
-                                                           OR range_id IN (23)
+        WITH RECURSIVE ChildHierarchy AS (
+            -- Anchor member
+            SELECT domain_id, range_id, property_code
+            FROM model.link
+            WHERE range_id = root
+              AND property_code = 'P127'
+            UNION
+            -- Recursive member
+            SELECT ln.domain_id, ln.range_id, ln.property_code
+            FROM model.link ln
+                     INNER JOIN ChildHierarchy ch ON ln.range_id = ch.domain_id AND ln.property_code = 'P127')
+        SELECT jsonb_agg(DISTINCT id)
+        FROM (SELECT DISTINCT domain_id as id
+              FROM ChildHierarchy
+              UNION ALL
+              SELECT root as id) i
+        INTO return_cases;
+    
+        RETURN return_cases;
+    END ;
+    $$;
+    
+    
 
-                                                        UNION ALL
-
-                                                        SELECT l.domain_id, l.range_id
-                                                        FROM model.link l
-                                                                 INNER JOIN subcategories s ON s.domain_id = l.range_id
-                                                        WHERE l.property_code = 'P127')
-                       SELECT caseIDS as ids
-                       FROM (SELECT domain_id AS caseIDS
-                             FROM subcategories
-                             UNION ALL
-                             SELECT range_id AS caseIDS
-                             FROM subcategories) a)
-          AND l.property_code = 'P2'
-          AND l.domain_id = current_id
-        INTO return_maintype;
-
-        RETURN return_maintype;
+    CREATE FUNCTION bitem.all_caseids(root INT, entity_id INT)
+        RETURNS JSONB
+        LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE
+        return_cases JSONB;
+        location_id INT;
+    
+    BEGIN
+        WITH RECURSIVE ParentHierarchy AS (
+            -- Anchor member
+            SELECT domain_id, range_id, property_code
+            FROM model.link
+            WHERE domain_id IN (SELECT range_id
+    from model.link
+    WHERE domain_id = entity_id
+      and property_code = 'P2' AND range_id IN (SELECT jsonb_array_elements(bitem.all_subtypes(root))::INT))
+              AND property_code = 'P127'
+            UNION
+            -- Recursive member
+            SELECT ln.domain_id, ln.range_id, ln.property_code
+            FROM model.link ln
+                     INNER JOIN ParentHierarchy ch ON ln.domain_id = ch.range_id AND ln.property_code = 'P127')
+        SELECT jsonb_agg(DISTINCT id)
+        FROM (SELECT DISTINCT domain_id as id
+              FROM ParentHierarchy
+              ) i
+        INTO return_cases;
+    
+        RETURN return_cases;
     END ;
     $$;
 
@@ -503,8 +628,9 @@ def setup_db():
                                       FROM model.entity fe
                                                JOIN model.link l2 ON fe.id IN (l2.domain_id, l2.range_id)) fu
                                      ON fu.id = l.type_id
-                  WHERE current_id IN (l.domain_id, l.range_id)
-                    AND e.id != current_id
+                  WHERE current_id IN (l.domain_id, l.range_id) AND e.id != current_id 
+                  OR (SELECT bitem.get_toplocationid(current_id)) IN (l.domain_id, l.range_id) AND e.openatlas_class_name != 'place'
+                  OR (SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53') IN (l.domain_id, l.range_id) AND e.openatlas_class_name NOT IN ('place', 'feature', 'stratigraphic_unit', 'artifact', 'human_remains') 
                   GROUP BY e.id, link_name, e.description, l.property_code, e.name, g.image, e.openatlas_class_name,
                            (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT, (GREATEST(e.end_from, e.end_to)::DATE)::TEXT) a
             GROUP BY openatlas_class_name;
@@ -514,6 +640,7 @@ def setup_db():
     DROP VIEW IF EXISTS bitem.allitems;
     CREATE VIEW bitem.allitems AS
     SELECT e.id,
+           bitem.all_caseids(""" + root + """, e.id) AS casestudies,
            CASE
                WHEN e.openatlas_class_name IN """ + artifact + """ THEN JSONB_AGG(bitem.get_place_coords(e.id))::jsonb
                WHEN e.openatlas_class_name IN """ + place + """ THEN (SELECT JSONB_AGG(bitem.get_coords(range_id))
@@ -561,6 +688,7 @@ def setup_db():
            openatlas_class_name,
            jsonb_strip_nulls(jsonb_build_object(
                    'id', id,
+                   'casestudies', casestudies,
                    '_class', openatlas_class_name,
                    '_label', bitem.translation(id, '""" + language_ids + """'),
                    'type', bitem.get_maintype(id),
@@ -572,12 +700,6 @@ def setup_db():
                    'connections', connections
                )) AS data
     FROM bitem.allitems;
-    
-    DROP TABLE IF EXISTS bitem.tbl_files;
-    CREATE TABLE bitem.tbl_allitems AS
-        SELECT id FROM model.entity WHERE openatlas_class_name = 'file',
-        NULL AS filetype
-
     """
-
+    print(sql)
     g.cursor.execute(sql)
