@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-09-18 13:11+0200\n"
+"POT-Creation-Date: 2023-10-12 10:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:52 bitem/templates/layout.html:111
+#: bitem/templates/layout.html:52 bitem/templates/layout.html:112
 msgid "items"
 msgstr ""
 
@@ -55,6 +55,14 @@ msgstr ""
 
 #: bitem/templates/layout.html:109
 msgid "open image in viewer"
+msgstr ""
+
+#: bitem/templates/layout.html:111
+msgid "event"
+msgstr ""
+
+#: bitem/templates/layout.html:113
+msgid "current"
 msgstr ""
 
 #: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21

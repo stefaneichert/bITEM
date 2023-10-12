@@ -1,8 +1,7 @@
-DROP SCHEMA IF EXISTS bitem CASCADE;
-CREATE SCHEMA bitem;
+CREATE schema IF NOT EXISTS bitem;
 
 -- get all ids of certain classes from one case study resp. a root case study
-DROP FUNCTION IF EXISTS bitem.get_entities(classes TEXT[], root INT);
+DROP FUNCTION IF EXISTS bitem.get_entities CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_entities(classes TEXT[], root INT)
     RETURNS TABLE
             (
@@ -231,7 +230,7 @@ BEGIN
 END;
 $$;
 
-
+DROP FUNCTION IF EXISTS bitem.get_maintype CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_maintype(current_id INT)
     RETURNS JSONB
     LANGUAGE plpgsql
@@ -347,6 +346,7 @@ WHERE place_id IN (SELECT ids
                        ));
 
 -- get place coordinates from children nodes
+DROP FUNCTION IF EXISTS bitem.get_place_coords CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_place_coords(current_id INT)
     RETURNS JSONB
     LANGUAGE plpgsql
@@ -389,7 +389,7 @@ BEGIN
 END;
 $$;
 
-
+DROP FUNCTION IF EXISTS bitem.get_coords CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_coords(current_id INT)
     RETURNS JSONB
     LANGUAGE plpgsql
@@ -444,7 +444,7 @@ END;
 $$;
 
 
-
+DROP FUNCTION IF EXISTS bitem.get_imgs CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_imgs(current_id INT)
     RETURNS JSONB
     LANGUAGE plpgsql
@@ -453,13 +453,12 @@ $$
 DECLARE
     return_images JSONB;
 BEGIN
-    SELECT JSONB_AGG(f.id) as images
-    FROM model.entity f
+    SELECT JSONB_AGG(f.filename) as images
+    FROM bitem.files f
              JOIN model.link l ON f.id = l.domain_id
 
     WHERE l.property_code = 'P67'
 
-      AND f.openatlas_class_name = 'file'
       AND l.range_id = current_id
     INTO return_images;
     RETURN return_images;
@@ -510,6 +509,7 @@ $$;
 
 
 -- get function name if directed property in OA7
+DROP FUNCTION IF EXISTS bitem.directionfunction CASCADE;
 CREATE OR REPLACE FUNCTION bitem.directionfunction(current_id INT, target_id INT, function TEXT, current_type_id INT)
     RETURNS TEXT
     LANGUAGE plpgsql
@@ -623,7 +623,7 @@ END ;
 $$;
 
 
-
+DROP FUNCTION IF EXISTS bitem.all_caseids CASCADE;
 CREATE FUNCTION bitem.all_caseids(root INT, entity_id INT)
     RETURNS JSONB
     LANGUAGE plpgsql
@@ -631,7 +631,6 @@ AS
 $$
 DECLARE
     return_cases JSONB;
-    location_id  INT;
 
 BEGIN
     WITH RECURSIVE ParentHierarchy AS (
@@ -685,7 +684,6 @@ END;
 $$;
 
 DROP FUNCTION IF EXISTS bitem.get_subevent_ents CASCADE;
-
 CREATE OR REPLACE FUNCTION bitem.get_subevent_ents(current_id INT)
     RETURNS TABLE
             (
@@ -756,7 +754,6 @@ END;
 $$;
 
 DROP FUNCTION IF EXISTS bitem.get_connection_ids CASCADE;
-
 CREATE OR REPLACE FUNCTION bitem.get_connection_ids(current_id INT)
     RETURNS TABLE
             (
@@ -866,6 +863,8 @@ BEGIN
                                                                                    bitem.translation(origin_id, '{197086, 197088}'),
                                                                                    'origin_id',
                                                                                    origin_id,
+                                                                                    'begin', (SELECT (LEAST(begin_from, begin_to)::DATE)::TEXT FROM model.entity WHERE id = origin_id),
+                                                                                    'end', (SELECT (LEAST(end_from, end_to)::DATE)::TEXT FROM model.entity WHERE id = origin_id),
                                                                                    'root_type', bitem.translation(
                                                                                            (bitem.find_root_type(id, property_code)),
                                                                                            '{197086, 197088}'),
@@ -875,9 +874,9 @@ BEGIN
                     FROM bitem.get_connection_ids(current_id)
                     GROUP BY openatlas_class_name, description, name, id, mainfirst, mainlast
                     ORDER BY openatlas_class_name, id) c
-                       LEFT JOIN (SELECT l.range_id as ent_id, JSONB_AGG(f.id) as image
+                       LEFT JOIN (SELECT l.range_id as ent_id, JSONB_AGG(fi.filename) as image
                                   FROM model.entity f
-                                           JOIN model.link l ON f.id = l.domain_id
+                                           JOIN model.link l ON f.id = l.domain_id JOIN bitem.files fi ON fi.id = l.domain_id
 
                                   WHERE l.property_code = 'P67'
 
@@ -935,23 +934,7 @@ GROUP BY e.id, e.name, e.openatlas_class_name, e.description, (LEAST(e.begin_fro
 
 
 DROP TABLE IF EXISTS bitem.tbl_allitems;
-CREATE TABLE bitem.tbl_allitems AS
-SELECT id,
-       openatlas_class_name,
-       jsonb_strip_nulls(jsonb_build_object(
-               'id', id,
-               'casestudies', casestudies,
-               '_class', openatlas_class_name,
-               '_label', bitem.translation(id, '{197086, 197088}'),
-               'type', bitem.get_maintype(id),
-               'content', bitem.desc_translation(description, '{197086, 197088}'),
-               'start', begin,
-               'end', "end",
-               'images', images,
-               'geometry', geometry,
-               'connections', connections
-           )) AS data
-FROM bitem.allitems; -- WHERE id IN (196192, 196159, 196078);
+CREATE TABLE bitem.tbl_allitems (id INT, openatlas_class_name TEXT, data JSONB);
 
 
 DROP TABLE IF EXISTS bitem.checkaccess;

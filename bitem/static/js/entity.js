@@ -130,7 +130,7 @@ function setGallery(images) {
     <div className="gal-item-content">
         <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">
         <div class="btn-panel text-end ">
-            <a href="/iiif/${img.id}" title="${languageTranslations._openInViewer}" class="img-btn line-fade-m"><img src="/static/icons/iiif.png"></a>
+            <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn line-fade-m"><img src="/static/icons/iiif.png"></a>
         </div>
     </div>
   `
@@ -403,7 +403,7 @@ function getSources(sourceConnections) {
         } else {
             let linktext = source.name;
             if (source.citation !== '') linktext = source.citation
-            returnHtml += '<p class="card-text"><i class="me-3 bi bi-globe"></i><a class="breaklink" href="' + source.name + '" target="_blank"><span style="line-break: auto">' + linktext + '</span><i class="ms-1 bi bi-arrow-up-right-square"></i></a></p>'
+            returnHtml += '<p class="card-text"><i class="me-3 bi bi-globe"></i><a class="breaklink inside-link" href="' + source.name + '" target="_blank"><span style="line-break: auto">' + linktext + '</span><i class="ms-1 bi bi-arrow-up-right-square"></i></a></p>'
         }
     })
 
@@ -427,13 +427,14 @@ function getMatchingNodes(referenceSystems, data) {
         for (const node of connection.nodes) {
             const id = node.id;
             if (referenceUrlMap[id]) {
-                const url = referenceUrlMap[id] + (node.involvement ? node.involvement[0].info : '');
+                const url = referenceUrlMap[id] + (node.involvement ? node.involvement[0].specification[0].info : '');
+
                 // If the ID exists in the reference systems, add it to the result
                 nodes.push({
                     id: id,
                     name: node._label.name,
                     URL: url,
-                    match: connection.class === 'reference_system' ? 'exact match' : ''
+                    match: connection.class === 'reference_system' ?  node.involvement[0].specification[0].qualifier.name : ''
                 });
             }
         }
@@ -690,14 +691,14 @@ function setEnts(current_data, class_) {
             )
 
             if (subevents > 0) {
-                propstring += '<div class="accordion sub-info-accordion accordion-flush" id="subInfoAccordion' + iteration + '">\n' +
+                propstring += '<div class="accordion sub-info-accordion accordion-flush" id="subInfoAccordion-' + class_ + '_' + iteration + '">\n' +
                     '  <div class="accordion-item">\n' +
                     '    <h2 class="accordion-header">\n' +
-                    '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + iteration + '" aria-expanded="false" aria-controls="flush-collapseOne">\n' +
+                    '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-' + class_ + '_' + iteration + '" aria-expanded="false" aria-controls="flush-collapseOne">\n' +
                     '        ' + subevents + ' indirect connections\n' +
                     '      </button>\n' +
                     '    </h2>\n' +
-                    '    <div id="flush-collapse' + iteration + '" class="accordion-collapse collapse" data-bs-parent="#subInfoAccordion' + iteration + '">\n' +
+                    '    <div id="flush-collapse-' + class_ + '_' + iteration + '" class="accordion-collapse collapse" data-bs-parent="#subInfoAccordion-' + class_ + '_' + iteration + '">\n' +
                     '      <div class="accordion-body">' + subevents_strings + '</div>\n' +
                     '    </div>\n' +
                     '  </div>\n' +
