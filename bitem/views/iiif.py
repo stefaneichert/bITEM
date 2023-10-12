@@ -20,7 +20,7 @@ def getManifest(img_id):
 
 
 
-    path = request.base_url
+    path = "https://iiif.bitem.at/iiif/3/",
 
     from iiif_prezi3 import Manifest, config
 
