@@ -7,6 +7,12 @@ window.onload = function () {
         grid.refreshItems().layout();
     }, 100);
     document.body.classList.add('images-loaded');
+    const accordions = document.querySelectorAll('.accordion-button');
+    accordions.forEach(el => el.addEventListener('click', event => {
+        setTimeout(() => {
+            grid.refreshItems().layout();
+        }, 400);
+    }))
 };
 
 window.addEventListener('resize', function (event) {
@@ -21,6 +27,13 @@ async function updateEnts() {
     const response = await fetch("/update");
     const message = await response.text();
     console.log(message);
+}
+
+async function getImageExt(id) {
+    const response = await fetch("/image/" + id);
+    const message = await response.text();
+    console.log(message);
+    return (message)
 }
 
 //updateEnts()
@@ -55,12 +68,12 @@ function createMuuriElems(obj) {
 
     let actors = makeEnts(obj, ['group', 'person'])
     if (actors.length > 0) {
-        grid.add(setActors(actors))
+        grid.add(setEnts(actors, '_actors'))
     }
 
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
-        grid.add(setArtifacts(items))
+        grid.add(setEnts(items, '_items'))
     }
 
 
@@ -70,7 +83,7 @@ function createMuuriElems(obj) {
 
     }
 
-    let events = makeEvents(data)
+    let events = makeEnts(obj, ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'])
     if (events.length > 0) {
         grid.add(setEvents(events))
         timeline(document.querySelectorAll('.timeline'));
@@ -157,7 +170,7 @@ function extractPlaceInfo(data) {
                         id: node.spatialinfo.properties.place_id,
                         _label: node.spatialinfo.properties._label,
                         type: node.spatialinfo.properties.type,
-                        link: node.link,
+                        link: node.involvement,
                         coordinates: node.spatialinfo.geometry.geometries[0].coordinates,
                         geometryType: node.spatialinfo.geometry.geometries[0].type
                     }
@@ -179,13 +192,17 @@ function setMarkers(data) {
     let Markers = []
     L.control.layers(baseMaps).addTo(map);
     for (const place of data) {
+        let links = '';
         if (typeof (place) !== 'undefined' && place.geometryType === 'Point') {
             const [latitude, longitude] = place.coordinates;
             const label = getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
-            const property = getTypeTranslation(place.link.property);
-            const link = getLabelTranslation(place.link);
-            const popupContent = `\"${link + '\" ' + property + ': '}<a href="/view/${place.id}">${label}</a> (${type})`;
+            for (const invo of place.link) {
+                const currentlink = getTypeTranslation(invo.origin);
+                links += '<i>' + getTypeTranslation(invo.property) + ':     </i>' + currentlink + '<br>'
+            }
+
+            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>${links}`;
             const circleMarker = L.circleMarker([longitude, latitude], CircleStyle)
                 .bindPopup(popupContent);
             Markers.push(circleMarker)
@@ -195,9 +212,11 @@ function setMarkers(data) {
         if (typeof (place) !== 'undefined' && place.geometryType === 'Polygon') {
             const label = getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
-            const property = getTypeTranslation(place.link.property);
-            const link = getLabelTranslation(place.link);
-            const popupContent = `\"${link + '\" ' + property + ': '}<a href="/view/${place.id}">${label}</a> (${type})`;
+            for (const invo of place.link) {
+                const currentlink = getTypeTranslation(invo.origin);
+                links += '<i>' + getTypeTranslation(invo.property) + ':     </i>' + currentlink + '<br>'
+            }
+            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>${links}`;
             const polygon = {
                 "type": "Feature",
                 "geometry": {
@@ -384,7 +403,7 @@ function getSources(sourceConnections) {
         } else {
             let linktext = source.name;
             if (source.citation !== '') linktext = source.citation
-            returnHtml += '<p class="card-text"><i class="me-3 bi bi-globe"></i><a class="breaklink" href="' + source.name + '" target="_blank"><span style="line-break: anywhere">' + linktext + '</span><i class="ms-1 bi bi-arrow-up-right-square"></i></a></p>'
+            returnHtml += '<p class="card-text"><i class="me-3 bi bi-globe"></i><a class="breaklink" href="' + source.name + '" target="_blank"><span style="line-break: auto">' + linktext + '</span><i class="ms-1 bi bi-arrow-up-right-square"></i></a></p>'
         }
     })
 
@@ -429,63 +448,51 @@ function getMatchingNodes(referenceSystems, data) {
 }
 
 
-function makeEvents(data) {
-    const connections = data.connections;
+function setEvents(current_data) {
+
+    if (['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'].includes(data._class)) {
+        let main_node = {'begin': data.start, 'end': data.end, 'content': data.content, 'id': data.id, 'type': data.type, '_label': data._label, 'involvement':[{'origin_id': 0}]}
+        current_data.push(main_node)
+    }
+
+    current_data.sort((a, b) => {
+        const dateA = new Date(a.begin);
+        const dateB = new Date(b.begin);
+        return dateA - dateB;
+    });
+
+
+
+    const itemTemplate = document.createElement('div');
+    itemTemplate.className = 'item';
+
     eventdates = []
-
-    const allEvents = [];
-
-    for (const connection of connections) {
-        if (['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'].includes(connection.class)) {
-            const nodes = connection.nodes;
-            const eventarray = nodes.map(node => {
-                if (typeof (node) !== 'undefined') {
-                    return {
-                        qualifier: node.link.property,
-                        origin: node.link.origin,
-                        id: node.id,
-                        _label: node._label,
-                        type: node.type,
-                        begin: node.begin,
-                        end: node.end,
-                    }
-                }
-            });
-            allEvents.push(...eventarray);
-            allEvents.sort((a, b) => {
-                const dateA = new Date(a.begin);
-                const dateB = new Date(b.begin);
-                return dateA - dateB;
-            });
-        }
-        for (const node of allEvents) {
+    for (const node of current_data) {
             if (node.begin) eventdates.push(node.begin)
             if (node.end) eventdates.push(node.end)
         }
-    }
-    return allEvents
-}
-
-function setEvents(data) {
-    const itemTemplate = document.createElement('div');
-    itemTemplate.className = 'item';
 
     returnHtml = `
     <div class="item-content tl-cont">
       <div class="card">
         <div class="card-body">
-        <h5 id="timeline-header" class="card-title">${data.length + ' ' + languageTranslations._events + ' (' + makeLocalDate(eventdates[0]) + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]) + ')'}</h5>
+        <h5 id="timeline-header" class="card-title">${current_data.length + ' ' + languageTranslations._events + ' (' + makeLocalDate(eventdates[0]) + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]) + ')'}</h5>
             <div class="timeline" data-visible-items="5" data-mode="horizontal" data-move-items="3" data-force-vertical-mode="900">
                 <div class="timeline__wrap">
                     <div class="timeline__items">
                 
             `
 
-    for (const event of data) {
+    for (const event of current_data) {
         const label = getLabelTranslation(event);
         const type = getTypeTranslation(event.type);
-        const link = getTypeTranslation(event.qualifier);
-        const origin = getTypeTranslation(event.origin);
+        let titleString = ''
+        let htmlClass = ''
+        for (const invo of event.involvement) {
+            if (invo.origin_id === data.id)  {titleString += getTypeTranslation(invo.property) + ': ' + getTypeTranslation(invo.origin); htmlClass = invo.property.name.replace(' ', '-')}
+            if (invo.origin_id === 0)  {titleString += languageTranslations._current + ' ' + languageTranslations._event; htmlClass = 'this-event'}
+        }
+
 
         let first = false;
         let last = false;
@@ -505,14 +512,17 @@ function setEvents(data) {
             both = true;
         }
 
-        returnHtml += `
+        let links = '';
 
+        console.log(event)
+        returnHtml += `
+        
          <div class="timeline__item">
-                <div class="timeline__content">
+                <div class="timeline__content ${htmlClass}" title="${titleString}">
                     ${both ? `<span class="h6">${makeLocalDate(event.begin)} - ${makeLocalDate(event.end)}</span>` : ''}
                     ${first ? `<span class="h6">${makeLocalDate(event.begin)}</span>` : ''}
                     ${last ? `<span class="h6">${makeLocalDate(event.end)}</span>` : ''}    <br>
-                    "${origin}" ${link}: ${label} (${type})<a class="info-buttons-d line-fade line-fade-d" href="/view/${event.id}"><i class="bi bi-arrow-up-right-square"></i></a>
+                    ${label} (${type})<a class="info-buttons-d line-fade line-fade-d" href="/view/${event.id}"><i class="bi bi-arrow-up-right-square"></i></a>
                 </div>
             </div>
          `
@@ -531,34 +541,39 @@ function setEvents(data) {
 function makeEnts(data, array) {
     const connections = data.connections;
 
-    const allActors = [];
+    const allEnts = [];
 
     for (const connection of connections) {
         if (array.includes(connection.class)) {
             const nodes = connection.nodes;
             for (const node of nodes) {
-                if (typeof (node.involvement) != 'undefined') {
-                    node.involvement.sort((a, b) => {
-                        const dateA = new Date(a.invbegin);
-                        const dateB = new Date(b.invend);
-                        return dateA - dateB;
-                    });
-                }
                 node.class = connection.class
-                allActors.push(node);
+                allEnts.push(node);
 
             }
         }
     }
-    allActors.sort((a, b) => {
+
+    for (const ent of allEnts) {
+        ent.involvement.sort((a, b) => {
         const dateA = new Date(a.begin);
         const dateB = new Date(b.begin);
         return dateA - dateB;
     });
-    return allActors
+    }
+
+    allEnts.sort((a, b) => {
+        const dateA = new Date(a.begin);
+        const dateB = new Date(b.begin);
+        return dateA - dateB;
+    });
+
+
+    return allEnts
 }
 
-function setActors(data) {
+
+function setEnts(current_data, class_) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
 
@@ -566,24 +581,26 @@ function setActors(data) {
     <div class="item-content">
       <div class="card">
         <div class="card-body">
-        <h5 class="card-title">${data.length + ' ' + languageTranslations._actors}</h5>
+        <h5 class="card-title">${current_data.length + ' ' + returnTranslation(class_)}</h5>
         `
+    let iteration = 0
+    for (const currentDatum of current_data) {
 
-    for (const actor of data) {
+        iteration += 1
         let icon = '<div><i class="h2 bi bi-person me-2"></i></div>'
-        if (actor.class === 'group') icon = '<div><i class="h2 bi bi-people me-2"></i></div>'
+        if (currentDatum.class === 'group') icon = '<div><i class="h2 bi bi-people me-2"></i></div>'
         let img = ''
-        if (actor.images) img = returnImage(50, actor.images[0])
-        const label = getLabelTranslation(actor);
+        if (currentDatum.images) img = returnImage(50, currentDatum.images[0])
+        const label = getLabelTranslation(currentDatum);
         let first = false;
         let last = false;
         let both = false;
 
-        if (actor.begin !== undefined) {
+        if (currentDatum.begin !== undefined) {
             first = true;
         }
 
-        if (actor.end !== undefined) {
+        if (currentDatum.end !== undefined) {
             last = true;
         }
 
@@ -595,124 +612,107 @@ function setActors(data) {
 
         returnHtml += `
 
-                <div class="row justify-content-between">
-                <div class="col-auto">
-                <div class="actor-box mt-3" title="${getTypeTranslation(actor.link.origin)} ${getTypeTranslation(actor.link.property)} ${getLabelTranslation(actor)}">
-                ${icon}<span class="h5 me-2">${label}<a class="info-buttons line-fade line-fade" href="/view/${actor.id}"><i class="bi bi-arrow-up-right-square"></i></a></span>
+                <div>
+                <div class="actor-box mt-3" title="">
+                ${icon}<span class="h5 me-4">${label}<a class="info-buttons line-fade line-fade" href="/view/${currentDatum.id}"><i class="bi bi-arrow-up-right-square"></i></a></span> ${img}
                 `
-        if (typeof (actor.involvement) !== 'undefined') {
-            let invo = actor.involvement
+        if (typeof (currentDatum.involvement) !== 'undefined') {
+            let invo = currentDatum.involvement
             invo.sort(customSortInvolvement)
+            let propstring = ''
+            let subevents = 0
+            let subevents_strings = ''
             invo.forEach(involvment => {
-                let propstring = ''
+                    if (involvment.origin_id === data.id) {
+                        propstring += '<div class="mt-2 margin-event">' + getTypeTranslation(involvment.property) + ': <i>' + getTypeTranslation(involvment.origin) + ' </i>'
 
-                if (involvment.invbegin !== undefined) {
-                    propstring += makeLocalDate(involvment.invbegin)
+                        if (typeof (involvment.specification) !== 'undefined') {
+                            propstring += ' ('
+                            for (const spec of involvment.specification) {
+
+
+                                if (spec.invbegin !== undefined) {
+                                    propstring += makeLocalDate(spec.invbegin)
+                                }
+
+                                if (spec.invbegin !== undefined && spec.invend !== undefined) {
+                                    propstring += ' '
+                                }
+
+                                if (spec.invend !== undefined) {
+                                    propstring += languageTranslations._until + ' ' + makeLocalDate(spec.invend)
+                                }
+
+                                propstring += ' '
+
+                                if (spec.qualifier !== undefined) {
+                                    propstring += languageTranslations._as + ' ' + getTypeTranslation(spec.qualifier)
+                                }
+                                propstring += ')'
+                            }
+
+
+                        }
+                    propstring += '</div>'
+                    } else {
+                        subevents_strings += '<div class="mt-2 margin-event">' + getTypeTranslation(involvment.property) + ': <i><a class="breaklink inside-link" href="/view/' + involvment.origin_id + '"><span style="line-break: auto">' + getTypeTranslation(involvment.origin) + ' </span></a></i>'
+
+                        if (typeof (involvment.specification) !== 'undefined') {
+                            let current_spec = ' ('
+                            for (const spec of involvment.specification) {
+
+
+                                if (spec.invbegin !== undefined) {
+                                    current_spec += makeLocalDate(spec.invbegin)
+                                }
+
+                                if (spec.invbegin !== undefined && spec.invend !== undefined) {
+                                    current_spec += ' '
+                                }
+
+                                if (spec.invend !== undefined) {
+                                    current_spec += languageTranslations._until + ' ' + makeLocalDate(spec.invend) + ' '
+                                }
+
+
+                                if (spec.qualifier !== undefined) {
+                                    current_spec += languageTranslations._as + ' ' + getTypeTranslation(spec.qualifier)
+                                }
+                                current_spec += ')'
+
+                                subevents_strings += current_spec
+                            }
+                        }
+                        subevents += 1
+                    subevents_strings +=  '</div>'
+                    }
                 }
+            )
 
-                if (involvment.invbegin !== undefined && involvment.invend !== undefined) {
-                    propstring += ' '
-                }
+            if (subevents > 0) {
+                propstring += '<div class="accordion sub-info-accordion accordion-flush" id="subInfoAccordion' + iteration + '">\n' +
+                    '  <div class="accordion-item">\n' +
+                    '    <h2 class="accordion-header">\n' +
+                    '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse' + iteration + '" aria-expanded="false" aria-controls="flush-collapseOne">\n' +
+                    '        ' + subevents + ' indirect connections\n' +
+                    '      </button>\n' +
+                    '    </h2>\n' +
+                    '    <div id="flush-collapse' + iteration + '" class="accordion-collapse collapse" data-bs-parent="#subInfoAccordion' + iteration + '">\n' +
+                    '      <div class="accordion-body">' + subevents_strings + '</div>\n' +
+                    '    </div>\n' +
+                    '  </div>\n' +
+                    '</div>'
+            }
 
-                if (involvment.invend !== undefined) {
-                    propstring += languageTranslations._until + ' ' + makeLocalDate(involvment.invend)
-                }
 
-                propstring += ' '
-
-                if (involvment.qualifier !== undefined) {
-                    propstring += languageTranslations._as + ' ' + getTypeTranslation(involvment.qualifier)
-                }
-                returnHtml += '<br><span class="ms-5">' + propstring + '</span>'
-
-            })
+            returnHtml += '<br><span>' + propstring + '</span>'
         }
-        returnHtml += '</div></div><div class="col-auto mt-3">' + img + '</div></div>'
+        returnHtml += '</div></div>'
 
     }
+
     returnHtml += `
-        </div>
-        </div>
-        </div>
-    </div>`
-
-    itemTemplate.innerHTML = returnHtml
-    return itemTemplate
-}
-
-function setArtifacts(data) {
-    const itemTemplate = document.createElement('div');
-    itemTemplate.className = 'item';
-
-    returnHtml = `
-    <div class="item-content">
-      <div class="card">
-        <div class="card-body">
-        <h5 class="card-title">${data.length + ' ' + languageTranslations._items}</h5>
-        `
-
-    for (const item of data) {
-        let img = ''
-        if (item.images) img = returnImage(50, item.images[0])
-        const label = getLabelTranslation(item);
-        let first = false;
-        let last = false;
-        let both = false;
-
-        if (item.begin !== undefined) {
-            first = true;
-        }
-
-        if (item.end !== undefined) {
-            last = true;
-        }
-
-        if (first && last) {
-            first = false;
-            last = false;
-            both = true;
-        }
-
-        returnHtml += `
-
-                <div class="row justify-content-between">
-                <div class="col-auto">
-                <div class="actor-box mt-3" title="${getTypeTranslation(item.link.origin)} ${getTypeTranslation(item.link.property)} ${getLabelTranslation(item)}">
-                <span class="h5 me-2">${label} (${getTypeTranslation(item.type)}) <a class="info-buttons line-fade line-fade" href="/view/${item.id}"><i class="bi bi-arrow-up-right-square"></i></a></span>
-                `
-        if (typeof (item.involvement) !== 'undefined') {
-            let invo = item.involvement
-            invo.sort(customSortInvolvement)
-            invo.forEach(involvment => {
-                let propstring = ''
-
-                if (involvment.invbegin !== undefined) {
-                    propstring += makeLocalDate(involvment.invbegin)
-                }
-
-                if (involvment.invbegin !== undefined && involvment.invend !== undefined) {
-                    propstring += ' '
-                }
-
-                if (involvment.invend !== undefined) {
-                    propstring += languageTranslations._until + ' ' + makeLocalDate(involvment.invend)
-                }
-
-                propstring += ' '
-
-                if (involvment.qualifier !== undefined) {
-                    propstring += languageTranslations._as + ' ' + getTypeTranslation(involvment.qualifier)
-                }
-                returnHtml += '<br><span class="ms-5">' + propstring + '</span>'
-
-            })
-        }
-        returnHtml += '</div></div><div class="col-auto mt-3">' + img + '</div></div>'
-
-    }
-    returnHtml += `
-        </div>
-        </div>
+            </div>
         </div>
     </div>`
 

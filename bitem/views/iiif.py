@@ -13,7 +13,9 @@ def getManifest(img_id):
 
     manifest = Manifest(
         id=path,
-        label=str(img_id))
+        label=str(img_id),
+        )
+
     canvas = manifest.make_canvas_from_iiif(
         url=app.config['IIIF_URL'] + str(img_id))
 

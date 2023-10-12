@@ -10,7 +10,7 @@ def mark_access(id: int):
         """
             INSERT INTO bitem.checkaccess 
                 (access_type, entity_id) VALUES 
-                ('access', %(id)s)""", {'id':id})
+                ('access', %(id)s)""", {'id': id})
 
 
 def get_cases(root: int) -> tuple[Any]:
@@ -112,9 +112,46 @@ def get_case_study_names(case_studies: tuple[Any], openatlas_class: str):
 
 def getMainImage(entity_id, images):
     g.cursor.execute("""
-        SELECT image_id
-        FROM web.entity_profile_image
-        WHERE entity_id = %(id)s
+        SELECT f.filename, w.image_id
+        FROM web.entity_profile_image w JOIN bitem.files f ON f.id = w.image_id
+        WHERE w.entity_id = %(id)s
     """, {'id': entity_id})
     result = g.cursor.fetchone()
-    return result.image_id if result else images[0]
+    return result.filename if result else images[0]
+
+
+def makeItemTable():
+    sql = """
+            SELECT ids
+               FROM bitem.get_entities(
+                       ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                       196063
+                   )
+    """
+
+    g.cursor.execute(sql)
+
+    ids = g.cursor.fetchall()
+
+    for row in ids:
+        sql_insert = """
+            DELETE FROM bitem.tbl_allitems WHERE id = %(id)s;
+            INSERT INTO bitem.tbl_allitems (id, openatlas_class_name, data) (SELECT id,
+       openatlas_class_name,
+       jsonb_strip_nulls(jsonb_build_object(
+               'id', id,
+               'casestudies', casestudies,
+               '_class', openatlas_class_name,
+               '_label', bitem.translation(id, '{197086, 197088}'),
+               'type', bitem.get_maintype(id),
+               'content', bitem.desc_translation(description, '{197086, 197088}'),
+               'start', begin,
+               'end', "end",
+               'images', images,
+               'geometry', geometry,
+               'connections', connections
+           )) AS data
+        FROM bitem.allitems WHERE id = %(id)s)
+        """
+
+        g.cursor.execute(sql_insert, {'id': row.ids})

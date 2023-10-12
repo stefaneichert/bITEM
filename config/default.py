@@ -46,11 +46,12 @@ ROOT_PATH = os.path.dirname(__file__) + '/../bitem'
 
 OPENATLAS_URL = 'https://thanados.openatlas.eu/update/'
 
-IIIF_BASE = 'http://127.0.0.1:8182/iiif/'
+IIIF_BASE = 'https://iiif.bitem.at/iiif/'
 IIIF_VERSION = '3'
 IIIF_URL = IIIF_BASE + IIIF_VERSION + '/'
+FILETYPE_API = '/licensed_file_overview/'
 
-API_URL = 'http://thanados.openatlas.eu/api/'
+API_URL = 'https://thanados.openatlas.eu/api/'
 API_SUFFIX = '&format=loud'
 API_FILE_DISPLAY = 'https://thanados.openatlas.eu/api/display/'
 

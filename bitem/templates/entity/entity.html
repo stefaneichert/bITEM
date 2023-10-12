@@ -2,7 +2,7 @@
 {% block content %}
 <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="/static/vendor/node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
-<script>const data = {{data|tojson}}</script>
+<script>const data = {{data | tojson}}</script>
 <link rel="stylesheet" href="/static/css/item.css"/>
 <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
 <script src="/static/vendor/node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
@@ -10,17 +10,33 @@
 <script src="/static/js/mapfunctions.js"></script>
 <script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
 <script src="/static/vendor/timeline-master/dist/js/timeline.min.js"></script>
-<link href="/static/vendor/timeline-master/dist/css/timeline.min.css" rel="stylesheet" />
+<link href="/static/vendor/timeline-master/dist/css/timeline.min.css" rel="stylesheet"/>
 
 
 <div class="loading">
-        <div class="spinner-grow text-light" role="status">
-            <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
-        </div>
+    <div class="spinner-grow text-light" role="status">
+        <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
     </div>
+</div>
 
 <main>
-<div id="tiles" class="grid fade-me">
+    <div id="tiles" class="grid fade-me"></div>
+    <div id="info-modal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 <script src="/static/js/entity.js"></script>

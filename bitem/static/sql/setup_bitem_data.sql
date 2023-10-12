@@ -40,13 +40,25 @@ $$;
 
 DROP FUNCTION IF EXISTS bitem.find_root_type(entity_id integer, _property_code text) CASCADE;
 CREATE OR REPLACE FUNCTION bitem.find_root_type(entity_id integer, _property_code text)
-    RETURNS integer AS
+    RETURNS INTEGER AS
 $$
 DECLARE
     root_id integer;
+    class TEXT;
 BEGIN
-    IF _property_code NOT IN ('P2', 'P127') THEN RETURN NULL; END IF;
+    SELECT cidoc_class_code FROM model.entity WHERE id = entity_id INTO class;
+    IF _property_code NOT IN ('P2', 'P127') THEN
+        -- Return NULL if _property_code is not in the specified values
+        RETURN NULL;
+    END IF;
+
     IF _property_code = 'P2' THEN SELECT 'P127' INTO _property_code; END IF;
+
+    -- Check if class is not 'E55' and return NULL
+    IF class != 'E55' THEN
+        RETURN NULL;
+    END IF;
+
     -- Find the direct parent of the entity_id with the given property code
     SELECT range_id
     INTO root_id
@@ -63,6 +75,7 @@ BEGIN
     RETURN entity_id;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 DROP FUNCTION IF EXISTS bitem.translation CASCADE;
@@ -671,7 +684,146 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS bitem.get_subevent_ents CASCADE;
 
+CREATE OR REPLACE FUNCTION bitem.get_subevent_ents(current_id INT)
+    RETURNS TABLE
+            (
+                id INT
+            )
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    class TEXT;
+BEGIN
+    SELECT openatlas_class_name FROM model.entity a WHERE a.id = current_id INTO class;
+
+    IF class IN ('acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification') THEN
+        RETURN QUERY
+            SELECT DISTINCT e.id
+            FROM model.entity e
+                     JOIN model.link l ON e.id IN (l.domain_id, l.range_id)
+            WHERE current_id IN (l.domain_id, l.range_id)
+              AND e.id != current_id;
+    ELSE
+        RETURN;
+    END IF;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS bitem.get_involvement CASCADE;
+CREATE FUNCTION bitem.get_involvement(origin INT, target_id INT, current_property_code TEXT)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_cases JSONB;
+    links        JSONB;
+
+BEGIN
+    SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+            'invbegin', (LEAST(l.begin_from, l.begin_to)::DATE)::TEXT,
+            'invend', (GREATEST(l.end_from, l.end_to)::DATE)::TEXT,
+            'info', NULLIF(l.description, ''),
+            'qualifier', (CASE
+                              WHEN l.type_id IN (SELECT type_id FROM model.link WHERE property_code != 'OA7')
+                                  THEN bitem.translation(l.type_id, '{197086, 197088}') ||
+                                       jsonb_build_object('supertypes',
+                                                          bitem.get_all_supertypes(l.type_id, '{197086, 197088}'))
+                              WHEN l.type_id IN (SELECT type_id FROM model.link WHERE property_code = 'OA7')
+                                  THEN jsonb_build_object('name',
+                                                          bitem.directionfunction(origin, target_id,
+                                                                                  (SELECT name FROM model.entity WHERE id = l.type_id),
+                                                                                  l.type_id))
+                END),
+            'qualifierID', l.type_id))) specification
+    FROM (SELECT *
+          FROM model.link
+          WHERE domain_id = origin
+            AND range_id = target_id
+            AND property_code = current_property_code
+          UNION ALL
+          SELECT *
+          FROM model.link
+          WHERE range_id = origin
+            AND domain_id = target_id
+            AND property_code = current_property_code) l
+    INTO return_cases;
+    RETURN return_cases;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS bitem.get_connection_ids CASCADE;
+
+CREATE OR REPLACE FUNCTION bitem.get_connection_ids(current_id INT)
+    RETURNS TABLE
+            (
+                origin               TEXT,
+                origin_id            INT,
+                openatlas_class_name TEXT,
+                name                 TEXT,
+                description          TEXT,
+                mainfirst            TEXT,
+                mainlast             TEXT,
+                id                   INT,
+                property_code        TEXT,
+                property             TEXT
+            )
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    current_name TEXT;
+BEGIN
+
+    SELECT y.name FROM model.entity y WHERE y.id = current_id INTO current_name;
+    RETURN QUERY
+        --direkt connection ids
+        SELECT DISTINCT current_name,
+                        current_id,
+                        e.openatlas_class_name,
+                        e.name,
+                        e.description,
+                        (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT AS mainfirst,
+                        (GREATEST(e.end_from, e.end_to)::DATE)::TEXT  AS mainlast,
+                        e.id,
+                        p.code,
+                        CASE
+                            WHEN l.range_id = e.id AND p.name_inverse IS NOT NULL THEN p.name_inverse
+                            ELSE p.name
+                            END                                          property
+        FROM model.entity e
+                 JOIN model.link l ON e.id IN (l.domain_id, l.range_id)
+                 JOIN model.property p ON l.property_code = p.code
+        WHERE current_id IN (l.domain_id, l.range_id)
+          AND e.id != current_id
+        UNION ALL
+        -- subevent connection ids
+        SELECT DISTINCT (SELECT x.name FROM model.entity x WHERE x.id = l1.range_id) AS origin,
+                        l1.range_id                                                  AS origin_id,
+                        e.openatlas_class_name,
+                        e.name,
+                        e.description,
+                        (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT                AS mainfirst,
+                        (GREATEST(e.end_from, e.end_to)::DATE)::TEXT                 AS mainlast,
+                        e.id,
+                        p.code,
+                        CASE
+                            WHEN l2.range_id = e.id AND p.name_inverse IS NOT NULL THEN p.name_inverse
+                            ELSE p.name
+                            END                                                         property
+        FROM model.link l1
+                 JOIN model.link l2 ON l1.range_id IN (l2.domain_id, l2.range_id)
+                 JOIN model.entity e ON e.id IN (l2.domain_id, l2.range_id)
+                 JOIN model.property p ON l2.property_code = p.code
+        WHERE l1.domain_id = current_id
+          AND l1.property_code = 'P9'
+          AND current_id NOT IN (l2.domain_id, l2.range_id)
+          AND l1.range_id != e.id;
+END;
+$$;
 
 DROP FUNCTION IF EXISTS bitem.get_connections(current_id INT) CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_connections(current_id INT)
@@ -688,60 +840,41 @@ BEGIN
     RETURN QUERY
         SELECT a.openatlas_class_name as class_,
                jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-                       'link',
-                       jsonb_build_object('_label', bitem.translation(a.domain_id, '{197086, 197088}'), 'property',
-                                          bitem.prop_translation(link, link_name, '{197086, 197088}'), 'origin',
-                                          link_origin, 'origin_id', id_origin),
                        'id', a.id,
-                       'root_type', bitem.translation((bitem.find_root_type(a.id, link)), '{197086, 197088}'),
                        'spatialinfo', bitem.get_coords(a.id),
                        '_label', bitem.translation(a.id, '{197086, 197088}'),
                        'type', bitem.get_maintype(a.id),
-                       'content', bitem.desc_translation(a.descr, '{197086, 197088}'),
+                       'root_type', bitem.translation((bitem.find_root_type(id, 'P2')), '{197086, 197088}'),
+                       'content', bitem.desc_translation(a.description, '{197086, 197088}'),
                        'images', a.image,
                        'begin', a.mainfirst,
                        'end', a.mainlast,
-                       'involvement', NULLIF(a.involvement, '[{}]')
+                       'involvement', NULLIF(a.connections, '[{}]')
                    )))                as connections
-        FROM (SELECT DISTINCT e.id,
-                              l.property_code                               AS link,
-                              l.domain_id,
-                              CASE
-                                  WHEN l.domain_id = e.id AND c.name_inverse IS NOT NULL THEN c.name_inverse
-                                  ELSE c.name
-                                  END                                          link_name,
-                              CASE
-                                  WHEN l.domain_id = e.id THEN bitem.translation(l.range_id, '{197086, 197088}')
-                                  WHEN l.range_id = e.id THEN bitem.translation(l.domain_id, '{197086, 197088}')
-                                  END                                          link_origin,
-                              CASE
-                                  WHEN l.domain_id = e.id THEN l.range_id
-                                  WHEN l.range_id = e.id THEN l.domain_id
-                                  END                                          id_origin,
-
-                              e.name,
-                              NULLIF(e.description, '')                     AS descr,
-                              e.openatlas_class_name,
-                              (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT AS mainfirst,
-                              (GREATEST(e.end_from, e.end_to)::DATE)::TEXT  AS mainlast,
-                              g.image                                       AS image,
-                              jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-                                      'invbegin', (LEAST(l.begin_from, l.begin_to)::DATE)::TEXT,
-                                      'invend', (GREATEST(l.end_from, l.end_to)::DATE)::TEXT,
-                                      'info', NULLIF(l.description, ''),
-                                      'qualifier', (CASE
-                                                        WHEN fu.id IN (SELECT type_id FROM model.link WHERE property_code != 'OA7')
-                                                            THEN bitem.translation(fu.id, '{197086, 197088}') ||
-                                                                 jsonb_build_object('supertypes',
-                                                                                    bitem.get_all_supertypes(fu.id, '{197086, 197088}'))
-                                                        WHEN fu.id IN (SELECT type_id FROM model.link WHERE property_code = 'OA7')
-                                                            THEN jsonb_build_object('name',
-                                                                                    bitem.directionfunction(current_id, e.id, fu.function, fu.id))
-                                          END),
-                                      'qualifierID', fu.id)))                  involvement
-              FROM model.entity e
-                       JOIN model.link l ON e.id IN (l.range_id, l.domain_id)
-                       JOIN model.property c ON c.code = l.property_code
+        FROM (SELECT DISTINCT c.*, i.image
+              FROM (SELECT DISTINCT openatlas_class_name,
+                                    name,
+                                    id,
+                                    NULLIF(description, '') AS description,
+                                    mainfirst,
+                                    mainlast,
+                                    JSONB_AGG(jsonb_strip_nulls(jsonb_build_object('_label',
+                                                                                   bitem.translation(id, '{197086, 197088}'),
+                                                                                   'property',
+                                                                                   bitem.prop_translation(property_code, property, '{197086, 197088}'),
+                                                                                   'origin',
+                                                                                   bitem.translation(origin_id, '{197086, 197088}'),
+                                                                                   'origin_id',
+                                                                                   origin_id,
+                                                                                   'root_type', bitem.translation(
+                                                                                           (bitem.find_root_type(id, property_code)),
+                                                                                           '{197086, 197088}'),
+                                                                                   'specification',
+                                                                                   NULLIF(bitem.get_involvement(origin_id, id, property_code), '[{}]')
+                                        )))                    connections
+                    FROM bitem.get_connection_ids(current_id)
+                    GROUP BY openatlas_class_name, description, name, id, mainfirst, mainlast
+                    ORDER BY openatlas_class_name, id) c
                        LEFT JOIN (SELECT l.range_id as ent_id, JSONB_AGG(f.id) as image
                                   FROM model.entity f
                                            JOIN model.link l ON f.id = l.domain_id
@@ -749,32 +882,8 @@ BEGIN
                                   WHERE l.property_code = 'P67'
 
                                     AND f.openatlas_class_name = 'file'
-                                  GROUP BY l.range_id) g
-                                 ON g.ent_id = e.id
-                       LEFT JOIN (SELECT DISTINCT fe.id, fe.name as function
-                                  FROM model.entity fe
-                                           JOIN model.link l2 ON fe.id IN (l2.domain_id, l2.range_id)) fu
-                                 ON fu.id = l.type_id
-              WHERE current_id IN (l.domain_id, l.range_id) AND e.id != current_id
-                 OR (SELECT bitem.get_toplocationid(current_id)) IN (l.domain_id, l.range_id) AND
-                    e.openatlas_class_name != 'place'
-                 OR e.id IN (SELECT id FROM bitem.get_eventplaces(current_id)) AND
-                    l.property_code IN ('P7', 'P26', 'P27')
-                 OR (SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53') IN
-                    (l.domain_id, l.range_id) AND e.openatlas_class_name NOT IN
-                                                  ('place', 'feature', 'stratigraphic_unit', 'artifact',
-                                                   'human_remains')
-              GROUP BY e.id, link_name, e.description, l.property_code, l.domain_id, l.range_id, e.name, g.image,
-                       e.openatlas_class_name,
-                       (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT, (GREATEST(e.end_from, e.end_to)::DATE)::TEXT) a
-        WHERE a.id_origin IN (SELECT range_id
-                              FROM model.link
-                              WHERE domain_id = current_id
-                              UNION ALL
-                              SELECT domain_id
-                              FROM model.link
-                              WHERE range_id = current_id)
-           OR a.id_origin = current_id
+                                  GROUP BY l.range_id) i
+                                 ON i.ent_id = c.id) a
         GROUP BY openatlas_class_name;
 END;
 $$;
@@ -842,8 +951,7 @@ SELECT id,
                'geometry', geometry,
                'connections', connections
            )) AS data
-FROM bitem.allitems LIMIT 25;
-
+FROM bitem.allitems; -- WHERE id IN (196192, 196159, 196078);
 
 
 DROP TABLE IF EXISTS bitem.checkaccess;

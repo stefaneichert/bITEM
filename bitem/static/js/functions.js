@@ -89,7 +89,8 @@ function getTypeTranslation(data) {
 function customSortInvolvement(a, b) {
     const dateA = new Date(a.invbegin);
     const dateB = new Date(b.invbegin);
-
+    //console.log(dateA)
+    //console.log(dateB)
     if (dateA < dateB) {
         return -1;
     } else if (dateA > dateB) {
@@ -123,4 +124,13 @@ function makeLocalDate(dateString) {
 
 function isValidDate(d) {
     return d instanceof Date && !isNaN(d);
+}
+
+function returnTranslation(key) {
+    if (languageTranslations.hasOwnProperty(key)) {
+        return languageTranslations[key];
+    } else {
+        // Handle the case when the key is not found (e.g., return a default value or handle it as needed).
+        return ''
+    }
 }
