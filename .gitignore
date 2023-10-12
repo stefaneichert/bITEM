@@ -22,6 +22,8 @@ bitem/static/vendor/*
 bitem/static/vendor/node_modules/*
 bitem/static/vendor/node_modules
 !bitem/static/vendor/*.json
+!bitem/static/vendor/timeline-master/*
+!bitem/static/vendor/timeline-master
 **/node_modules
 
 #files
