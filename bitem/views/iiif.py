@@ -56,16 +56,16 @@ def getManifest(img_id):
         print(image_name)
         attribution = ''
         source = ''
+        sourceThere = False
         for row in result:
             if row.property == 'is referred to by':
-
+                sourceThere = True
                 source += row.name
                 if row.info:
                     source += ': ' + row.info
                 if row.spec:
                     source += ' ' + row.spec
-                source += _('source(s)').capitalize() + ':<br>' + source + '<br>'
-
+                source += '<br>'
             if row.name == license and row.property_code == 'P2':
                 print(row)
                 try:
@@ -95,7 +95,8 @@ def getManifest(img_id):
                         attribution += ': ' + row.info
                     if row.spec:
                         attribution += ' ' + row.spec
-
+        if sourceThere:
+            source = '<br>' + _('source(s)').capitalize() + ':<br>' + source
         attribution += str('<p>' + source + '</p>')
 
     manifest = Manifest(
