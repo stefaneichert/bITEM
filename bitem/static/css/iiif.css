@@ -1,3 +1,19 @@
 .MuiAppBar-positionAbsolute, .mirador-viewer {
     top: 3.5rem;
 }
+
+.mosaic-tile {
+    margin: 0;
+}
+
+.mosaic-root {
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    position: absolute;
+}
+
+.mirador-canvas-nav {
+    display: none;
+}

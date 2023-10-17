@@ -8,10 +8,17 @@ var mirador = Mirador.viewer({
     ],
     language: language,
     availableLanguages: { // All the languages available in the language switcher
-    de: 'Deutsch',
-    en: 'English'},
+        de: 'Deutsch',
+        en: 'English'
+    },
     window: {
-        allowClose: true,
+        allowClose: false,
+        defaultSideBarPanel: 'attribution',
+        sideBarOpenByDefault: false,
+        allowMaximize: false, // Configure if windows can be maximized or not
+        allowTopMenuButton: false, // Configure if window view and thumbnail display menu are visible or not
+        defaultView: 'single',  // Configure which viewing mode (e.g. single, book, gallery) for windows to be opened in
+        sideBarOpen: false, // Configure if the sidebar (and its content panel) is open by default
     },
     workspace: {
         allowNewWindows: false,
@@ -19,6 +26,6 @@ var mirador = Mirador.viewer({
         type: 'mosaic', // Which workspace type to load by default. Other possible values are "elastic"
     },
     workspaceControlPanel: {
-        enabled: true,
+        enabled: false,
     }
 });

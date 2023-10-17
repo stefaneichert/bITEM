@@ -49,7 +49,9 @@ function updateGeojson() {
     });
 
     data.forEach((element) => {
+        console.log(element)
         const geom = element.geometry;
+
         if (!geom) return;
 
         if (getActiveItems().includes(element.id)) {
@@ -58,10 +60,11 @@ function updateGeojson() {
                 if (elem) {
                     const label = getLabelTranslation(elem.properties);
                     const type = getTypeTranslation(elem.properties.type);
+                    const place_id = elem.properties.place_id;
 
 
                     coords = elem.geometry.geometries.find(singleGeom => singleGeom.type === 'Point')
-                    const popupContent = `<a href="/view/${element.id}"><b>${label}</b></a><br>${type}`;
+                    const popupContent = `<a href="/view/${place_id}"><b>${label}</b></a><br>${type}`;
                     const geojsonFeature = {
                         type: "Feature",
                         id: element.id,

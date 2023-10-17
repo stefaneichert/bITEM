@@ -20,7 +20,6 @@ def setIIIFSize(img, wmax, hmax):
     image = {}
     image['path'] = imgstring
     image['id'] = str(img)
-    print(image)
     return (image)
 
 
@@ -34,10 +33,8 @@ def returnIIIFMeta(id):
             info = json.load(url)
             iiif['w'] = info['width']
             iiif['h'] = info['height']
-        print(iiif)
         return iiif
     except Exception:
-        print(iiif)
         return iiif
 
 

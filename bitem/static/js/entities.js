@@ -1,6 +1,6 @@
 //initiate Grid
 grid = new Muuri('.grid', {
-    dragEnabled: true,
+    dragEnabled: false,
     dragPlaceholder: {
         enabled: true
     },
@@ -148,7 +148,7 @@ function addMuuri(data) {
 
     const buttons = `
     <div class="btn-panel text-end">
-      ${images ? `<a href="/iiif/${data.image.id}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}
+      ${images ? `<a href="/iiif/${data.image.id.split('.')[0]}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}
       <a class="line-fade info-buttons" href="/view/${data.id}"><i class="bi bi-info-circle"></i></a>
     </div>
   `;

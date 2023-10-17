@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-12 10:58+0200\n"
+"POT-Creation-Date: 2023-10-16 12:49+0200\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:52 bitem/templates/layout.html:112
+#: bitem/templates/layout.html:52 bitem/templates/layout.html:113
 msgid "items"
 msgstr "Objekte"
 
@@ -30,7 +30,7 @@ msgstr "Personen"
 msgid "groups"
 msgstr "Gruppen"
 
-#: bitem/templates/layout.html:61 bitem/templates/layout.html:110
+#: bitem/templates/layout.html:61 bitem/templates/layout.html:111
 msgid "events"
 msgstr "Ereignisse"
 
@@ -55,16 +55,28 @@ msgid "actors"
 msgstr "Akteure"
 
 #: bitem/templates/layout.html:109
+msgid "actor(s)"
+msgstr "Akteur(e)"
+
+#: bitem/templates/layout.html:110
 msgid "open image in viewer"
 msgstr "Bild in Viewer öffnen"
 
-#: bitem/templates/layout.html:111
-msgid "event"
-msgstr "Ereignis"
+#: bitem/templates/layout.html:112
+msgid "event(s)"
+msgstr "Ereignis(se)"
 
-#: bitem/templates/layout.html:113
+#: bitem/templates/layout.html:114
+msgid "item(s)"
+msgstr "Objekt(e)"
+
+#: bitem/templates/layout.html:115
 msgid "current"
 msgstr "aktuelles"
+
+#: bitem/templates/layout.html:116 bitem/views/iiif.py:59
+msgid "source(s)"
+msgstr "Quelle(n)"
 
 #: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
 #: bitem/templates/submenu.html:3
@@ -144,4 +156,10 @@ msgstr "Details"
 
 #~ msgid "actors"
 #~ msgstr "Akteure"
+
+#~ msgid "event"
+#~ msgstr "Ereignis"
+
+#~ msgid "source"
+#~ msgstr "Quelle"
 

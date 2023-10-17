@@ -68,12 +68,12 @@ function createMuuriElems(obj) {
 
     let actors = makeEnts(obj, ['group', 'person'])
     if (actors.length > 0) {
-        grid.add(setEnts(actors, '_actors'))
+        grid.add(setEnts(actors, '_actor'))
     }
 
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
-        grid.add(setEnts(items, '_items'))
+        grid.add(setEnts(items, '_item'))
     }
 
 
@@ -391,7 +391,7 @@ function getSources(sourceConnections) {
     <div class="item-content bib-cont">
       <div class="card">
         <div class="card-body">
-        <h5 class="card-title mb-3">${result.length + ' Sources'}</h5>
+        <h5 class="card-title mb-3">${result.length + ' ' + languageTranslations._source }</h5>
         `
 
     result.forEach(source => {
@@ -477,7 +477,7 @@ function setEvents(current_data) {
     <div class="item-content tl-cont">
       <div class="card">
         <div class="card-body">
-        <h5 id="timeline-header" class="card-title">${current_data.length + ' ' + languageTranslations._events + ' (' + makeLocalDate(eventdates[0]) + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]) + ')'}</h5>
+        <h5 id="timeline-header" class="card-title">${current_data.length + ' ' + languageTranslations._event + ' (' + makeLocalDate(eventdates[0]) + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]) + ')'}</h5>
             <div class="timeline" data-visible-items="5" data-mode="horizontal" data-move-items="3" data-force-vertical-mode="900">
                 <div class="timeline__wrap">
                     <div class="timeline__items">

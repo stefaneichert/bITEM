@@ -121,6 +121,8 @@ def getMainImage(entity_id, images):
 
 
 def makeItemTable():
+    import json
+    from bitem.util import data_mapper, iiiftools
     sql = """
             SELECT ids
                FROM bitem.get_entities(
@@ -134,6 +136,25 @@ def makeItemTable():
     ids = g.cursor.fetchall()
 
     for row in ids:
+        g.cursor.execute(f'SELECT images FROM bitem.allitems WHERE id = {row.ids}')
+        images = g.cursor.fetchone()
+        print(images.images)
+        mainimage = None
+        imagearray = None
+        if images.images:
+            finalimages = []
+            mainimage = iiiftools.setIIIFSize((data_mapper.getMainImage(row.ids, images.images)), 300, 500)
+            print('mainimage: ' + str(mainimage))
+            for img in images.images:
+                print(img)
+                finalimages.append(iiiftools.setIIIFSize(img, 400, 700))
+            imagearray = finalimages
+
+
+        print(imagearray)
+
+
+
         sql_insert = """
             DELETE FROM bitem.tbl_allitems WHERE id = %(id)s;
             INSERT INTO bitem.tbl_allitems (id, openatlas_class_name, data) (SELECT id,
@@ -147,11 +168,12 @@ def makeItemTable():
                'content', bitem.desc_translation(description, '{197086, 197088}'),
                'start', begin,
                'end', "end",
-               'images', images,
+               'image', (NULLIF(%(mainimage)s, 'Null'))::JSONB, 
+               'images', (NULLIF(%(imagearray)s, 'Null'))::JSONB,
                'geometry', geometry,
                'connections', connections
            )) AS data
         FROM bitem.allitems WHERE id = %(id)s)
         """
 
-        g.cursor.execute(sql_insert, {'id': row.ids})
+        g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})

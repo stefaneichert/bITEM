@@ -36,15 +36,6 @@ def getlist(openAtlasClass = None, id = 0):
     finalresult = []
     images = []
     for row in result:
-        if 'images' in row.data:
-            print (row.data['images'])
-            print (row.data['id'])
-            row.data['image'] = iiiftools.setIIIFSize((data_mapper.getMainImage(row.data['id'], row.data['images'])), 300, 500)
-
-            for img in row.data['images']:
-                print(img)
-                images.append(iiiftools.setIIIFSize(img, 400, 700))
-            row.data['images'] = images
         finalresult.append(row.data)
 
     return (finalresult)
