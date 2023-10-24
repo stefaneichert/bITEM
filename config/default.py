@@ -45,7 +45,7 @@ MEDIA_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg', '.glb', '.webp']
 JPG_FOLDER_PATH = '/static/images/jpgs'
 ROOT_PATH = os.path.dirname(__file__) + '/../bitem'
 
-OPENATLAS_UPLOAD_FOLDER = Path('/var') / 'www' / 'openatlas' / 'files' / 'uploads'
+OPENATLAS_UPLOAD_FOLDER = Path('/var') / 'www' / 'openatlas' / 'thanados' / 'files' / 'uploads'
 
 OPENATLAS_URL = 'https://thanados.openatlas.eu/update/'
 

@@ -56,7 +56,6 @@ def getManifest(img_id):
 
     g.cursor.execute(f'SELECT description FROM model.entity WHERE id = {img_id}')
     filedescription = g.cursor.fetchone()
-    print(filedescription.description)
 
     image_name = result[0].image
     if license:
@@ -106,7 +105,8 @@ def getManifest(img_id):
         if sourceThere:
             source = '<br>' + _('source(s)').capitalize() + ':<br>' + source
         attribution += str('<p>' + source + '</p>')
-        attribution += str('<p>' + filedescription.description + '</p>')
+        if filedescription.description:
+            attribution += str('<p>' + filedescription.description + '</p>')
 
     manifest = Manifest(
         id=request.base_url,
