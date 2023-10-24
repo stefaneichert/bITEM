@@ -20,7 +20,9 @@ def getManifest(img_id):
         filedata = json.loads(url.read().decode())
         for file_id, data in filedata.items():
             extension = data['extension']
+            print(data)
             if extension:
+                print(extension)
                 license = data['license']
 
     from iiif_prezi3 import Manifest, KeyValueString, config
@@ -50,10 +52,16 @@ def getManifest(img_id):
 
     g.cursor.execute(sql, {'id': img_id})
     result = g.cursor.fetchall()
+    print(result)
+
+    g.cursor.execute(f'SELECT description FROM model.entity WHERE id = {img_id}')
+    filedescription = g.cursor.fetchone()
+    print(filedescription.description)
 
     image_name = result[0].image
     if license:
         print(image_name)
+        print(license)
         attribution = ''
         source = ''
         sourceThere = False
@@ -98,6 +106,7 @@ def getManifest(img_id):
         if sourceThere:
             source = '<br>' + _('source(s)').capitalize() + ':<br>' + source
         attribution += str('<p>' + source + '</p>')
+        attribution += str('<p>' + filedescription.description + '</p>')
 
     manifest = Manifest(
         id=request.base_url,
@@ -105,9 +114,9 @@ def getManifest(img_id):
         requiredStatement=KeyValueString(label="Attribution",
                                          value=attribution)
     )
-
-    canvas = manifest.make_canvas_from_iiif(
-        url=app.config['IIIF_URL'] + str(img_id) + extension)
+    if extension in ('.png', '.bmp', '.jpg', '.jpeg'):
+        canvas = manifest.make_canvas_from_iiif(
+            url=app.config['IIIF_URL'] + str(img_id) + extension)
 
     return manifest.json(indent=2)
 

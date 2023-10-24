@@ -71,4 +71,5 @@ def inject_conf_var() -> dict[str, Any]:
                 app.config['LANGUAGES'].keys())),
         IIIF_URL=app.config['IIIF_URL'],
         IIIF_BASE=app.config['IIIF_BASE'],
-        REFERENCE_SYSTEMS=app.config['REFERENCE_SYSTEMS'])
+        REFERENCE_SYSTEMS=app.config['REFERENCE_SYSTEMS'],
+        UPLOAD_FOLDER=app.config['OPENATLAS_UPLOAD_FOLDER'])

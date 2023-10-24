@@ -44,7 +44,7 @@ def makeFileList():
 
     sql1 = """
             DROP TABLE IF EXISTS bitem.files;
-            CREATE TABLE bitem.files (id INT, extension TEXT, filename TEXT);
+            CREATE TABLE bitem.files (id INT, extension TEXT, filename TEXT, mimetype TEXT);
     """
     g.cursor.execute(sql1)
 
@@ -58,8 +58,15 @@ def makeFileList():
                 print("ID:", file_id)
                 print("Extension:", extension)
                 print("License:", license)
-
+                if extension in ('.png', '.bmp', '.jpg', '.jpeg'):
+                    mimetype = 'img'
+                if extension == '.glb':
+                    mimetype = '3d'
+                if extension == '.webp':
+                    mimetype = 'poster'
+                if extension == '.pdf':
+                    mimetype = 'pdf'
                 sql = """
-                        INSERT INTO bitem.files (id, extension, filename) VALUES (%(file_id)s, %(extension)s, %(filename)s)
+                        INSERT INTO bitem.files (id, extension, filename, mimetype) VALUES (%(file_id)s, %(extension)s, %(filename)s, %(mimetype)s)
                 """
-                g.cursor.execute(sql, {'file_id': file_id, 'extension': extension, 'filename': str(file_id) + extension})
+                g.cursor.execute(sql, {'file_id': file_id, 'extension': extension, 'filename': str(file_id) + extension, 'mimetype': mimetype})

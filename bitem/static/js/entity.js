@@ -30,9 +30,8 @@ async function updateEnts() {
 }
 
 async function getImageExt(id) {
-    const response = await fetch("/image/" + id);
-    const message = await response.text();
-    console.log(message);
+    const response = await fetch("/iiif/" + id + ".json");
+    const message = await response.json();
     return (message)
 }
 
@@ -53,6 +52,13 @@ createMuuriElems(data)
 function createMuuriElems(obj) {
     const elem = addMuuri(obj);
     grid.add(elem);
+
+    let models = (obj.models)
+    if (models) {
+        console.log(models)
+        make3d(models)
+    }
+
 
     let sourceConnections = data.connections.filter(
         (connection) => ['external_reference', 'bibliography'].includes(connection.class)
@@ -80,7 +86,6 @@ function createMuuriElems(obj) {
     let images = (obj.images)
     if (images) {
         extractImages(images);
-
     }
 
     let events = makeEnts(obj, ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'])
@@ -90,6 +95,113 @@ function createMuuriElems(obj) {
     }
 
 
+}
+
+function make3d(models) {
+    for (const model of models) {
+        let poster = ''
+        let currentmodel = ''
+        for (const file of model.files) {
+            if (file.includes('glb')) currentmodel = file
+            if (file.includes('webp')) poster = file
+        }
+        const itemTemplate = document.createElement('div');
+        itemTemplate.className = 'item';
+        itemTemplate.innerHTML = `
+    <div class="item-content item-3d">
+      <div class="card">
+      <div class="card-body">        
+            <model-viewer
+            class="model-3d hover-img"
+                alt="${model.name}"
+                src="${uploadPath}/${currentmodel}"
+                shadow-intensity="1"
+                poster="${uploadPath}/${poster}"
+                loading="lazy"
+                camera-controls
+                auto-rotate
+                auto-rotate-delay="0"
+        ></model-viewer>
+        <div class="btn-panel text-end ">
+            <a href="#" onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + model.name + '\''})" class="img-btn line-fade-m"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
+        </div>              
+      </div>
+      </div>
+
+    </div>
+  `;
+        grid.add(itemTemplate)
+    }
+
+}
+
+function enlarge3d(model, poster, name) {
+    let modelContainer = document.getElementById('current-3d-model')
+    modelContainer.innerHTML = `
+    
+            
+        <div class="modal-header">
+            <h5 class="modal-title">${name}</h5>
+            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div  class="modal-body">
+            <model-viewer 
+                    class="fullscreen-model"
+                    alt="${name}"
+                    src="${uploadPath}/${model}"
+                    shadow-intensity="1"
+                    poster="${uploadPath}/${poster}"
+                    loading="lazy"
+                    camera-controls
+                    auto-rotate
+                    auto-rotate-delay="0"
+            ></model-viewer>
+        </div>
+        <div class="modal-footer">
+            <p id="attribution"></p>
+        </div>
+    `
+    const modalThreeD = new bootstrap.Modal('#info-modal')
+
+    modalThreeD.show()
+    id = model.replace('.glb', '')
+    console.log(id)
+
+    getImageExt(id)
+    .then(data => {
+        // Handle the JSON data here
+        let attrContainer = document.getElementById('attribution')
+        attrContainer.innerHTML = data.requiredStatement.value[language][0]
+        console.log(data);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+
+
+}
+
+function extractHTMLContent(obj) {
+    let htmlContent = '';
+
+    function recursiveExtract(obj) {
+        if (typeof obj === 'string' && isHTML(obj)) {
+            htmlContent = obj;
+        } else if (typeof obj === 'object') {
+            for (let key in obj) {
+                recursiveExtract(obj[key]);
+            }
+        }
+    }
+
+    function isHTML(str) {
+        const div = document.createElement('div');
+        div.innerHTML = str;
+        return div.querySelector('html') !== null;
+    }
+
+    recursiveExtract(obj);
+    return htmlContent;
 }
 
 function extractImages(images) {
@@ -391,7 +503,7 @@ function getSources(sourceConnections) {
     <div class="item-content bib-cont">
       <div class="card">
         <div class="card-body">
-        <h5 class="card-title mb-3">${result.length + ' ' + languageTranslations._source }</h5>
+        <h5 class="card-title mb-3">${result.length + ' ' + languageTranslations._source}</h5>
         `
 
     result.forEach(source => {
@@ -434,7 +546,7 @@ function getMatchingNodes(referenceSystems, data) {
                     id: id,
                     name: node._label.name,
                     URL: url,
-                    match: connection.class === 'reference_system' ?  node.involvement[0].specification[0].qualifier.name : ''
+                    match: connection.class === 'reference_system' ? node.involvement[0].specification[0].qualifier.name : ''
                 });
             }
         }
@@ -452,7 +564,15 @@ function getMatchingNodes(referenceSystems, data) {
 function setEvents(current_data) {
 
     if (['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'].includes(data._class)) {
-        let main_node = {'begin': data.start, 'end': data.end, 'content': data.content, 'id': data.id, 'type': data.type, '_label': data._label, 'involvement':[{'origin_id': 0}]}
+        let main_node = {
+            'begin': data.start,
+            'end': data.end,
+            'content': data.content,
+            'id': data.id,
+            'type': data.type,
+            '_label': data._label,
+            'involvement': [{'origin_id': 0}]
+        }
         current_data.push(main_node)
     }
 
@@ -463,15 +583,14 @@ function setEvents(current_data) {
     });
 
 
-
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
 
     eventdates = []
     for (const node of current_data) {
-            if (node.begin) eventdates.push(node.begin)
-            if (node.end) eventdates.push(node.end)
-        }
+        if (node.begin) eventdates.push(node.begin)
+        if (node.end) eventdates.push(node.end)
+    }
 
     returnHtml = `
     <div class="item-content tl-cont">
@@ -490,8 +609,14 @@ function setEvents(current_data) {
         let titleString = ''
         let htmlClass = ''
         for (const invo of event.involvement) {
-            if (invo.origin_id === data.id)  {titleString += getTypeTranslation(invo.property) + ': ' + getTypeTranslation(invo.origin); htmlClass = invo.property.name.replace(' ', '-')}
-            if (invo.origin_id === 0)  {titleString += languageTranslations._current + ' ' + languageTranslations._event; htmlClass = 'this-event'}
+            if (invo.origin_id === data.id) {
+                titleString += getTypeTranslation(invo.property) + ': ' + getTypeTranslation(invo.origin);
+                htmlClass = invo.property.name.replace(' ', '-')
+            }
+            if (invo.origin_id === 0) {
+                titleString += languageTranslations._current + ' ' + languageTranslations._event;
+                htmlClass = 'this-event'
+            }
         }
 
 
@@ -557,10 +682,10 @@ function makeEnts(data, array) {
 
     for (const ent of allEnts) {
         ent.involvement.sort((a, b) => {
-        const dateA = new Date(a.begin);
-        const dateB = new Date(b.begin);
-        return dateA - dateB;
-    });
+            const dateA = new Date(a.begin);
+            const dateB = new Date(b.begin);
+            return dateA - dateB;
+        });
     }
 
     allEnts.sort((a, b) => {
@@ -654,7 +779,7 @@ function setEnts(current_data, class_) {
 
 
                         }
-                    propstring += '</div>'
+                        propstring += '</div>'
                     } else {
                         subevents_strings += '<div class="mt-2 margin-event">' + getTypeTranslation(involvment.property) + ': <i><a class="breaklink inside-link" href="/view/' + involvment.origin_id + '"><span style="line-break: auto">' + getTypeTranslation(involvment.origin) + ' </span></a></i>'
 
@@ -685,7 +810,7 @@ function setEnts(current_data, class_) {
                             }
                         }
                         subevents += 1
-                    subevents_strings +=  '</div>'
+                        subevents_strings += '</div>'
                     }
                 }
             )
