@@ -126,7 +126,8 @@ def makeItemTable():
     sql = """
             SELECT ids
                FROM bitem.get_entities(
-                       ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                       ARRAY ['artifact'],
+                       --ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
                    )
     """
