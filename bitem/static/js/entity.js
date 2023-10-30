@@ -123,7 +123,7 @@ function make3d(models) {
                 auto-rotate-delay="0"
         ></model-viewer>
         <div class="btn-panel text-end ">
-            <a href="#" onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + model.name + '\''})" class="img-btn line-fade-m"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
+            <span onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + model.name + '\''})" class="img-btn line-fade-m"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
         </div>              
       </div>
       </div>
@@ -141,8 +141,7 @@ function enlarge3d(model, poster, name) {
     
             
         <div class="modal-header">
-            <h5 class="modal-title">${name}</h5>
-            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+            <h5 class="modal-title"><img class="me-4" src="/static/icons/logo.png" alt="bITEM" width="auto" height="24">${name}</h5>                    
         </div>
         <div  class="modal-body">
             <model-viewer 
@@ -156,52 +155,74 @@ function enlarge3d(model, poster, name) {
                     auto-rotate
                     auto-rotate-delay="0"
             ></model-viewer>
+            <button id="closebutton" type="button" class="btn btn-outline-light" title="Close Window" onclick="history.back()" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+            <button id="infobutton" onclick="toggleInfo()" title="Copyright Information" type="button" class="btn btn-outline-light" aria-label="Info"><i class="bi bi-info-lg"></i></button>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer d-none" id="info-footer">
             <p id="attribution"></p>
         </div>
     `
     const modalThreeD = new bootstrap.Modal('#info-modal')
 
-    modalThreeD.show()
+
     id = model.replace('.glb', '')
     console.log(id)
 
-    getImageExt(id)
-    .then(data => {
-        // Handle the JSON data here
-        let attrContainer = document.getElementById('attribution')
-        attrContainer.innerHTML = data.requiredStatement.value[language][0]
-        console.log(data);
+    var closedModalHashStateId = "#modalClosed";
+    var openModalHashStateId = "#modalOpen";
+    const myModalEl = document.getElementById('info-modal')
+
+    /* Updating the hash state creates a new entry
+     * in the web browser's history. The latest entry in the web browser's
+     * history is "modal.html#modalClosed". */
+    window.location.hash = closedModalHashStateId;
+
+    /* The latest entry in the web browser's history is now "modal.html#modalOpen".
+     * The entry before this is "modal.html#modalClosed". */
+    myModalEl.addEventListener('show.bs.modal', event => {
+        window.location.hash = openModalHashStateId;
     })
-    .catch(error => {
-        console.error("Error:", error);
+
+
+    /* When the user closes the modal using the Twitter Bootstrap UI,
+     * we just return to the previous entry in the web
+     * browser's history, which is "modal.html#modalClosed". This is the same thing
+     * that happens when the user clicks the web browser's back button. */
+    myModalEl.addEventListener('hide.bs.modal', event => {
+
+        history.replaceState(null, null, ' ');
+
     });
 
-
-}
-
-function extractHTMLContent(obj) {
-    let htmlContent = '';
-
-    function recursiveExtract(obj) {
-        if (typeof obj === 'string' && isHTML(obj)) {
-            htmlContent = obj;
-        } else if (typeof obj === 'object') {
-            for (let key in obj) {
-                recursiveExtract(obj[key]);
-            }
+    window.onhashchange = function () {
+        if (window.location.hash != "#modalOpen") {
+            modalThreeD.hide()
+        }
+        if (window.location.hash == ("#modalOpen")) {
+            modalThreeD.show()
         }
     }
 
-    function isHTML(str) {
-        const div = document.createElement('div');
-        div.innerHTML = str;
-        return div.querySelector('html') !== null;
-    }
+    modalThreeD.show()
 
-    recursiveExtract(obj);
-    return htmlContent;
+    getImageExt(id)
+        .then(data => {
+            // Handle the JSON data here
+            let attrContainer = document.getElementById('attribution')
+            attrContainer.innerHTML = data.requiredStatement.value[language][0]
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+}
+
+// Immutable hash state identifiers.
+
+
+function toggleInfo() {
+    const infoFooter = document.getElementById('info-footer')
+    infoFooter.classList.toggle('d-none')
 }
 
 function extractImages(images) {

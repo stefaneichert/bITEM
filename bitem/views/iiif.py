@@ -76,9 +76,9 @@ def getManifest(img_id):
             if row.name == license and row.property_code == 'P2':
                 print(row)
                 try:
-                    license_uri = re.search(
+                    license_uri = (re.search(
                         '##licenseUrl_##(.*)##_licenseUrl##',
-                        row.info).group(1)
+                        row.info).group(1)).replace('https', 'http')
                 except Exception:
                     license_uri = None
                 if license_uri:

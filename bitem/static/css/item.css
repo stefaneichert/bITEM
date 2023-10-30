@@ -318,3 +318,15 @@
 #current-3d-model {
     padding: 0;
 }
+
+#infobutton {
+    position: absolute;
+    right: 4rem;
+    bottom: 1rem;
+}
+
+#closebutton {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+}
