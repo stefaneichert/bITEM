@@ -17,6 +17,12 @@ window.onload = function () {
     }, 500);
 
     OpenStreetMap.addTo(map)
+    if (selection !== 'places') {
+        setTimeout(function () {
+            toggleSidebar('right');
+        }, 800);
+    }
+
 
 };
 
@@ -63,7 +69,6 @@ setTimeout(() => {
 shave('.card-text', 200)
 changeClasses('add', 'leaflet-sidebar', 'sb-both')
 changeClasses('add', 'leaflet-left', 'map-both')
-
 
 
 //create/update Geojson

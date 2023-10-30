@@ -16,7 +16,8 @@ def get_data(selection: str) -> str:
             "/map/map.html",
             _data=_data,
             title=_(selection),
-            csNames=csNames)
+            csNames=csNames,
+            selection=selection)
     return ''
 
 def getlist(openAtlasClass = None, id = 0):

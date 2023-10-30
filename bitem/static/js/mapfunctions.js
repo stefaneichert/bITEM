@@ -49,7 +49,6 @@ function updateGeojson() {
     });
 
     data.forEach((element) => {
-        console.log(element)
         const geom = element.geometry;
 
         if (!geom) return;

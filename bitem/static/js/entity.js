@@ -55,7 +55,6 @@ function createMuuriElems(obj) {
 
     let models = (obj.models)
     if (models) {
-        console.log(models)
         make3d(models)
     }
 
@@ -166,7 +165,6 @@ function enlarge3d(model, poster, name) {
 
 
     id = model.replace('.glb', '')
-    console.log(id)
 
     var closedModalHashStateId = "#modalClosed";
     var openModalHashStateId = "#modalOpen";
@@ -210,7 +208,6 @@ function enlarge3d(model, poster, name) {
             // Handle the JSON data here
             let attrContainer = document.getElementById('attribution')
             attrContainer.innerHTML = data.requiredStatement.value[language][0]
-            console.log(data);
         })
         .catch(error => {
             console.error("Error:", error);
@@ -661,7 +658,6 @@ function setEvents(current_data) {
 
         let links = '';
 
-        console.log(event)
         returnHtml += `
         
          <div class="timeline__item">

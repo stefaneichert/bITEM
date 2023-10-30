@@ -89,8 +89,6 @@ function getTypeTranslation(data) {
 function customSortInvolvement(a, b) {
     const dateA = new Date(a.invbegin);
     const dateB = new Date(b.invbegin);
-    //console.log(dateA)
-    //console.log(dateB)
     if (dateA < dateB) {
         return -1;
     } else if (dateA > dateB) {
