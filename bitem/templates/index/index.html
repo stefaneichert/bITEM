@@ -6,9 +6,12 @@
 
         <model-viewer
                 class="indexmodel" alt="Moa"
-                src="/static/3dmodels/{{ model }}"
+                alt="3d Model"
+                src="{{model}}"
                 shadow-intensity="1"
+                poster="{{poster}}"
                 loading="lazy"
+                camera-controls
                 auto-rotate
                 auto-rotate-delay="0"
         ></model-viewer>
