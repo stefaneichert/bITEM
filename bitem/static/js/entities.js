@@ -215,3 +215,5 @@ function exchangeListClass() {
     button.classList.toggle("bi-list-ul");
     button.classList.toggle("bi-layout-wtf");
 }
+
+sortGrid('names')
