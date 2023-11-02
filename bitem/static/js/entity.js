@@ -721,7 +721,7 @@ function setEnts(current_data, class_) {
     itemTemplate.className = 'item';
 
     returnHtml = `
-    <div class="item-content">
+    <div class="item-content ent-content">
       <div class="card">
         <div class="card-body">
         <h5 class="card-title">${current_data.length + ' ' + returnTranslation(class_)}</h5>

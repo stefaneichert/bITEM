@@ -192,3 +192,7 @@ body {
     font-size: medium;
     vertical-align: middle;
 }
+
+.ent-content {
+    max-height: 40vh;
+}
