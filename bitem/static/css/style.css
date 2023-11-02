@@ -207,6 +207,7 @@ body {
 .item-content {
     cursor: unset!important;
     overflow-x: hidden;
+    max-height: 60vh;
 }
 
 .lang-nav {
