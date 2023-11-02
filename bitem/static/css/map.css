@@ -182,6 +182,7 @@
 
 
 .fixheight {
+    z-index: 1;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -232,26 +233,18 @@
     transition: background 1s, box-shadow 1s;
 }
 
+.content-items, .activemap-50, .activemap-100 {
+        height: calc(100vh - 56px - 2rem - 16px - 24px);
+    }
+
 @media screen and (max-width: 400px) {
     .sortbuttons {
         display: inline !important;
     }
-
-    .content-items, .activemap-50, .activemap-100 {
-        height: calc(100vh - 21.5rem);
-    }
 }
 
-@media screen and (min-width: 401px) and (max-width: 768px) {
-    .content-items, .activemap-50, .activemap-100 {
-        height: calc(100vh - 15.5rem);
-    }
-}
 
 @media screen and (min-width: 769px) {
-    .content-items, .activemap-50, .activemap-100 {
-        height: calc(100vh - 12.5rem);
-    }
 
     .item-content > * {
         width: calc(22vw - 25px);
@@ -260,10 +253,6 @@
 
 
 @media screen and (min-width: 1190px) {
-    .content-items, .activemap-50, .activemap-100 {
-        height: calc(100vh - 9.5rem);
-    }
-
     .item-content > * {
         width: calc(13vw);
     }
@@ -276,7 +265,6 @@
 .list-image {
     max-height: 150px;
 }
-
 
 .loading {
     display: flex;

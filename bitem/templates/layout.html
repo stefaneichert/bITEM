@@ -37,6 +37,7 @@
 
 <body class="d-flex flex-column min-vh-100">
 
+
 <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-black">
         <div class="container-fluid">
@@ -51,7 +52,7 @@
                     <li class="nav-item">
                         <a class="nav-link line-fade" href="{{ url_for('items') }}">{{_('items')|uc_first}}</a>
                     </li>
-                   <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link line-fade" href="{{ url_for('persons') }}">{{_('persons')|uc_first}}</a>
                     </li>
                     <li class="nav-item">
@@ -66,21 +67,28 @@
                     <li class="nav-item">
                         <a class="nav-link line-fade" href="{{ url_for('about') }}">{{_('about')|uc_first}}</a>
                     </li>
+
                 </ul>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    {% for language in AVAILABLE_LANGUAGES.items() %}
-                    {% if CURRENT_LANGUAGE != language[0] %}
-                    <li class="nav-item" title="{{language[1]}}">
-                        <a class="nav-link" href="{{ url_for('set_language', language=language[0]) }}">
-                            <i class="bi bi-globe me-1"></i>
-                            <span id="language">{{language[0]}}</span>
-                        </a>
+                    <li class="nav-item ent-item">
+                    <a class="nav-link line-fade" data-bs-toggle="offcanvas" href="#offcanvasExample" title="Filter"><i class="bi bi-funnel"></i></a>
                     </li>
-                    {% endif %}
-                    {% endfor %}
-
+                    <li class="nav-item ent-item">
+                    <input id="searchField" type="search" class="form-control bg-black bitem-text" placeholder="{{_('search term')}}...">
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                           <i class="bi bi-globe me-2"></i><span id="language">{{CURRENT_LANGUAGE}}</span>
+                        </a>
+                        <ul class="dropdown-menu lang-nav" aria-labelledby="navbarDropdown">
+                        {% for lang in AVAILABLE_LANGUAGES.items() %}
+                            <li><a class="dropdown-item" href="{{ url_for('set_language', language=lang[0] )}}">{{lang[0]}}</a></li>
+                        {% endfor %}
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -92,16 +100,12 @@
 </button>
 
 <script>
+    languageOrigin = "{{CURRENT_LANGUAGE}}"
     language = document.getElementById("language").textContent;
-    if (language === 'en') {
-        language = 'de'
-    } else {
-        language = 'en'
-    }
     iiifUrl = '{{IIIF_URL}}'
     uploadPath = '{{UPLOAD_FOLDER}}'
     iiifBase = '{{IIIF_BASE}}'
-    refSys = {{REFERENCE_SYSTEMS|tojson}}
+    refSys = {{REFERENCE_SYSTEMS | tojson}}
 
     languageTranslations = {
         "_until": "{{_('until')}}",

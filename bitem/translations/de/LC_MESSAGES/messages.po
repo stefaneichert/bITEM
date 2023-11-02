@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-16 12:49+0200\n"
+"POT-Creation-Date: 2023-11-02 13:55+0100\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -18,109 +18,117 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:52 bitem/templates/layout.html:113
+#: bitem/templates/layout.html:53 bitem/templates/layout.html:118
 msgid "items"
 msgstr "Objekte"
 
-#: bitem/templates/layout.html:55
+#: bitem/templates/layout.html:56
 msgid "persons"
 msgstr "Personen"
 
-#: bitem/templates/layout.html:58
+#: bitem/templates/layout.html:59
 msgid "groups"
 msgstr "Gruppen"
 
-#: bitem/templates/layout.html:61 bitem/templates/layout.html:111
+#: bitem/templates/layout.html:62 bitem/templates/layout.html:116
 msgid "events"
 msgstr "Ereignisse"
 
-#: bitem/templates/layout.html:64
+#: bitem/templates/layout.html:65
 msgid "places"
 msgstr "Orte"
 
-#: bitem/templates/layout.html:67
+#: bitem/templates/layout.html:68
 msgid "about"
 msgstr "Über"
 
-#: bitem/templates/layout.html:106
-msgid "until"
-msgstr "bis"
-
-#: bitem/templates/layout.html:107
-msgid "as"
-msgstr "als"
-
-#: bitem/templates/layout.html:108
-msgid "actors"
-msgstr "Akteure"
-
-#: bitem/templates/layout.html:109
-msgid "actor(s)"
-msgstr "Akteur(e)"
-
-#: bitem/templates/layout.html:110
-msgid "open image in viewer"
-msgstr "Bild in Viewer öffnen"
-
-#: bitem/templates/layout.html:112
-msgid "event(s)"
-msgstr "Ereignis(se)"
-
-#: bitem/templates/layout.html:114
-msgid "item(s)"
-msgstr "Objekt(e)"
-
-#: bitem/templates/layout.html:115
-msgid "current"
-msgstr "aktuelles"
-
-#: bitem/templates/layout.html:116 bitem/views/iiif.py:59
-msgid "source(s)"
-msgstr "Quelle(n)"
-
-#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
-#: bitem/templates/submenu.html:3
-msgid "loading"
-msgstr "lade"
-
-#: bitem/templates/submenu.html:10
-msgid "of"
-msgstr "von"
-
-#: bitem/templates/submenu.html:16 bitem/templates/submenu.html:18
-#: bitem/templates/submenu.html:20 bitem/templates/submenu.html:22
-msgid "sort by"
-msgstr "sortieren nach"
-
-#: bitem/templates/submenu.html:16
-msgid "name"
-msgstr "Name"
-
-#: bitem/templates/submenu.html:18
-msgid "type"
-msgstr "Typus"
-
-#: bitem/templates/submenu.html:20
-msgid "begin"
-msgstr "Beginn"
-
-#: bitem/templates/submenu.html:22
-msgid "end"
-msgstr "Ende"
-
-#: bitem/templates/submenu.html:24
-msgid "switch view"
-msgstr "Ansicht wechseln"
-
-#: bitem/templates/submenu.html:28
-msgid "filter by case study"
-msgstr "nach Case Study filtern"
-
-#: bitem/templates/submenu.html:48
+#: bitem/templates/layout.html:79
 msgid "search term"
 msgstr "Suchbegriff"
 
-#: bitem/templates/index/index.html:19
+#: bitem/templates/layout.html:111
+msgid "until"
+msgstr "bis"
+
+#: bitem/templates/layout.html:112
+msgid "as"
+msgstr "als"
+
+#: bitem/templates/layout.html:113
+msgid "actors"
+msgstr "Akteure"
+
+#: bitem/templates/layout.html:114
+msgid "actor(s)"
+msgstr "Akteur(e)"
+
+#: bitem/templates/layout.html:115
+msgid "open image in viewer"
+msgstr "Bild in Viewer öffnen"
+
+#: bitem/templates/layout.html:117
+msgid "event(s)"
+msgstr "Ereignis(se)"
+
+#: bitem/templates/layout.html:119
+msgid "item(s)"
+msgstr "Objekt(e)"
+
+#: bitem/templates/layout.html:120
+msgid "current"
+msgstr "aktuelles"
+
+#: bitem/templates/layout.html:121 bitem/views/iiif.py:106
+msgid "source(s)"
+msgstr "Quelle(n)"
+
+#: bitem/templates/submenu.html:3
+msgid "of"
+msgstr "von"
+
+#: bitem/templates/submenu.html:11
+msgid "filter"
+msgstr "filtern"
+
+#: bitem/templates/submenu.html:11
+msgid "sort"
+msgstr "sortieren"
+
+#: bitem/templates/submenu.html:21 bitem/templates/submenu.html:23
+#: bitem/templates/submenu.html:25 bitem/templates/submenu.html:27
+msgid "sort by"
+msgstr "sortieren nach"
+
+#: bitem/templates/submenu.html:21
+msgid "name"
+msgstr "Name"
+
+#: bitem/templates/submenu.html:23
+msgid "type"
+msgstr "Typus"
+
+#: bitem/templates/submenu.html:25
+msgid "begin"
+msgstr "Beginn"
+
+#: bitem/templates/submenu.html:27
+msgid "end"
+msgstr "Ende"
+
+#: bitem/templates/submenu.html:29
+msgid "switch view"
+msgstr "Ansicht wechseln"
+
+#: bitem/templates/submenu.html:34
+msgid "filter by case study"
+msgstr "nach Case Study filtern"
+
+#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
+#: bitem/templates/submenu.html:77
+msgid "loading"
+msgstr "lade"
+
+#: bitem/templates/index/index.html:22
 msgid "learn more"
 msgstr "mehr"
 

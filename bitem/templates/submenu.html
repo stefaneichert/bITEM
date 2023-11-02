@@ -1,17 +1,22 @@
-    <div class="loading">
-        <div class="spinner-grow text-light" role="status">
-            <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
-        </div>
-    </div>
-    <div class="fixed-second">
-        <div class="fade-me justify-content-between row ps-2 pe-2 ms-3 me-3 mt-3">
-            <div class="col-md-auto mt-2 me-4"><h3 class="bitem-text">{{title|uc_first}} <span class="counter"> (
+<div id="counter" class="container-fluid"><h3 class="bitem-text ms-4 mt-4">{{title|uc_first}} <span class="counter"> (
                 <span id="item-count"></span>
                 <span> {{_('of')}} </span>
                 <span id="item-total"></span> )
             </span>
-            </h3></div>
-            <div class="col-md-auto mt-2 bitem-text">
+</h3></div>
+
+<div class="offcanvas offcanvas-end text-bg-dark" data-bs-scroll="true" data-bs-backdrop="static" tabindex="-1"
+     id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{_('filter')|uc_first}}/{{_('sort')|uc_first}}</h5>
+        <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div>
+            <div class="fade-me justify-content-between row ps-2 pe-2 ms-3 me-3 mt-3">
+
+                <div class="col-md-auto mt-2 bitem-text">
           <span class="sortbuttons">
   <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')" title="{{_('sort by')}} {{_('name')}}">{{_('name')|uc_first}}<i
           class="ms-1 bi bi-arrow-down-up"></i></a>
@@ -24,16 +29,17 @@
                 <a id="list-switch" class="nav-link line-fade ms-3" href="#" title="{{_('switch view')}}">
                     <h4><i id="viewbutton" class="ms-1 bi bi-list-ul"></i></h4></a>
       </span></div>
-            <div class="col-md-auto mt-2 d-inline-flex">
-                <select id="case-select" class="bg-black form-select me-2 bitem-text custom-select" aria-label="case study select" title="{{_('filter by case study')}}">
-                    {% if CURRENT_LANGUAGE == 'de' and csNames[0].de %}
-                    <option value="{{csNames[0].id}}">{{csNames[0].de}}</option>
-                    {% elif CURRENT_LANGUAGE == 'en' and csNames[0].en %}
-                    <option value="{{csNames[0].id}}">{{csNames[0].en}}</option>
-                    {% else %}
-                    <option value="{{csNames[0].id}}">{{csNames[0].name}}</option>
-                    {% endif %}
-                    {% for row in csNames%}
+                <div class="col-md-auto mt-2 d-inline-flex">
+                    <select id="case-select" class="bg-black form-select me-2 bitem-text custom-select"
+                            aria-label="case study select" title="{{_('filter by case study')}}">
+                        {% if CURRENT_LANGUAGE == 'de' and csNames[0].de %}
+                        <option value="{{csNames[0].id}}">{{csNames[0].de}}</option>
+                        {% elif CURRENT_LANGUAGE == 'en' and csNames[0].en %}
+                        <option value="{{csNames[0].id}}">{{csNames[0].en}}</option>
+                        {% else %}
+                        <option value="{{csNames[0].id}}">{{csNames[0].name}}</option>
+                        {% endif %}
+                        {% for row in csNames%}
                         {% if row.sortorder == 2 and CURRENT_LANGUAGE == 'de' and row.de %}
                         <option value="{{row.id}}">{{row.de}}</option>
                         {% elif row.sortorder == 2 and CURRENT_LANGUAGE == 'en' and row.en %}
@@ -41,13 +47,34 @@
                         {% elif row.sortorder == 2 %}
                         <option value="{{row.id}}">{{row.name}}</option>
                         {% endif %}
-                    {% endfor %}
+                        {% endfor %}
 
 
-                </select>
-                <input id="searchField" type="search" class="form-control bg-black bitem-text" placeholder="{{_('search term')}}...">
+                    </select>
+
+
+                </div>
 
             </div>
-
+        </div>
+        <div class="dropdown mt-3">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown">
+                Dropdown button
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
         </div>
     </div>
+</div>
+
+
+<div class="loading">
+    <div class="spinner-grow text-light" role="status">
+        <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
+    </div>
+</div>
+

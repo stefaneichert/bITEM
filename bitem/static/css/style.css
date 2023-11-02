@@ -208,4 +208,20 @@ body {
     cursor: unset!important;
 }
 
+.lang-nav {
+    min-width: unset;
+    width: -webkit-fill-available;
+    text-align: center;
+}
 
+.offcanvas {
+z-index: 5001;
+}
+
+#counter {
+    height: 2rem;
+}
+
+.ent-item {
+    display: none;
+}

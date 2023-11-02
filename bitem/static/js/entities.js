@@ -1,3 +1,8 @@
+var elements = document.querySelectorAll('.ent-item');
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].classList.remove('ent-item');
+    }
+
 //initiate Grid
 grid = new Muuri('.grid', {
     dragEnabled: false,
