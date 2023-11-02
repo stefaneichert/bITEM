@@ -94,6 +94,10 @@
     }
 }
 
+.tl-cont {
+    max-height: unset!important;
+}
+
 @media screen and (min-width: 769px) {
     .item-content > * {
         width: calc(50vw - (3rem + 10px));
