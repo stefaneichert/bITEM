@@ -26,6 +26,9 @@
 .item-content {
     position: relative;
     cursor: pointer;
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .hover-img:hover + .btn-panel > .img-btn {
