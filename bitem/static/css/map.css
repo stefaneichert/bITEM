@@ -293,6 +293,11 @@
     max-height: 400px;
 }
 
+.model-content {
+    max-width: 100%;
+    height: 250px;
+}
+
 .sortbuttons {
     display: inline-flex;
     padding-top: 5px;
@@ -331,5 +336,7 @@
     vertical-align: middle;
 }
 
-
-
+.model-3d {
+    min-height: 250px;
+    width: 100%;
+}

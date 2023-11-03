@@ -20,9 +20,7 @@ def getManifest(img_id):
         filedata = json.loads(url.read().decode())
         for file_id, data in filedata.items():
             extension = data['extension']
-            print(data)
             if extension:
-                print(extension)
                 license = data['license']
 
     from iiif_prezi3 import Manifest, KeyValueString, config
@@ -52,15 +50,12 @@ def getManifest(img_id):
 
     g.cursor.execute(sql, {'id': img_id})
     result = g.cursor.fetchall()
-    print(result)
 
     g.cursor.execute(f'SELECT description FROM model.entity WHERE id = {img_id}')
     filedescription = g.cursor.fetchone()
 
     image_name = result[0].image
     if license:
-        print(image_name)
-        print(license)
         attribution = ''
         source = ''
         sourceThere = False
@@ -74,7 +69,6 @@ def getManifest(img_id):
                     source += ' ' + row.spec
                 source += '<br>'
             if row.name == license and row.property_code == 'P2':
-                print(row)
                 try:
                     license_uri = (re.search(
                         '##licenseUrl_##(.*)##_licenseUrl##',
@@ -84,7 +78,6 @@ def getManifest(img_id):
                 if license_uri:
                     try:
                         apiUrl = 'https://api.creativecommons.org/rest/1.5/details?license-uri=' + license_uri + '&locale=' + locale
-                        print(apiUrl)
                         document = requests.get(apiUrl)
                         soup = BeautifulSoup(document.content, "lxml-xml")
                         attribution = str(soup.find("html"))

@@ -149,11 +149,26 @@ function addMuuri(data) {
         both = true;
     }
 
-    const images = Boolean(data.images);
+    let images = Boolean(data.images);
+    let modelthere = Boolean(data.models);
+
+    let currentmodel = ''
+    let poster = ''
+    let modelname = ''
+    if (modelthere) {images = false;
+        let model=data.models[0]
+        modelname = model.name
+
+    for (const file of model.files) {
+            if (file.includes('glb')) currentmodel = file
+            if (file.includes('webp')) poster = file
+        }
+    }
 
     const buttons = `
     <div class="btn-panel text-end">
       ${images ? `<a href="/iiif/${data.image.id.split('.')[0]}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}
+      ${modelthere ? `<a onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + modelname + '\''})" class="info-buttons line-fade"><i class="bi bi-badge-3d"></i></a>` : ''}
       <a class="line-fade info-buttons" href="/view/${data.id}"><i class="bi bi-info-circle"></i></a>
     </div>
   `;
@@ -168,11 +183,24 @@ function addMuuri(data) {
             ${both ? `<p class="card-title">${makeLocalDate(data.start)} - ${makeLocalDate(data.end)}</p>` : ''}
             ${first ? `<p class="card-title">${makeLocalDate(data.start)}</p>` : ''}
             ${last ? `<p class="card-title">${makeLocalDate(data.end)}</p>` : ''}
+            ${modelthere ? `<div class="model-content">
+                    <model-viewer
+                            class="model-3d"
+                            alt="${modelname}"
+                            src="${uploadPath}/${currentmodel}"
+                            shadow-intensity="1"
+                            poster="${uploadPath}/${poster}"
+                            loading="lazy"              
+                            auto-rotate
+                            auto-rotate-delay="0"
+                    ></model-viewer></div>
+                    ` : ''}            
             ${images ? `<div><img src="${data.image.path}" loading="eager" class="image-content"></div>` : ''}
-            <p class="card-text mt-2">${getLanguage(data.content)}</p>
+                        <p class="card-text mt-2">${getLanguage(data.content)}</p>
             ${buttons}
           ${images ? '</div>' : ''}
           ${images ? `<div class="list-col-4"><img src="${data.image.path}" loading="lazy" class="float-end img-fluid list-image d-none"></div>` : ''}
+          
         </div>
       </div>
     </div>

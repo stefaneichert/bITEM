@@ -29,12 +29,6 @@ async function updateEnts() {
     console.log(message);
 }
 
-async function getImageExt(id) {
-    const response = await fetch("/iiif/" + id + ".json");
-    const message = await response.json();
-    return (message)
-}
-
 //updateEnts()
 
 const grid = new Muuri('.grid', {
@@ -134,93 +128,6 @@ function make3d(models) {
 
 }
 
-function enlarge3d(model, poster, name) {
-    let modelContainer = document.getElementById('current-3d-model')
-    modelContainer.innerHTML = `
-    
-            
-        <div class="modal-header">
-            <h5 class="modal-title"><img class="me-4" src="/static/icons/logo.png" alt="bITEM" width="auto" height="24">${name}</h5>                    
-        </div>
-        <div  class="modal-body">
-            <model-viewer 
-                    class="fullscreen-model"
-                    alt="${name}"
-                    src="${uploadPath}/${model}"
-                    shadow-intensity="1"
-                    poster="${uploadPath}/${poster}"
-                    loading="lazy"
-                    camera-controls
-                    auto-rotate
-                    auto-rotate-delay="0"
-            ></model-viewer>
-            <button id="closebutton" type="button" class="btn btn-outline-light" title="Close Window" onclick="history.back()" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-            <button id="infobutton" onclick="toggleInfo()" title="Copyright Information" type="button" class="btn btn-outline-light" aria-label="Info"><i class="bi bi-info-lg"></i></button>
-        </div>
-        <div class="modal-footer d-none" id="info-footer">
-            <p id="attribution"></p>
-        </div>
-    `
-    const modalThreeD = new bootstrap.Modal('#info-modal')
-
-
-    id = model.replace('.glb', '')
-
-    var closedModalHashStateId = "#modalClosed";
-    var openModalHashStateId = "#modalOpen";
-    const myModalEl = document.getElementById('info-modal')
-
-    /* Updating the hash state creates a new entry
-     * in the web browser's history. The latest entry in the web browser's
-     * history is "modal.html#modalClosed". */
-    window.location.hash = closedModalHashStateId;
-
-    /* The latest entry in the web browser's history is now "modal.html#modalOpen".
-     * The entry before this is "modal.html#modalClosed". */
-    myModalEl.addEventListener('show.bs.modal', event => {
-        window.location.hash = openModalHashStateId;
-    })
-
-
-    /* When the user closes the modal using the Twitter Bootstrap UI,
-     * we just return to the previous entry in the web
-     * browser's history, which is "modal.html#modalClosed". This is the same thing
-     * that happens when the user clicks the web browser's back button. */
-    myModalEl.addEventListener('hide.bs.modal', event => {
-
-        history.replaceState(null, null, ' ');
-
-    });
-
-    window.onhashchange = function () {
-        if (window.location.hash != "#modalOpen") {
-            modalThreeD.hide()
-        }
-        if (window.location.hash == ("#modalOpen")) {
-            modalThreeD.show()
-        }
-    }
-
-    modalThreeD.show()
-
-    getImageExt(id)
-        .then(data => {
-            // Handle the JSON data here
-            let attrContainer = document.getElementById('attribution')
-            attrContainer.innerHTML = data.requiredStatement.value[language][0]
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-}
-
-// Immutable hash state identifiers.
-
-
-function toggleInfo() {
-    const infoFooter = document.getElementById('info-footer')
-    infoFooter.classList.toggle('d-none')
-}
 
 function extractImages(images) {
     const itemTemplate = document.createElement('div');

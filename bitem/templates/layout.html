@@ -97,7 +97,12 @@
 <button type="button" class="btn btn-secondary btn-floating btn-lg" id="btn-back-to-top">
     <i class="bi bi-arrow-up"></i>
 </button>
-
+<div id="info-modal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen">
+                <div id="current-3d-model" class="modal-content">
+                </div>
+            </div>
+        </div>
 <script>
     languageOrigin = "{{CURRENT_LANGUAGE}}"
     language = document.getElementById("language").textContent;
@@ -124,5 +129,6 @@
 {% block content %}
 {% endblock %}
 </body>
+
 </html>
 

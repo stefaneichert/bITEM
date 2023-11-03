@@ -139,7 +139,6 @@ def makeItemTable():
     for row in ids:
         g.cursor.execute(f'SELECT images FROM bitem.allitems WHERE id = {row.ids}')
         images = g.cursor.fetchone()
-        print(images.images)
         mainimage = None
         imagearray = None
         if images.images:
