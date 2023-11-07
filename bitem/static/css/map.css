@@ -234,8 +234,8 @@
 }
 
 .content-items, .activemap-50, .activemap-100 {
-        height: calc(100vh - 56px - 2rem - 16px - 24px);
-    }
+    height: calc(100vh - 56px - 2rem - 16px - 24px);
+}
 
 @media screen and (max-width: 400px) {
     .sortbuttons {
@@ -339,4 +339,10 @@
 .model-3d {
     min-height: 250px;
     width: 100%;
+}
+
+#resetBtn {
+    font-size: 1.4rem;
+    background: unset !important;
+    box-shadow: none!important;
 }

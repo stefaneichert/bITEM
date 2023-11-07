@@ -8,16 +8,24 @@
 <div class="offcanvas offcanvas-end text-bg-dark" data-bs-scroll="true" tabindex="-1"
      id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{_('filter')|uc_first}}/{{_('sort')|uc_first}}</h5>
+        <span>
+        <h5 class="offcanvas-title"
+            id="offcanvasExampleLabel">{{_('filter')|uc_first}}/{{_('sort')|uc_first}}</h5>
+        </span>
+        <span>
+        <button id="resetBtn" type="button" class="btn-close btn-close-white" title="{{_('reset')|uc_first}}"><i
+                class="bi bi-arrow-counterclockwise"></i></button>
         <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
+        </span>
     </div>
     <div class="offcanvas-body">
+
 
         <input id="searchField" type="search" class="form-control bg-black bitem-text"
                placeholder="{{_('search term')}}...">
 
-        <h5 class="mt-3">Sort by:</h5>
+        <h5 class="mt-3">{{_('sort by')|uc_first}}:</h5>
         <div class="bitem-text">
                       <span class="sortbuttons">
                               <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')"
@@ -37,16 +45,16 @@
                                                 <h4><i id="viewbutton" class="ms-1 bi bi-list-ul"></i></h4></a>
                       </span>
         </div>
-        <h5 class="mt-3">Filter by: </h5>
+        <h5 class="mt-3">{{_('filter by')|uc_first}}: </h5>
         <span class="sortbuttons ms-3"><div class="form-check form-check-inline">
                 <input class="form-check-input radio-select" type="radio" name="inlineRadioOptions" id="inlineRadio1"
                        value="and" checked>
-                <label class="form-check-label" for="inlineRadio1">and</label>
+                <label class="form-check-label" for="inlineRadio1">{{_('and')}}</label>
             </div>
             <div class="form-check form-check-inline">
                 <input class="form-check-input radio-select" type="radio" name="inlineRadioOptions" id="inlineRadio2"
                        value="or">
-                <label class="form-check-label" for="inlineRadio2">or</label>
+                <label class="form-check-label" for="inlineRadio2">{{_('or')}}</label>
             </div></span>
 
         <div id="filterAccordion" class="accordion accordion-flush">
@@ -55,7 +63,7 @@
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
                             aria-controls="panelsStayOpen-collapseTwo">
-                        Media
+                        {{_('media')|uc_first}}
                     </button>
                 </h2>
                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
@@ -65,7 +73,7 @@
                             <input class="form-check-input filter-input" type="checkbox" value="_model"
                                    id="check-model">
                             <label class="form-check-label" for="check-model">
-                                3D Models
+                                {{_('3D models')|uc_first}}
                             </label>
                         </div>
                         {% endif %}
@@ -74,7 +82,7 @@
                             <input class="form-check-input filter-input" type="checkbox" value="_image"
                                    id="check-image">
                             <label class="form-check-label" for="check-image">
-                                Images
+                                {{_('images')|uc_first}}
                             </label>
                         </div>
                         {% endif %}
@@ -83,7 +91,7 @@
                             <input class="form-check-input filter-input" type="checkbox" value="_nomedia"
                                    id="check-nomedia">
                             <label class="form-check-label" for="check-nomedia">
-                                No media
+                                {{_('no media')|uc_first}}
                             </label>
                         </div>
                         {% endif %}
@@ -119,7 +127,7 @@
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#types" aria-expanded="false" aria-controls="types">
-                        Types
+                        {{_('types')|uc_first}}
                     </button>
                 </h2>
                 <div id="types" class="accordion-collapse collapse">

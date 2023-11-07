@@ -39,6 +39,7 @@ const countField = document.getElementById("item-count");
 const itemTotalField = document.getElementById("item-total");
 const searchField = document.getElementById("searchField");
 const switchList = document.getElementById("list-switch");
+const resetBtn = document.getElementById("resetBtn");
 
 let andOr = "and"
 
@@ -75,6 +76,14 @@ searchField.addEventListener('search', function () {
 });
 searchField.addEventListener('keyup', function () {
     applycheckFilters(checkedValues, andOr)
+});
+
+resetBtn.addEventListener('click', function () {
+    searchField.value = '';
+    checkboxes.forEach(function (checkbox) {
+        checkbox.checked = false;
+    });
+    applycheckFilters([], andOr)
 });
 
 
@@ -168,8 +177,8 @@ function applycheckFilters(selectedValues, andOr) {
         applyFilters()
     } else {
 
-    updateCount(filteredItems)
-    if (mapThere) setMarkers()
+        updateCount(filteredItems)
+        if (mapThere) setMarkers()
     }
 }
 
