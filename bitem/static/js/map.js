@@ -23,15 +23,32 @@ window.onload = function () {
         }, 800);
     }
 
+    mapThere = true
+
 
 };
 
-//Add map interaction to buttons
-searchField.addEventListener('search', setMarkers);
-searchField.addEventListener('keyup', setMarkers);
-selectField.addEventListener('change', setMarkers);
-let list = false
-switchList.addEventListener('click', setListWitdh);
+function setMarkers() {
+    let items = getActiveItems().length > 0
+    if (typeof (PlaceMarker) !== 'undefined') PlaceMarker.removeFrom(map);
+    PlaceMarker = updateGeojson()
+    PlaceMarker.addTo(map)
+    let bounds = PlaceMarker.getBounds()
+    if (JSON.stringify(bounds) === '{}') items = false
+    let sidebarnow = document.getElementById("sidebar")
+    let sbw = sidebarnow.clientWidth
+    if (sbw === 0) {
+        map.setActiveArea('activemap-100');
+        items ? map.fitBounds(bounds, {
+            padding: [50, 50]
+        }) : console.log('no places');
+    } else {
+        map.setActiveArea('activemap-50');
+        items ? map.fitBounds(bounds, {
+            padding: [50, 50]
+        }) : console.log('no places');
+    }
+}
 
 //check for currently shown Muuri items
 function getActiveItems() {
@@ -74,27 +91,7 @@ changeClasses('add', 'leaflet-left', 'map-both')
 //create/update Geojson
 
 
-//change markers by selected/filtered items
-function setMarkers() {
-    let items = getActiveItems().length > 0
-    if (typeof (PlaceMarker) !== 'undefined') PlaceMarker.removeFrom(map);
-    PlaceMarker = updateGeojson()
-    PlaceMarker.addTo(map)
-    let bounds = PlaceMarker.getBounds()
-    let sidebarnow = document.getElementById("sidebar")
-    let sbw = sidebarnow.clientWidth
-    if (sbw === 0) {
-        map.setActiveArea('activemap-100');
-        items ? map.fitBounds(bounds, {
-            padding: [50, 50]
-        }) : console.log('no places');
-    } else {
-        map.setActiveArea('activemap-50');
-        items ? map.fitBounds(bounds, {
-            padding: [50, 50]
-        }) : console.log('no places');
-    }
-}
+
 
 
 let hovermarkers = L.layerGroup().addTo(map)
@@ -153,7 +150,7 @@ const resizeHandler = () => {
         changeClasses('change', 'leaflet-left', 'map-both', 'map-no', removeClasses)
         changeClasses('change', 'barswitch-middle', 'barswitch-middle', 'barswitch-right', removeClasses)
         changeClasses('change', 'mapswitch-middle', 'mapswitch-middle', 'mapswitch-right', removeClasses)
-        if (list) changeClasses('change', 'card', 'list-item-50', 'list-item-100')
+        //if (list) changeClasses('change', 'card', 'list-item-50', 'list-item-100')
     }
 
     grid.refreshItems().layout();
@@ -178,7 +175,7 @@ function toggleSidebar(direction) {
             changeClasses('change', 'mapswitch-left', 'mapswitch-left', 'mapswitch-middle', removeClasses)
             changeClasses('change', 'leaflet-sidebar', 'sb-no', 'sb-both', removeClasses)
             changeClasses('change', 'leaflet-left', 'map-only', 'map-both', removeClasses)
-            if (list) changeClasses('change', 'card', 'list-item-100', 'list-item-50')
+            //if (list) changeClasses('change', 'card', 'list-item-100', 'list-item-50')
         }
 
         if (direction === 'right' && sbw > 0) {
@@ -186,7 +183,7 @@ function toggleSidebar(direction) {
             changeClasses('change', 'mapswitch-middle', 'mapswitch-middle', 'mapswitch-right', removeClasses)
             changeClasses('change', 'leaflet-sidebar', 'sb-both', 'sb-only', removeClasses)
             changeClasses('change', 'leaflet-left', 'map-both', 'map-no', removeClasses)
-            if (list) changeClasses('change', 'card', 'list-item-50', 'list-item-100')
+            //if (list) changeClasses('change', 'card', 'list-item-50', 'list-item-100')
         }
 
         if (direction === 'left' && ((sbw + 100) > vpw)) {
@@ -194,7 +191,7 @@ function toggleSidebar(direction) {
             changeClasses('change', 'mapswitch-right', 'mapswitch-right', 'mapswitch-middle', removeClasses)
             changeClasses('change', 'leaflet-sidebar', 'sb-only', 'sb-both', removeClasses)
             changeClasses('change', 'leaflet-left', 'map-no', 'map-both', removeClasses)
-            if (list) changeClasses('change', 'card', 'list-item-100', 'list-item-50')
+            //if (list) changeClasses('change', 'card', 'list-item-100', 'list-item-50')
         }
 
         if (direction === 'left' && ((sbw + 100) < vpw)) {
@@ -209,7 +206,7 @@ function toggleSidebar(direction) {
             changeClasses('change', 'mapswitch-left', 'mapswitch-left', 'mapswitch-right', removeClasses)
             changeClasses('change', 'leaflet-sidebar', 'sb-no', 'sb-only', removeClasses)
             changeClasses('change', 'leaflet-left', 'map-only', 'map-no', removeClasses)
-            if (list) changeClasses('change', 'card', 'list-item-50', 'list-item-100')
+            //if (list) changeClasses('change', 'card', 'list-item-50', 'list-item-100')
         }
         if (direction === 'left') {
             changeClasses('change', 'barswitch-right', 'barswitch-right', 'barswitch-left', removeClasses)

@@ -58,16 +58,16 @@ function createMuuriElems(obj) {
     );
     if (sourceConnections.length > 0) grid.add(getSources(sourceConnections))
 
+    let actors = makeEnts(obj, ['group', 'person'])
+    if (actors.length > 0) {
+        grid.add(setEnts(actors, '_actor'))
+    }
+
     const placeInfo = extractPlaceInfo(data)
     if (placeInfo.length > 0) {
         grid.add(setmap())
         setMarkers(placeInfo)
 
-    }
-
-    let actors = makeEnts(obj, ['group', 'person'])
-    if (actors.length > 0) {
-        grid.add(setEnts(actors, '_actor'))
     }
 
     let items = makeEnts(obj, ['artifact'])
@@ -145,21 +145,21 @@ function extractImages(images) {
       </div>
     </div>
   `;
-    grid.add(itemTemplate)
+    //grid.add(itemTemplate)
     setGallery(images)
 }
 
 function setGallery(images) {
 
-    grid2 = new Muuri('.gallery', {
+    /*grid2 = new Muuri('.gallery', {
         layout: {
             fillGaps: true
         }
-    });
+    });*/
 
     for (const img of images) {
         const itemTemplate = document.createElement('div');
-        let currentStyle = 'max-width: 250px; max-height: 250px';
+        let currentStyle = 'max-width: 350px; max-height: 350px';
 
         itemTemplate.className = 'gal-item';
         let returnHtml = ''
@@ -172,7 +172,8 @@ function setGallery(images) {
     </div>
   `
         itemTemplate.innerHTML = returnHtml
-        grid2.add(itemTemplate);
+        //grid2.add(itemTemplate);
+        grid.add(itemTemplate);
     }
 
 }

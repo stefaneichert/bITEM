@@ -1,10 +1,11 @@
+let mapThere = false;
 var elements = document.querySelectorAll('.ent-item');
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].classList.remove('ent-item');
-    }
+for (var i = 0; i < elements.length; i++) {
+    elements[i].classList.remove('ent-item');
+}
 
 //initiate Grid
-grid = new Muuri('.grid', {
+let grid = new Muuri('.grid', {
     dragEnabled: false,
     dragPlaceholder: {
         enabled: true
@@ -37,32 +38,159 @@ grid = new Muuri('.grid', {
 const countField = document.getElementById("item-count");
 const itemTotalField = document.getElementById("item-total");
 const searchField = document.getElementById("searchField");
-const selectField = document.getElementById("case-select");
 const switchList = document.getElementById("list-switch");
+
+let andOr = "and"
+
+const radios = document.querySelectorAll('.radio-select');
+
+let checkedValues = []
+
+radios.forEach(radio => {
+    radio.addEventListener('change', function () {
+        const checkedRadios = Array.from(radios).filter(radio => radio.checked);
+        const checkedRadioValues = radio.value;
+        console.log('Checked radios: ' + checkedRadioValues);
+        andOr = checkedRadioValues
+        applycheckFilters(checkedValues, andOr)
+
+    });
+});
+
+const checkboxes = document.querySelectorAll('.filter-input');
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+        checkedValues = checkedCheckboxes.map(checkbox => checkbox.value);
+        console.log('Checked values: ' + checkedValues.join(' ' + andOr + ' '));
+        console.log(checkedValues)
+        applycheckFilters(checkedValues, andOr)
+    });
+});
+
+//Add map interaction to buttons
+searchField.addEventListener('search', function () {
+    applycheckFilters(checkedValues, andOr)
+});
+searchField.addEventListener('keyup', function () {
+    applycheckFilters(checkedValues, andOr)
+});
+
 
 searchField.value = '';
 itemTotalField.innerText = data.length;
 
-searchField.addEventListener('search', applyFilters);
-searchField.addEventListener('keyup', applyFilters);
-selectField.addEventListener('change', applyFilters);
 switchList.addEventListener('click', listSwitch);
 
+function applycheckFilters(selectedValues, andOr) {
+    console.log('filter start')
+    let items = grid.getItems();
+    searchValue = searchField.value.toLowerCase();
+    console.log(andOr)
+    console.log(selectedValues)
+
+    // Filter items based on selected values
+    let filteredItems = items.filter((item) => {
+        const dataMedia = item.getElement().getAttribute('data-media');
+        const dataTypeId = item.getElement().getAttribute('data-typeid');
+        const dataCaseStudies = item.getElement().getAttribute('data-casestudies');
+        const searchMatch = item.getElement().getAttribute('data-all');
+
+        // Check if dataMedia, dataTypeId, and dataCaseStudies match any selected value
+        if (andOr === "and") {
+            console.log('now its and')
+
+            return selectedValues.every((value) => {
+
+                if (value === '_model') {
+                    return dataMedia.includes('_model');
+                } else if (value === '_image') {
+                    return dataMedia.includes('_image')
+                } else if (value === '_nomedia') {
+                    return dataMedia === '_nomedia'
+                } else if (value.startsWith('_cs_')) {
+                    let there = false
+                    // Check if dataCaseStudies contains the selected value
+                    const csValue = dataCaseStudies.split(',');
+                    csValue.forEach(element => {
+                        if (value === "_cs_" + element) {
+                            there = true
+                        }
+                    })
+                    console.log(there)
+                    return (there)
+
+                } else if (value.startsWith('_tp_')) {
+                    return dataTypeId === value;
+
+                }
+
+                return false;
+            });
+        } else if (andOr === "or") {
+            console.log('now its or')
+            return selectedValues.some((value) => {
+                if (dataMedia.includes(value) || value === dataTypeId) {
+
+                    return true;
+                } else if (value.startsWith('_cs_')) {
+                    let there = false
+                    // Check if dataCaseStudies contains the selected value
+                    const csValue = dataCaseStudies.split(',');
+                    csValue.forEach(element => {
+                        if (value === "_cs_" + element) {
+                            console.log(value)
+                            there = true
+                        }
+                    })
+                    return (there)
+
+                }
+
+                return false;
+            });
+
+        }
+    })
+
+    if (filteredItems.length === 0 && andOr === "or") {
+        filteredItems = items
+    }
+
+    if (filteredItems.length === 0 && checkedValues.length === 0) {
+        filteredItems = items
+    }
+
+    grid.filter(item => filteredItems.includes(item))
+
+    if (searchValue !== '') {
+        applyFilters()
+    } else {
+
+    updateCount(filteredItems)
+    if (mapThere) setMarkers()
+    }
+}
+
+
 function applyFilters() {
-    const searchValue = searchField.value.toLowerCase();
-    const selectValue = selectField.value.toLowerCase();
-    const filteredItems = grid.getItems().filter(item => {
+    //const searchValue = searchField.value.toLowerCase();
+    const activeItems = grid.getItems().filter(item => item.isActive())
+    const filteredItems = activeItems.filter(item => {
         const element = item.getElement();
-        const isSelectMatch = !selectValue ? true : (element.getAttribute('data-casestudies') || '').toLowerCase().indexOf(selectValue) > -1;
         const isSearchMatch = !searchValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchValue) > -1;
-        return isSelectMatch && isSearchMatch;
+        return isSearchMatch;
     });
+    console.log(filteredItems)
     grid.filter(item => filteredItems.includes(item));
     updateCount(filteredItems);
+    if (mapThere) setMarkers()
 }
 
 function updateCount(filteredItems) {
-    const activeItemsCount = filteredItems.filter(item => item.isActive()).length;
+    items = grid.getItems()
+    const activeItemsCount = items.filter(item => item.isActive()).length;
     countField.innerText = activeItemsCount;
 }
 
@@ -110,9 +238,11 @@ function addMuuri(data) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.type = null;
+    itemTemplate.dataset.typeid = null;
     itemTemplate.dataset.id = data.id;
     itemTemplate.dataset.begin = null;
     itemTemplate.dataset.end = null;
+    itemTemplate.dataset.media = '';
     itemTemplate.dataset.name = getLabelTranslation(data);
     itemTemplate.dataset.casestudies = data.casestudies;
 
@@ -124,6 +254,7 @@ function addMuuri(data) {
 
     if (data.type) {
         itemTemplate.dataset.type = getTypeTranslation(data.type);
+        itemTemplate.dataset.typeid = '_tp_' + data.type.id;
         dataAll += getTypeTranslation(data.type) + ' ';
     }
 
@@ -155,16 +286,20 @@ function addMuuri(data) {
     let currentmodel = ''
     let poster = ''
     let modelname = ''
-    if (modelthere) {images = false;
-        let model=data.models[0]
+    if (modelthere) {
+        images = false;
+        let model = data.models[0]
         modelname = model.name
+        itemTemplate.dataset.media += "_model";
 
-    for (const file of model.files) {
+        for (const file of model.files) {
             if (file.includes('glb')) currentmodel = file
             if (file.includes('webp')) poster = file
         }
     }
 
+    if (images) itemTemplate.dataset.media += "_image";
+    if (images === false && modelthere === false) itemTemplate.dataset.media = "_nomedia";
     const buttons = `
     <div class="btn-panel text-end">
       ${images ? `<a href="/iiif/${data.image.id.split('.')[0]}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}

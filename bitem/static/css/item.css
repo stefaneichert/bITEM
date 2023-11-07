@@ -149,7 +149,8 @@
     position: absolute;
     width: auto;
     height: auto;
-    margin: 0.5rem;
+    margin-left: 2rem;
+    margin-top: 2rem;
     z-index: 1;
 }
 

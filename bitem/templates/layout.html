@@ -38,44 +38,41 @@
 <body class="d-flex flex-column min-vh-100">
 
 <header>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-black">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}"><img src="/static/icons/logo.png" alt="bITEM"
-                                                                       width="auto" height="24"></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link line-fade" href="{{ url_for('items') }}">{{_('items')|uc_first}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link line-fade" href="{{ url_for('persons') }}">{{_('persons')|uc_first}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link line-fade" href="{{ url_for('groups') }}">{{_('groups')|uc_first}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link line-fade" href="{{ url_for('events') }}">{{_('events')|uc_first}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link line-fade" href="{{ url_for('places') }}">{{_('places')|uc_first}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link line-fade" href="{{ url_for('about') }}">{{_('about')|uc_first}}</a>
-                    </li>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-black">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}"><img src="/static/icons/logo.png" alt="bITEM"
+                                                                           width="auto" height="24"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link line-fade" href="{{ url_for('items') }}">{{_('items')|uc_first}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link line-fade" href="{{ url_for('persons') }}">{{_('persons')|uc_first}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link line-fade" href="{{ url_for('groups') }}">{{_('groups')|uc_first}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link line-fade" href="{{ url_for('events') }}">{{_('events')|uc_first}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link line-fade" href="{{ url_for('places') }}">{{_('places')|uc_first}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link line-fade" href="{{ url_for('about') }}">{{_('about')|uc_first}}</a>
+                        </li>
 
-                </ul>
-            </div>
+                    </ul>
+                </div>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item ent-item">
                     <a class="nav-link line-fade" data-bs-toggle="offcanvas" href="#offcanvasExample" title="Filter"><i class="bi bi-funnel"></i></a>
-                    </li>
-                    <li class="nav-item ent-item">
-                    <input id="searchField" type="search" class="form-control bg-black bitem-text" placeholder="{{_('search term')}}...">
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
