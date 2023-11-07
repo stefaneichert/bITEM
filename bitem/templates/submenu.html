@@ -134,10 +134,10 @@
                     <div class="accordion-body">
                         {% for row in types %}
                         {% set langKey = 'name' %}
-                        {% if CURRENT_LANGUAGE == 'de' and row.de %}
-                        {% set langKey = 'de' %}
-                        {% elif CURRENT_LANGUAGE == 'en' and row.en %}
-                        {% set langKey = 'en' %}
+                        {% if CURRENT_LANGUAGE == 'de' and row.DE %}
+                        {% set langKey = 'DE' %}
+                        {% elif CURRENT_LANGUAGE == 'en' and row.EN %}
+                        {% set langKey = 'EN' %}
                         {% endif %}
                         <div class="form-check">
                             <input class="form-check-input filter-input" id="check-{{row.id}}" type="checkbox"
