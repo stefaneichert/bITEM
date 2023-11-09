@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-07 13:42+0100\n"
+"POT-Creation-Date: 2023-11-09 16:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -155,8 +155,16 @@ msgstr ""
 msgid "types"
 msgstr ""
 
-#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
 #: bitem/templates/submenu.html:160
+msgid "Timespan"
+msgstr ""
+
+#: bitem/templates/submenu.html:164
+msgid "include entries without date"
+msgstr ""
+
+#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
+#: bitem/templates/submenu.html:175
 msgid "loading"
 msgstr ""
 

@@ -83,6 +83,8 @@ resetBtn.addEventListener('click', function () {
     checkboxes.forEach(function (checkbox) {
         checkbox.checked = false;
     });
+    prepareTimeData()
+    fillSlider(fromSlider, toSlider, '#C6C6C6', '#0d6efd', toSlider);
     applycheckFilters([], andOr)
 });
 
@@ -95,6 +97,8 @@ switchList.addEventListener('click', listSwitch);
 function applycheckFilters(selectedValues, andOr) {
     console.log('filter start')
     let items = grid.getItems();
+    if (timethere) items = getDateArray()
+    console.log(items)
     searchValue = searchField.value.toLowerCase();
     console.log(andOr)
     console.log(selectedValues)
@@ -389,3 +393,4 @@ function exchangeListClass() {
 }
 
 sortGrid('names')
+
