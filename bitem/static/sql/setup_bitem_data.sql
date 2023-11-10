@@ -842,7 +842,7 @@ BEGIN
                  JOIN model.entity e ON e.id IN (l2.domain_id, l2.range_id)
                  JOIN model.property p ON l2.property_code = p.code
         WHERE l1.domain_id = current_id
-          AND l1.property_code = 'P9'
+          AND l1.property_code IN ('P9', 'P53')
           AND current_id NOT IN (l2.domain_id, l2.range_id)
           AND l1.range_id != e.id
         UNION ALL
@@ -870,9 +870,11 @@ BEGIN
           AND e2.id != e.id
           AND e3.id != e.id
           AND l1.property_code IN ('P11', 'P12', 'P14', 'P25')
-          AND e3.openatlas_class_name IN ('person', 'group', 'artifact', 'place', 'object_location');
+          AND e3.openatlas_class_name IN ('person', 'group', 'artifact', 'place', 'object_location')
+          AND l1.range_id != e.id;
 END;
 $$;
+
 
 DROP FUNCTION IF EXISTS bitem.get_connections(current_id INT) CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_connections(current_id INT)
