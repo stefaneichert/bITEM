@@ -46,15 +46,17 @@
                       </span>
         </div>
         <h5 class="mt-5">{{_('filter by')|uc_first}}: </h5>
-        <span class="sortbuttons ms-3"><div class="form-check form-check-inline">
-                <input class="form-check-input radio-select" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                       value="and" checked>
-                <label class="form-check-label" title="{{_('and')}}" for="inlineRadio1"><i class="bi bi-intersect me-2"></i></label>
+        <span class="sortbuttons ms-3">
+            <div class="form-check form-check-inline" title="{{_('and')}}" >
+            <input class="form-check-input radio-select" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                   value="and" checked>
+                <label class="form-check-label" for="inlineRadio1"><i class="bi bi-intersect me-2"></i></label>
             </div>
-            <div class="form-check form-check-inline">
+            <div class="form-check form-check-inline" title="{{_('or')}}" >
                 <input class="form-check-input radio-select" type="radio" name="inlineRadioOptions" id="inlineRadio2"
                        value="or">
-                <label class="form-check-label" title="{{_('or')}}" for="inlineRadio2"><i class="bi bi-grid me-2"></i></label>
+                <label class="form-check-label" for="inlineRadio2"><i
+                        class="bi bi-grid me-2"></i></label>
             </div></span>
 
         <div id="filterAccordion" class="accordion accordion-flush">

@@ -231,6 +231,7 @@ body {
 #info-modal {
     background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgb(0, 0, 0) 15%, rgb(21, 21, 21) 50%, rgb(115, 115, 115) 80%, rgb(151, 151, 151));
     color: whitesmoke;
+    z-index: 6000;
 }
 
 #info-modal .modal-content {
