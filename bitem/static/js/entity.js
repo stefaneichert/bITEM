@@ -184,7 +184,7 @@ function setmap() {
     itemTemplate.innerHTML = `
     <div class="item-content">
       <div class="card">
-        <div class="card-body">
+        <div class="card-body map-body">
             <div id="map"></div>
         </div>
       </div>
@@ -226,7 +226,7 @@ function extractPlaceInfo(data) {
 
 function setMarkers(data) {
 
-    map = L.map('map', {minZoom: 2, maxZoom: 17, worldCopyJump: false, dragging: false});
+    map = L.map('map', {minZoom: 2, maxZoom: 17, worldCopyJump: false, dragging: false, scrollWheelZoom: false});
     let Markers = []
     L.control.layers(baseMaps).addTo(map);
     for (const place of data) {
@@ -665,7 +665,7 @@ function setEnts(current_data, class_) {
 
                 <div>
                 <div class="actor-box mt-3" title="">
-                ${icon}<span class="h5 me-4">${label}<a class="info-buttons line-fade line-fade" href="/view/${currentDatum.id}"><i class="bi bi-arrow-up-right-square"></i></a></span> ${img}
+                ${icon}<div class="h5 ent-box">${label}<a class="info-buttons line-fade line-fade" href="/view/${currentDatum.id}"><i class="bi bi-arrow-up-right-square"></i></a></div> ${img}
                 `
         if (typeof (currentDatum.involvement) !== 'undefined') {
             let invo = currentDatum.involvement
