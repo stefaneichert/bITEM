@@ -149,11 +149,12 @@ function enlarge3d(model, poster, name) {
                     shadow-intensity="1"
                     poster="${uploadPath}/${poster}"
                     loading="lazy"
-                    camera-controls
-                    auto-rotate
-                    auto-rotate-delay="0"
+                    camera-controls                    
             ></model-viewer>
             <button id="closebutton" type="button" class="btn btn-outline-light" title="Close Window" onclick="history.back()" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+            <form method="get" action="${uploadPath}/${model}">
+            <button id="downloadbutton" type="submit" class="btn btn-outline-light" title="Download Model" onclick="history.back()" aria-label="Download"><i class="bi bi-download"></i></button>
+            </form>
             <button id="infobutton" onclick="toggleInfo()" title="Copyright Information" type="button" class="btn btn-outline-light" aria-label="Info"><i class="bi bi-info-lg"></i></button>
         </div>
         <div class="modal-footer d-none" id="info-footer">

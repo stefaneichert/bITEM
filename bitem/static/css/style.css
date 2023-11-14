@@ -255,6 +255,12 @@ body {
     padding: 0;
 }
 
+#downloadbutton {
+    position: absolute;
+    right: 7rem;
+    bottom: 1rem;
+}
+
 #infobutton {
     position: absolute;
     right: 4rem;
