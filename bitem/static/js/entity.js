@@ -275,6 +275,8 @@ function setMarkers(data) {
     map.fitBounds(bounds, {
         padding: [150, 150]
     })
+    map.setZoom(11)
+    
 
 }
 
@@ -775,10 +777,10 @@ function returnImage(height, id) {
     let filetype = '.' + id.split('.')[1]
     console.log(filetype)
     if (imageExtensions.includes(filetype)) {
-    let path = iiifUrl + id + '/full/,' + height + '/0/default.jpg'
-    let img = `<img src="${path}" loading="eager">`
-    return img
-        }
+        let path = iiifUrl + id + '/full/,' + height + '/0/default.jpg'
+        let img = `<img src="${path}" loading="eager">`
+        return img
+    }
     return ''
 }
 
