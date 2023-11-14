@@ -133,7 +133,7 @@ def makeItemTable():
     """
 
     g.cursor.execute(sql)
-    #g.cursor.execute('select 208718 AS ids')
+    g.cursor.execute('select 196159 AS ids')
 
     ids = g.cursor.fetchall()
 

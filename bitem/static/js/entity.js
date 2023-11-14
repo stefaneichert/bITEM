@@ -772,8 +772,13 @@ function setEnts(current_data, class_) {
 }
 
 function returnImage(height, id) {
+    let filetype = '.' + id.split('.')[1]
+    console.log(filetype)
+    if (imageExtensions.includes(filetype)) {
     let path = iiifUrl + id + '/full/,' + height + '/0/default.jpg'
     let img = `<img src="${path}" loading="eager">`
     return img
+        }
+    return ''
 }
 

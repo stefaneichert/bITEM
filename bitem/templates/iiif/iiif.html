@@ -3,9 +3,12 @@
 
 <script src="/static/vendor/node_modules/mirador/dist/mirador.min.js"></script>
 <link rel="stylesheet" href="/static/css/iiif.css"/>
-
+<div id="loading-indicator"><div class="spinner-grow text-light" role="status">
+        <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
+    </div></div>
 <main>
 <div id="my-mirador"/>
+
 </main>
 <script>img_manifest = "{{img_manifest|safe}}"</script>
 <script src="/static/js/iiif.js"></script>

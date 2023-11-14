@@ -29,3 +29,17 @@ var mirador = Mirador.viewer({
         enabled: false,
     }
 });
+
+let loadingIndicator = document.getElementById('loading-indicator');
+// Assuming you have an image element inside the viewer
+const imageElement = document.querySelector('.mirador-image-tools');
+
+// Attach an event listener for the 'manifestDataUpdated' event
+mirador.store.subscribe(() => {
+    const { manifests } = mirador.store.getState();
+
+    // Check if there are manifests (images) loaded
+    if (manifests && Object.keys(manifests).length > 0) {
+        loadingIndicator.style.display = 'none';
+    }
+});

@@ -39,6 +39,7 @@ VIEW_CLASSES = {
 }
 
 MEDIA_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg', '.glb', '.webp']
+IMAGE_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg']
 
 # Paths
 JPG_FOLDER_PATH = '/static/images/jpgs'
