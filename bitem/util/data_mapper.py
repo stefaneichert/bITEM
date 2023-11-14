@@ -126,13 +126,14 @@ def makeItemTable():
     sql = """
             SELECT ids
                FROM bitem.get_entities(
-                       --ARRAY ['artifact'],
+                       --ARRAY ['group', 'person'],
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
                    )
     """
 
     g.cursor.execute(sql)
+    #g.cursor.execute('select 196087 AS ids')
 
     ids = g.cursor.fetchall()
 

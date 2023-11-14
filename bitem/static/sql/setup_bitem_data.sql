@@ -1,3 +1,4 @@
+DROP schema IF EXISTS bitem CASCADE;
 CREATE schema IF NOT EXISTS bitem;
 
 -- get all ids of certain classes from one case study resp. a root case study
@@ -825,7 +826,12 @@ BEGIN
         UNION ALL
         -- subevent connection ids
         SELECT DISTINCT (SELECT x.name FROM model.entity x WHERE x.id = l1.range_id) AS origin,
-                        l1.range_id                                                  AS origin_id,
+                        CASE
+                            WHEN (SELECT x.openatlas_class_name FROM model.entity x WHERE x.id = l1.range_id) =
+                                 'object_location' THEN (SELECT x.id
+                                                         FROM model.entity x
+                                                         WHERE x.id = l1.domain_id AND l1.property_code = 'P53')
+                            ELSE l1.range_id END                                        origin_id,
                         e.openatlas_class_name,
                         e.name,
                         e.description,
@@ -846,6 +852,7 @@ BEGIN
           AND current_id NOT IN (l2.domain_id, l2.range_id)
           AND l1.range_id != e.id
         UNION ALL
+        -- actors and artifacts indirect connections
         SELECT DISTINCT e2.name                                         AS origin,
                         e2.id                                           AS origin_id,
                         e3.openatlas_class_name,
@@ -871,9 +878,38 @@ BEGIN
           AND e3.id != e.id
           AND l1.property_code IN ('P11', 'P12', 'P14', 'P25')
           AND e3.openatlas_class_name IN ('person', 'group', 'artifact', 'place', 'object_location')
-          AND l1.range_id != e.id;
+        UNION ALL
+        -- actors and artifacts indirect to places
+        SELECT DISTINCT qevent.name                                             AS origin,
+                        qevent.id                                               AS origin_id,
+                        qactor.openatlas_class_name,
+                        qactor.name,
+                        qactor.description,
+                        (LEAST(qactor.begin_from, qactor.begin_to)::DATE)::TEXT AS mainfirst,
+                        (GREATEST(qactor.end_from, qactor.end_to)::DATE)::TEXT  AS mainlast,
+                        qactor.id,
+                        p.code,
+                        CASE
+                            WHEN qeventact.range_id = qactor.id AND p.name_inverse IS NOT NULL THEN p.name_inverse
+                            ELSE p.name
+                            END                                                    property
+        FROM (SELECT *
+              FROM model.entity e1
+              WHERE e1.id IN (SELECT domain_id
+                           FROM model.link li1
+                           WHERE li1.property_code IN ('P7', 'P31', 'P26', 'P27', 'P24')
+                             AND li1.range_id = (SELECT range_id FROM model.link li WHERE li.domain_id = current_id
+                                                                                AND li.property_code = 'P53'))) qevent
+                JOIN model.link qeventact ON qevent.id IN (qeventact.domain_id, qeventact.range_id)
+                  JOIN model.entity qactor ON qactor.id IN (qeventact.domain_id, qeventact.range_id)
+                  JOIN model.property p ON qeventact.property_code = p.code
+              WHERE qactor.openatlas_class_name IN ('group', 'person', 'artifact', 'place')
+                AND qeventact.property_code IN ('P11', 'P14', 'P22', 'P23', 'P25', 'P24', 'P108', 'P31');
 END;
 $$;
+
+
+
 
 
 DROP FUNCTION IF EXISTS bitem.get_connections(current_id INT) CASCADE;
