@@ -273,10 +273,12 @@ function setMarkers(data) {
     map.addLayer(Clmarkers);
 
     map.fitBounds(bounds, {
-        padding: [150, 150]
+        //padding: [25, 25]
     })
-    map.setZoom(11)
-    
+    const currentZoom = map.getZoom()
+    console.log(currentZoom)
+    if (currentZoom > 11) map.setZoom(11)
+
 
 }
 
