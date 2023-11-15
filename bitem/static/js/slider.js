@@ -15,16 +15,13 @@ function prepareTimeData() {
         if (node.start) eventdates.push(node.start)
         if (node.end) eventdates.push(node.end)
     }
-    console.log(eventdates)
     const properdates = eventdates.map(dateString => new Date(dateString));
     properdates.sort((a, b) => a - b);
-    console.log(properdates)
 
      const dates = properdates.map(dateString => new Date(dateString).toISOString().substring(0, 10),);
     const finaldates = new Set(dates);
     let begin = finaldates[0]
     let end = finaldates[dates.length - 1]
-    console.log(begin + ' - ' + end)
     let i = 0
     times = []
     for (const date of finaldates) {
@@ -32,8 +29,6 @@ function prepareTimeData() {
         i += 1
     }
 
-    console.log(times)
-    console.log(times.length)
     if (times.length > 2) {timethere = true; document.getElementById('timeslider').classList.remove('d-none')}
     document.getElementById('fromInput').value = makeLocalDate(times[0])
     document.getElementById('fromSlider').min = 0
@@ -99,13 +94,8 @@ function controlToSlider(fromSlider, toSlider, toInput) {
 }
 
 function getDateArray() {
-    console.log(fromSlider.value + ' - ' + toSlider.value)
     const firstDate = new Date(times[fromSlider.value]);
     const lastDate = new Date(times[toSlider.value])
-
-    console.log(firstDate)
-    console.log(lastDate)
-
     const allItems = grid.getItems()
     const filteredItems = allItems.filter(item => {
         const element = item.getElement();
@@ -120,10 +110,6 @@ function getDateArray() {
         const endIsEarlierOrSame = end <= lastDate;
         if (beginIsLaterOrSame && endIsEarlierOrSame) {
             return true
-            console.log('data-begin is later or the same as the first entry in the array, and data-end is earlier or the same as the last entry in the array.');
-            console.log(start)
-            console.log(end)
-            console.log(element.getAttribute('data-name'))
         }
 
 

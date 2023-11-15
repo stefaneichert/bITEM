@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-15 12:18+0100\n"
+"POT-Creation-Date: 2023-11-15 15:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,6 +79,14 @@ msgstr ""
 
 #: bitem/templates/layout.html:124
 msgid "indirect connection(s)"
+msgstr ""
+
+#: bitem/templates/layout.html:125
+msgid "Location of"
+msgstr ""
+
+#: bitem/templates/layout.html:126
+msgid "center of"
 msgstr ""
 
 #: bitem/templates/submenu.html:3

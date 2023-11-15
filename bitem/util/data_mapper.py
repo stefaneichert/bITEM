@@ -140,7 +140,7 @@ FROM (SELECT g.location_id,
              g.place_id,
              g.place_name,
              jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb ||
-    jsonb_build_object('geomtype', geomtype)) AS geom
+    jsonb_build_object('geomtype', geomtype) || jsonb_build_object('name', name) || jsonb_build_object('description', description)) AS geom
       FROM (SELECT g.entity_id AS location_id,
                    l.domain_id AS place_id,
                    e.name      AS place_name,
@@ -158,7 +158,9 @@ FROM (SELECT g.location_id,
                        WHEN g.geom_point IS NOT NULL THEN (g.geom_point)
                        WHEN g.geom_linestring IS NOT NULL THEN (g.geom_linestring)
                        WHEN g.geom_polygon IS NOT NULL THEN (g.geom_polygon)
-                       END     AS geom
+                       END     AS geom,
+                   g.description,
+                   g.name
             FROM model.gis g
                      JOIN model.link l ON g.entity_id = l.range_id
                      JOIN model.entity e ON e.id = l.domain_id
@@ -180,10 +182,12 @@ FROM (SELECT g.location_id,
                        WHEN g.geom_linestring IS NOT NULL THEN 'derived_point'
                        WHEN g.geom_polygon IS NOT NULL THEN 'derived_point'
                        END     AS geomtype,
-                CASE
+                   CASE
                        WHEN g.geom_linestring IS NOT NULL THEN (st_pointonsurface(g.geom_linestring))
                        WHEN g.geom_polygon IS NOT NULL THEN (st_pointonsurface(g.geom_polygon))
-                       END     AS geom
+                       END     AS geom,
+                   g.description,
+                   g.name
             FROM model.gis g
                      JOIN model.link l ON g.entity_id = l.range_id
                      JOIN model.entity e ON e.id = l.domain_id

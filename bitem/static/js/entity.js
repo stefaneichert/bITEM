@@ -197,13 +197,12 @@ function setmap() {
 function extractPlaceInfo(data) {
     const connections = data.connections;
 
-    const placeInfo = [];
+    let placeInfo = [];
 
     for (const connection of connections) {
         if (connection.class === 'place') {
             const nodes = connection.nodes;
             nodes.forEach((node) =>  {
-                console.log(node)
                 if (typeof (node.spatialinfo) !== 'undefined') {
                     const spatialEnts = node.spatialinfo.geometry.geometries
                     for (const geom of spatialEnts) {
@@ -213,9 +212,12 @@ function extractPlaceInfo(data) {
                         'type': node.spatialinfo.properties.type,
                         'link': node.involvement,
                         'coordinates': geom.coordinates,
-                        'geometryType': geom.type
+                        'geometryType': geom.type,
+                        'name': geom.name,
+                        'description': geom.description,
+                        'geometryClass': geom.geomtype
                     }
-                    if (geom.geomtype === 'direct_geom')placeInfo.push(current_geom)
+                    placeInfo.push(current_geom)
                     }
                 }
             })
@@ -233,14 +235,25 @@ function setMarkers(data) {
         let links = '';
         if (typeof (place) !== 'undefined' && place.geometryType === 'Point') {
             const [latitude, longitude] = place.coordinates;
-            const label = 'Location of ' + getLabelTranslation(place);
+            const label = languageTranslations._locationof + ' ' + getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
             for (const invo of place.link) {
                 const currentlink = getTypeTranslation(invo.origin);
                 links += '<i>' + getTypeTranslation(invo.property) + ':     </i>' + currentlink + '<br>'
             }
 
-            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>${links}`;
+            let desc = ''
+            if (place.name || place.description) {
+                desc = '<br>'
+                if (place.geometryClass === 'derived_point') desc += languageTranslations._centerpointof + ' '
+                if (place.name) desc += place.name
+                if (place.name && place.description) desc += ': ' + place.description
+                if (!place.name && place.description) desc += place.description
+                desc += '<br>'
+            }
+            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>
+                                            ${desc}
+                                           <br>${links}`;
             const circleMarker = L.circleMarker([longitude, latitude], CircleStyle)
                 .bindPopup(popupContent);
             Markers.push(circleMarker)
@@ -248,13 +261,25 @@ function setMarkers(data) {
             Clmarkers.addLayer(ClMarker)
         }
         if (typeof (place) !== 'undefined' && place.geometryType === 'Polygon') {
-            const label = 'Location of ' + getLabelTranslation(place);
+            const label = languageTranslations._locationof + ' ' + getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
             for (const invo of place.link) {
                 const currentlink = getTypeTranslation(invo.origin);
                 links += '<i>' + getTypeTranslation(invo.property) + ':     </i>' + currentlink + '<br>'
             }
-            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>${links}`;
+
+            let desc = ''
+            if (place.name || place.description) {
+                desc = '<br>'
+                if (place.geometryClass === 'derived_point') desc += languageTranslations._centerpointof + ' '
+                if (place.name) desc += place.name
+                if (place.name && place.description) desc += ': ' + place.description
+                if (!place.name && place.description) desc += place.description
+                desc += '<br>'
+            }
+            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>
+                                            ${desc}
+                                           <br>${links}`;
             const polygon = {
                 "type": "Feature",
                 "geometry": {
@@ -269,16 +294,14 @@ function setMarkers(data) {
         }
     }
     OpenStreetMap.addTo(map)
-    console.log(Markers)
     const Features = new L.FeatureGroup(Markers)
     let bounds = Features.getBounds()
     map.addLayer(Clmarkers);
 
     map.fitBounds(bounds, {
-        //padding: [25, 25]
+        padding: [50, 50]
     })
     const currentZoom = map.getZoom()
-    console.log(currentZoom)
     if (currentZoom > 11) map.setZoom(11)
 
 
@@ -779,7 +802,6 @@ function setEnts(current_data, class_) {
 
 function returnImage(height, id) {
     let filetype = '.' + id.split('.')[1]
-    console.log(filetype)
     if (imageExtensions.includes(filetype)) {
         let path = iiifUrl + id + '/full/,' + height + '/0/default.jpg'
         let img = `<img src="${path}" loading="eager">`

@@ -51,7 +51,6 @@ radios.forEach(radio => {
     radio.addEventListener('change', function () {
         const checkedRadios = Array.from(radios).filter(radio => radio.checked);
         const checkedRadioValues = radio.value;
-        console.log('Checked radios: ' + checkedRadioValues);
         andOr = checkedRadioValues
         applycheckFilters(checkedValues, andOr)
 
@@ -64,8 +63,6 @@ checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function () {
         const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
         checkedValues = checkedCheckboxes.map(checkbox => checkbox.value);
-        console.log('Checked values: ' + checkedValues.join(' ' + andOr + ' '));
-        console.log(checkedValues)
         applycheckFilters(checkedValues, andOr)
     });
 });
@@ -95,13 +92,9 @@ itemTotalField.innerText = data.length;
 switchList.addEventListener('click', listSwitch);
 
 function applycheckFilters(selectedValues, andOr) {
-    console.log('filter start')
     let items = grid.getItems();
     if (timethere) items = getDateArray()
-    console.log(items)
     searchValue = searchField.value.toLowerCase();
-    console.log(andOr)
-    console.log(selectedValues)
 
     // Filter items based on selected values
     let filteredItems = items.filter((item) => {
@@ -112,8 +105,6 @@ function applycheckFilters(selectedValues, andOr) {
 
         // Check if dataMedia, dataTypeId, and dataCaseStudies match any selected value
         if (andOr === "and") {
-            console.log('now its and')
-
             return selectedValues.every((value) => {
 
                 if (value === '_model') {
@@ -131,7 +122,6 @@ function applycheckFilters(selectedValues, andOr) {
                             there = true
                         }
                     })
-                    console.log(there)
                     return (there)
 
                 } else if (value.startsWith('_tp_')) {
@@ -142,7 +132,6 @@ function applycheckFilters(selectedValues, andOr) {
                 return false;
             });
         } else if (andOr === "or") {
-            console.log('now its or')
             return selectedValues.some((value) => {
                 if (dataMedia.includes(value) || value === dataTypeId) {
 
@@ -153,7 +142,6 @@ function applycheckFilters(selectedValues, andOr) {
                     const csValue = dataCaseStudies.split(',');
                     csValue.forEach(element => {
                         if (value === "_cs_" + element) {
-                            console.log(value)
                             there = true
                         }
                     })
@@ -195,7 +183,6 @@ function applyFilters() {
         const isSearchMatch = !searchValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchValue) > -1;
         return isSearchMatch;
     });
-    console.log(filteredItems)
     grid.filter(item => filteredItems.includes(item));
     updateCount(filteredItems);
     if (mapThere) setMarkers()
