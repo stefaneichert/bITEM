@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-09 16:17+0100\n"
+"POT-Creation-Date: 2023-11-15 12:18+0100\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:52 bitem/templates/layout.html:119
+#: bitem/templates/layout.html:52 bitem/templates/layout.html:120
 msgid "items"
 msgstr "Objekte"
 
@@ -30,7 +30,7 @@ msgstr "Personen"
 msgid "groups"
 msgstr "Gruppen"
 
-#: bitem/templates/layout.html:61 bitem/templates/layout.html:117
+#: bitem/templates/layout.html:61 bitem/templates/layout.html:118
 msgid "events"
 msgstr "Ereignisse"
 
@@ -42,41 +42,45 @@ msgstr "Orte"
 msgid "about"
 msgstr "Über"
 
-#: bitem/templates/layout.html:112
+#: bitem/templates/layout.html:113
 msgid "until"
 msgstr "bis"
 
-#: bitem/templates/layout.html:113
+#: bitem/templates/layout.html:114
 msgid "as"
 msgstr "als"
 
-#: bitem/templates/layout.html:114
+#: bitem/templates/layout.html:115
 msgid "actors"
 msgstr "Akteure"
 
-#: bitem/templates/layout.html:115
+#: bitem/templates/layout.html:116
 msgid "actor(s)"
 msgstr "Akteur(e)"
 
-#: bitem/templates/layout.html:116
+#: bitem/templates/layout.html:117
 msgid "open image in viewer"
 msgstr "Bild in Viewer öffnen"
 
-#: bitem/templates/layout.html:118
+#: bitem/templates/layout.html:119
 msgid "event(s)"
 msgstr "Ereignis(se)"
 
-#: bitem/templates/layout.html:120
+#: bitem/templates/layout.html:121
 msgid "item(s)"
 msgstr "Objekt(e)"
 
-#: bitem/templates/layout.html:121
+#: bitem/templates/layout.html:122
 msgid "current"
 msgstr "aktuelles"
 
-#: bitem/templates/layout.html:122 bitem/views/iiif.py:99
+#: bitem/templates/layout.html:123 bitem/views/iiif.py:99
 msgid "source(s)"
 msgstr "Quelle(n)"
+
+#: bitem/templates/layout.html:124
+msgid "indirect connection(s)"
+msgstr "indirekte Verbindung(en)"
 
 #: bitem/templates/submenu.html:3
 msgid "of"
@@ -128,44 +132,44 @@ msgstr "Ansicht wechseln"
 msgid "filter by"
 msgstr "filtern nach"
 
-#: bitem/templates/submenu.html:52
+#: bitem/templates/submenu.html:50
 msgid "and"
 msgstr "und"
 
-#: bitem/templates/submenu.html:57
+#: bitem/templates/submenu.html:55
 msgid "or"
 msgstr "oder"
 
-#: bitem/templates/submenu.html:66
+#: bitem/templates/submenu.html:68
 msgid "media"
 msgstr "Medien"
 
-#: bitem/templates/submenu.html:76
+#: bitem/templates/submenu.html:78
 msgid "3D models"
 msgstr "3D Modelle"
 
-#: bitem/templates/submenu.html:85
+#: bitem/templates/submenu.html:87
 msgid "images"
 msgstr "Bilder"
 
-#: bitem/templates/submenu.html:94
+#: bitem/templates/submenu.html:96
 msgid "no media"
 msgstr "keine Medien"
 
-#: bitem/templates/submenu.html:130
+#: bitem/templates/submenu.html:132
 msgid "types"
 msgstr "Typus"
 
-#: bitem/templates/submenu.html:160
+#: bitem/templates/submenu.html:162
 msgid "Timespan"
 msgstr "Zeitspanne"
 
-#: bitem/templates/submenu.html:164
+#: bitem/templates/submenu.html:166
 msgid "include entries without date"
 msgstr "inklusive Einträge ohne Datum"
 
-#: bitem/templates/entity/entity.html:18 bitem/templates/item/view.html:21
-#: bitem/templates/submenu.html:175
+#: bitem/templates/entity/entity.html:18 bitem/templates/iiif/iiif.html:7
+#: bitem/templates/item/view.html:21 bitem/templates/submenu.html:177
 msgid "loading"
 msgstr "lade"
 

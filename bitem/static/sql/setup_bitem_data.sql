@@ -290,7 +290,8 @@ SELECT location_id,
 FROM (SELECT g.location_id,
              g.place_id,
              g.place_name,
-             jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb) AS geom
+             jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb ||
+    jsonb_build_object('geomtype', geomtype)) AS geom
       FROM (SELECT g.entity_id AS location_id,
                    l.domain_id AS place_id,
                    e.name      AS place_name,
@@ -299,6 +300,11 @@ FROM (SELECT g.location_id,
                        WHEN g.geom_linestring IS NOT NULL THEN 'linestring'
                        WHEN g.geom_polygon IS NOT NULL THEN 'polygon'
                        END     AS type,
+                   CASE
+                       WHEN g.geom_point IS NOT NULL THEN 'direct_geom'
+                       WHEN g.geom_linestring IS NOT NULL THEN 'direct_geom'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'direct_geom'
+                       END     AS geomtype,
                    CASE
                        WHEN g.geom_point IS NOT NULL THEN (g.geom_point)
                        WHEN g.geom_linestring IS NOT NULL THEN (g.geom_linestring)
@@ -322,6 +328,10 @@ FROM (SELECT g.location_id,
                        WHEN g.geom_polygon IS NOT NULL THEN 'point'
                        END     AS type,
                    CASE
+                       WHEN g.geom_linestring IS NOT NULL THEN 'derived_point'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'derived_point'
+                       END     AS geomtype,
+                CASE
                        WHEN g.geom_linestring IS NOT NULL THEN (st_pointonsurface(g.geom_linestring))
                        WHEN g.geom_polygon IS NOT NULL THEN (st_pointonsurface(g.geom_polygon))
                        END     AS geom
@@ -356,7 +366,12 @@ $$
 DECLARE
     location        INT;
     return_geometry JSONB;
+    direct_location JSONB;
 BEGIN
+    SELECT geometry FROM bitem.geometries WHERE place_id = current_id INTO direct_location;
+    CASE WHEN direct_location IS NOT NULL THEN RETURN direct_location;
+    ELSE
+
     WITH RECURSIVE
         parent_tree AS (SELECT p.parent_id, p.child_id, ARRAY [p.child_id] AS path, 1 AS depth
                         FROM (SELECT domain_id as parent_id, range_id as child_id
@@ -387,6 +402,7 @@ BEGIN
     WHERE g.location_id = location
       AND location IN (SELECT location_id FROM bitem.geometries);
     RETURN return_geometry;
+    END CASE;
 END;
 $$;
 
@@ -989,7 +1005,7 @@ CREATE VIEW bitem.allitems AS
 SELECT e.id,
        bitem.all_caseids(196063, e.id)                       AS casestudies,
        CASE
-           WHEN e.openatlas_class_name IN ('artifact') THEN JSONB_AGG(bitem.get_place_coords(e.id))::jsonb
+           WHEN e.openatlas_class_name IN ('artifact', 'feature', 'stratigraphic_unit') THEN JSONB_AGG(bitem.get_place_coords(e.id))::jsonb
            WHEN e.openatlas_class_name IN ('place') THEN (SELECT JSONB_AGG(bitem.get_coords(range_id))
                                                           FROM model.link
                                                           WHERE domain_id = e.id

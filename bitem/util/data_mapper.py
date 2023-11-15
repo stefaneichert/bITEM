@@ -119,6 +119,93 @@ def getMainImage(entity_id, images):
     result = g.cursor.fetchone()
     return result.filename if result else images[0]
 
+def makeGeomTable():
+
+    sql = """
+DROP TABLE IF EXISTS bitem.geometries;
+CREATE TABLE bitem.geometries AS
+SELECT location_id,
+       place_id,
+       place_name,
+       jsonb_build_object(
+               'type', 'Feature',
+               'properties', jsonb_build_object('id', location_id, 'place_id', place_id, '_label',
+                                                (SELECT bitem.translation(place_id, '{197086, 197088}')), 'type',
+                                                bitem.get_maintype(place_id)),
+               'geometry', jsonb_build_object(
+                       'type', 'GeometryCollection',
+                       'geometries', geom
+                           )) AS geometry
+FROM (SELECT g.location_id,
+             g.place_id,
+             g.place_name,
+             jsonb_agg(ST_AsGeoJSON(ST_ForcePolygonCCW(g.geom))::jsonb ||
+    jsonb_build_object('geomtype', geomtype)) AS geom
+      FROM (SELECT g.entity_id AS location_id,
+                   l.domain_id AS place_id,
+                   e.name      AS place_name,
+                   CASE
+                       WHEN g.geom_point IS NOT NULL THEN 'point'
+                       WHEN g.geom_linestring IS NOT NULL THEN 'linestring'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'polygon'
+                       END     AS type,
+                   CASE
+                       WHEN g.geom_point IS NOT NULL THEN 'direct_geom'
+                       WHEN g.geom_linestring IS NOT NULL THEN 'direct_geom'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'direct_geom'
+                       END     AS geomtype,                                
+                   CASE
+                       WHEN g.geom_point IS NOT NULL THEN (g.geom_point)
+                       WHEN g.geom_linestring IS NOT NULL THEN (g.geom_linestring)
+                       WHEN g.geom_polygon IS NOT NULL THEN (g.geom_polygon)
+                       END     AS geom
+            FROM model.gis g
+                     JOIN model.link l ON g.entity_id = l.range_id
+                     JOIN model.entity e ON e.id = l.domain_id
+            WHERE l.property_code = 'P53'
+              AND l.domain_id IN (SELECT ids
+                                  FROM bitem.get_entities(
+                                          ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                                          196063
+                                       ))
+            UNION ALL
+            SELECT g.entity_id AS location_id,
+                   l.domain_id AS place_id,
+                   e.name      AS place_name,
+                   CASE
+                       WHEN g.geom_linestring IS NOT NULL THEN 'point'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'point'
+                       END     AS type,
+                   CASE
+                       WHEN g.geom_linestring IS NOT NULL THEN 'derived_point'
+                       WHEN g.geom_polygon IS NOT NULL THEN 'derived_point'
+                       END     AS geomtype,
+                CASE
+                       WHEN g.geom_linestring IS NOT NULL THEN (st_pointonsurface(g.geom_linestring))
+                       WHEN g.geom_polygon IS NOT NULL THEN (st_pointonsurface(g.geom_polygon))
+                       END     AS geom
+            FROM model.gis g
+                     JOIN model.link l ON g.entity_id = l.range_id
+                     JOIN model.entity e ON e.id = l.domain_id
+
+            WHERE g.geom_linestring IS NOT NULL AND l.property_code = 'P53' AND l.domain_id IN (SELECT ids
+                                                                                                FROM bitem.get_entities(
+                                                                                                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                                                                                                        196063
+                                                                                                     ))
+               OR g.geom_polygon IS NOT NULL AND l.property_code = 'P53' AND l.domain_id IN (SELECT ids
+                                                                                             FROM bitem.get_entities(
+                                                                                                     ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                                                                                                     196063
+                                                                                                  ))) g
+      GROUP BY g.location_id, g.place_id, g.place_name) b
+WHERE place_id IN (SELECT ids
+                   FROM bitem.get_entities(
+                           ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                           196063
+                        ));   
+    """
+    g.cursor.execute(sql)
 
 def makeItemTable():
     import json
@@ -133,7 +220,7 @@ def makeItemTable():
     """
 
     g.cursor.execute(sql)
-    #g.cursor.execute('select 196159 AS ids')
+    #g.cursor.execute('select 208871 AS ids')
 
     ids = g.cursor.fetchall()
 

@@ -202,30 +202,30 @@ function extractPlaceInfo(data) {
     for (const connection of connections) {
         if (connection.class === 'place') {
             const nodes = connection.nodes;
-            const placeDataArray = nodes.map(node => {
+            nodes.forEach((node) =>  {
+                console.log(node)
                 if (typeof (node.spatialinfo) !== 'undefined') {
-                    return {
-                        id: node.spatialinfo.properties.place_id,
-                        _label: node.spatialinfo.properties._label,
-                        type: node.spatialinfo.properties.type,
-                        link: node.involvement,
-                        coordinates: node.spatialinfo.geometry.geometries[0].coordinates,
-                        geometryType: node.spatialinfo.geometry.geometries[0].type
+                    const spatialEnts = node.spatialinfo.geometry.geometries
+                    for (const geom of spatialEnts) {
+                    let current_geom = {
+                        'id': node.spatialinfo.properties.place_id,
+                        '_label': node.spatialinfo.properties._label,
+                        'type': node.spatialinfo.properties.type,
+                        'link': node.involvement,
+                        'coordinates': geom.coordinates,
+                        'geometryType': geom.type
+                    }
+                    if (geom.geomtype === 'direct_geom')placeInfo.push(current_geom)
                     }
                 }
-            });
-            for (const place of placeDataArray) {
-                if (typeof (place) !== 'undefined') placeInfo.push(place)
-            }
+            })
         }
     }
-
     return placeInfo
 
 }
 
 function setMarkers(data) {
-
     map = L.map('map', {minZoom: 2, maxZoom: 17, worldCopyJump: false, dragging: false, scrollWheelZoom: false});
     let Markers = []
     L.control.layers(baseMaps).addTo(map);
@@ -233,7 +233,7 @@ function setMarkers(data) {
         let links = '';
         if (typeof (place) !== 'undefined' && place.geometryType === 'Point') {
             const [latitude, longitude] = place.coordinates;
-            const label = getLabelTranslation(place);
+            const label = 'Location of ' + getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
             for (const invo of place.link) {
                 const currentlink = getTypeTranslation(invo.origin);
@@ -248,7 +248,7 @@ function setMarkers(data) {
             Clmarkers.addLayer(ClMarker)
         }
         if (typeof (place) !== 'undefined' && place.geometryType === 'Polygon') {
-            const label = getLabelTranslation(place);
+            const label = 'Location of ' + getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
             for (const invo of place.link) {
                 const currentlink = getTypeTranslation(invo.origin);
@@ -265,9 +265,11 @@ function setMarkers(data) {
 
             const drawpolygon = L.geoJSON(polygon).bindPopup(popupContent);
             Markers.push(drawpolygon)
+            drawpolygon.addTo(map)
         }
     }
     OpenStreetMap.addTo(map)
+    console.log(Markers)
     const Features = new L.FeatureGroup(Markers)
     let bounds = Features.getBounds()
     map.addLayer(Clmarkers);
@@ -749,7 +751,7 @@ function setEnts(current_data, class_) {
                     '  <div class="accordion-item">\n' +
                     '    <h2 class="accordion-header">\n' +
                     '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-' + class_ + '_' + iteration + '" aria-expanded="false" aria-controls="flush-collapseOne">\n' +
-                    '        ' + subevents + ' indirect connections\n' +
+                    '        ' + subevents + ' ' + languageTranslations._indirect +'' +
                     '      </button>\n' +
                     '    </h2>\n' +
                     '    <div id="flush-collapse-' + class_ + '_' + iteration + '" class="accordion-collapse collapse" data-bs-parent="#subInfoAccordion-' + class_ + '_' + iteration + '">\n' +
