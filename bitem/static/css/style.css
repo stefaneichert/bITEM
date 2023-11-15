@@ -10,13 +10,15 @@ body {
     flex-wrap: wrap;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
 }
 
 .footerimg {
     padding: 1rem;
     max-height: 100px;
     width: auto;
+    margin-right: 1rem;
+    margin-left: 1rem
 }
 
 .indexmodel {
