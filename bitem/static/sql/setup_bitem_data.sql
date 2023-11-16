@@ -414,12 +414,20 @@ AS
 $$
 DECLARE
     return_geometry JSONB;
+    class_ TEXT;
+    loc_id INT;
 BEGIN
+    SELECT openatlas_class_name from model.entity WHERE id = current_id INTO class_;
+    CASE WHEN class_ = 'place' THEN SELECT (SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53') INTO loc_id;
+    ELSE SELECT current_id INTO loc_id;
+    END CASE;
+
+
     SELECT geometry
     INTO return_geometry
     FROM bitem.geometries g
-    WHERE g.location_id = current_id
-      AND current_id IN (SELECT location_id FROM bitem.geometries);
+    WHERE g.location_id = loc_id
+      AND loc_id IN (SELECT location_id FROM bitem.geometries);
 
     RETURN return_geometry;
 END;
@@ -941,7 +949,7 @@ AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT a.openatlas_class_name          as class_,
+        SELECT a.class_,
                jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
                        'id', a.id,
                        'spatialinfo', bitem.get_coords(a.id),
@@ -955,7 +963,7 @@ BEGIN
                        'involvement', NULLIF(a.connections, '[{}]')
                                            ))) as connections
         FROM (SELECT DISTINCT c.*, i.image
-              FROM (SELECT DISTINCT openatlas_class_name,
+              FROM (SELECT DISTINCT REPLACE(openatlas_class_name, 'object_location', 'place') as class_,
                                     name,
                                     id,
                                     NULLIF(description, '') AS      description,
@@ -984,8 +992,8 @@ BEGIN
                                                                                    NULLIF(bitem.get_involvement(origin_id, id, property_code), '[{}]')
                                                                 ))) connections
                     FROM bitem.get_connection_ids(current_id)
-                    GROUP BY openatlas_class_name, description, name, id, mainfirst, mainlast
-                    ORDER BY openatlas_class_name, id) c
+                    GROUP BY class_, description, name, id, mainfirst, mainlast
+                    ORDER BY class_, id) c
                        LEFT JOIN (SELECT l.range_id as ent_id, JSONB_AGG(fi.filename) as image
                                   FROM model.entity f
                                            JOIN model.link l ON f.id = l.domain_id
@@ -996,7 +1004,7 @@ BEGIN
                                     AND f.openatlas_class_name = 'file'
                                   GROUP BY l.range_id) i
                                  ON i.ent_id = c.id) a
-        GROUP BY openatlas_class_name;
+        GROUP BY a.class_;
 END;
 $$;
 
