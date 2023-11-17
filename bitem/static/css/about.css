@@ -10,7 +10,7 @@ body {
     color: white;
 }
 
-.fadein-container-about{
+.fadein-container-about {
     padding-left: 2rem;
     padding-right: 2rem;
 }
@@ -20,5 +20,49 @@ body {
     text-decoration: none;
 }
 
+.about-card {
+    background: rgb(245 245 245 / 15%);
+    color: whitesmoke;
+    --bs-card-border-width: none;
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 15%);
+    transition: background 1s, box-shadow 1s;
+}
+
+@media screen and (min-width: 501px) {
+
+    .about-card {
+        padding: 2rem;
+        margin: 2rem;
+    }
+
+    .about-container {
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+    }
+
+}
+
+
+.about-card:hover {
+    background: rgb(245 245 245 / 26%);
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 26%);
+    transition: background 1s, box-shadow 1s;
+}
+
+
+@media screen and (max-width: 500px) {
+
+    .about-container {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .about-card {
+        padding: 1rem;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+}
 
 
