@@ -417,9 +417,17 @@ DECLARE
     class_ TEXT;
     loc_id INT;
 BEGIN
-    SELECT openatlas_class_name from model.entity WHERE id = current_id INTO class_;
-    CASE WHEN class_ = 'place' THEN SELECT (SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53') INTO loc_id;
-    ELSE SELECT current_id INTO loc_id;
+    SELECT openatlas_class_name FROM model.entity WHERE id = current_id INTO class_;
+    CASE WHEN class_ IN ('place', 'feature', 'stratigraphic_unit', 'artifact') THEN
+        SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53' INTO loc_id;
+        CASE WHEN loc_id NOT IN (SELECT location_id FROM bitem.geometries) THEN
+              RETURN bitem.get_place_coords(current_id);
+        ELSE
+            NULL;
+        END CASE;
+
+    ELSE
+        SELECT current_id INTO loc_id;
     END CASE;
 
 
@@ -429,45 +437,13 @@ BEGIN
     WHERE g.location_id = loc_id
       AND loc_id IN (SELECT location_id FROM bitem.geometries);
 
+    CASE WHEN return_geometry IS NULL AND class_ = 'object_location' THEN
+        SELECT domain_id FROM model.link WHERE range_id = loc_id AND property_code = 'P53' INTO loc_id;
+        RETURN bitem.get_place_coords(loc_id); ELSE NULL; END CASE;
+
     RETURN return_geometry;
 END;
 $$;
-
-
-DROP FUNCTION IF EXISTS bitem.all_cases CASCADE;
-CREATE OR REPLACE FUNCTION bitem.all_cases(root INT)
-    RETURNS TABLE
-            (
-                ids INT
-            )
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    cases JSONB;
-BEGIN
-    RETURN QUERY
-        WITH RECURSIVE subcategories AS (SELECT domain_id, range_id
-                                         FROM model.link
-                                         WHERE range_id = root
-                                           AND property_code = 'P127'
-
-                                         UNION ALL
-
-                                         SELECT l.domain_id, l.range_id
-                                         FROM model.link l
-                                                  INNER JOIN subcategories s ON s.domain_id = l.range_id
-                                         WHERE l.property_code = 'P127')
-        SELECT DISTINCT caseids AS ids
-        FROM (SELECT domain_id AS caseIDS
-              FROM subcategories
-              UNION ALL
-              SELECT range_id AS caseIDS
-              FROM subcategories) a;
-
-END;
-$$;
-
 
 DROP FUNCTION IF EXISTS bitem.get_imgs CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_imgs(current_id INT)
@@ -595,52 +571,6 @@ END;
 $$;
 
 
-DROP FUNCTION IF EXISTS bitem.get_toplocationid CASCADE;
-CREATE OR REPLACE FUNCTION bitem.get_toplocationid(current_id INT)
-    RETURNS INT
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    return_id INT;
-    class     TEXT;
-BEGIN
-    SELECT openatlas_class_name FROM model.entity WHERE id = current_id INTO class;
-    CASE
-        WHEN class = 'place'
-            THEN SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53' INTO return_id;
-        ELSE WITH RECURSIVE
-                 parent_tree AS (SELECT p.parent_id, p.child_id, ARRAY [p.child_id] AS path, 1 AS depth
-                                 FROM (SELECT domain_id as parent_id, range_id as child_id
-                                       FROM model.link
-                                       WHERE property_code = 'P46') p
-                                 WHERE p.child_id = current_id
-                                 UNION ALL
-                                 SELECT t.parent_id, t.child_id, pt.path || ARRAY [t.child_id], pt.depth + 1
-                                 FROM (SELECT domain_id as parent_id, range_id as child_id
-                                       FROM model.link
-                                       WHERE property_code = 'P46') t
-                                          JOIN parent_tree pt ON pt.parent_id = t.child_id),
-                 root_nodes AS (SELECT DISTINCT ON (path[1]) path[1] AS child_id, parent_id AS top_level
-                                FROM parent_tree
-                                WHERE parent_id IS NOT NULL
-                                ORDER BY path[1], depth DESC)
-             SELECT l.range_id
-             INTO return_id
-             FROM root_nodes r
-                      JOIN parent_tree a ON a.child_id = r.child_id
-                      JOIN model.link l ON r.top_level = l.domain_id
-             WHERE l.domain_id = r.top_level
-               AND l.property_code = 'P53';
-        END CASE;
-    CASE
-        WHEN return_id ISNULL THEN SELECT 0 into return_id;
-        ELSE SELECT return_id INTO return_id;
-        END CASE;
-    RETURN return_id;
-END;
-$$;
-
 DROP FUNCTION IF EXISTS bitem.all_subtypes CASCADE;
 CREATE OR REPLACE FUNCTION bitem.all_subtypes(root INT)
     RETURNS JSONB
@@ -708,58 +638,6 @@ BEGIN
 END ;
 $$;
 
-DROP FUNCTION IF EXISTS bitem.get_eventplaces CASCADE;
-CREATE OR REPLACE FUNCTION bitem.get_eventplaces(current_id INT)
-    RETURNS TABLE
-            (
-                id INT
-            )
-    LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    RETURN QUERY
-        SELECT DISTINCT g.location_id
-        FROM model.link l
-                 JOIN model.entity e ON e.id IN (l.domain_id, l.range_id)
-                 JOIN model.link l2 ON e.id IN (l2.domain_id, l2.range_id)
-                 JOIN bitem.geometries g
-                      ON g.location_id IN (l2.range_id, l2.domain_id)
-        WHERE l.property_code IN ('P11', 'P14', 'P22', 'P23', 'P25', 'P31', 'P108', 'P24')
-          AND e.openatlas_class_name IN
-              ('acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification')
-          AND current_id IN (l.domain_id, l.range_id)
-          AND l2.property_code IN ('P7', 'P26', 'P27');
-
-END;
-$$;
-
-DROP FUNCTION IF EXISTS bitem.get_subevent_ents CASCADE;
-CREATE OR REPLACE FUNCTION bitem.get_subevent_ents(current_id INT)
-    RETURNS TABLE
-            (
-                id INT
-            )
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    class TEXT;
-BEGIN
-    SELECT openatlas_class_name FROM model.entity a WHERE a.id = current_id INTO class;
-
-    IF class IN ('acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification') THEN
-        RETURN QUERY
-            SELECT DISTINCT e.id
-            FROM model.entity e
-                     JOIN model.link l ON e.id IN (l.domain_id, l.range_id)
-            WHERE current_id IN (l.domain_id, l.range_id)
-              AND e.id != current_id;
-    ELSE
-        RETURN;
-    END IF;
-END;
-$$;
 
 DROP FUNCTION IF EXISTS bitem.get_involvement CASCADE;
 CREATE FUNCTION bitem.get_involvement(origin INT, target_id INT, current_property_code TEXT)
@@ -848,7 +726,7 @@ BEGIN
         WHERE current_id IN (l.domain_id, l.range_id)
           AND e.id != current_id
         UNION ALL
-        -- subevent connection ids
+        -- subevent, place connection ids
         SELECT DISTINCT (SELECT x.name FROM model.entity x WHERE x.id = l1.range_id) AS origin,
                         CASE
                             WHEN (SELECT x.openatlas_class_name FROM model.entity x WHERE x.id = l1.range_id) =
@@ -897,7 +775,7 @@ BEGIN
                  JOIN model.property p ON l2.property_code = p.code
                  JOIN model.entity e3 ON e3.id IN (l2.domain_id, l2.range_id)
         WHERE e.id = current_id
-          AND e.openatlas_class_name IN ('person', 'group')
+          AND e.openatlas_class_name IN ('person', 'group', 'artifact')
           AND e2.id != e.id
           AND e3.id != e.id
           AND l1.property_code IN ('P11', 'P12', 'P14', 'P25')
@@ -931,9 +809,6 @@ BEGIN
                 AND qeventact.property_code IN ('P11', 'P14', 'P22', 'P23', 'P25', 'P24', 'P108', 'P31');
 END;
 $$;
-
-
-
 
 
 DROP FUNCTION IF EXISTS bitem.get_connections(current_id INT) CASCADE;
