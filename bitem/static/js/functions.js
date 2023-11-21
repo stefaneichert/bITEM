@@ -112,7 +112,7 @@ function makeLocalDate(dateString) {
     let result = {'datestring': dateString, 'localdate': ''}
     let addition = ''
     let addValue = 0
-    if (typeof (dateString) === 'undefined') return '?'
+    if (typeof (dateString) === 'undefined') {result.localdate = '?'; return result}
 
     if (dateString[0] === '-') {
         addition = ' BC'
