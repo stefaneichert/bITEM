@@ -80,6 +80,8 @@ resetBtn.addEventListener('click', function () {
     checkboxes.forEach(function (checkbox) {
         checkbox.checked = false;
     });
+    datecheck.checked = true;
+    dateless = true;
     prepareTimeData()
     fillSlider(fromSlider, toSlider, '#C6C6C6', '#0d6efd', toSlider);
     applycheckFilters([], andOr)
