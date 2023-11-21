@@ -1,4 +1,5 @@
 const Clmarkers = L.markerClusterGroup({singleMarkerMode: true, maxClusterRadius: 1})
+let mapindex = 0;
 
 window.onload = function () {
     if (typeof (grid2) != 'undefined') grid2.refreshItems().layout();
@@ -41,6 +42,35 @@ const grid = new Muuri('.grid', {
     },
 });
 
+function moveToFirst(itemId) {
+    // Find the item by data-id
+    const itemToMove = grid.getItems().find(item => item.getElement().dataset.id === itemId);
+    console.log(itemToMove)
+    console.log(itemToMove.index)
+
+    if (itemToMove) {
+        // Get the first item in the grid
+        if (mapindex === 0) {
+            grid.move(itemToMove, 0);
+            mapindex = itemToMove._id - 2;
+        } else {
+            grid.move(itemToMove, mapindex);
+            mapindex = 0;
+        }
+        toggleDragging();
+        toggleMouseWheelZoom();
+    }
+}
+
+function toggleDragging() {
+    map.dragging.enabled() ? map.dragging.disable() : map.dragging.enable();
+}
+
+// Function to enable or disable mouse wheel zoom
+function toggleMouseWheelZoom() {
+    map.scrollWheelZoom.enabled() ? map.scrollWheelZoom.disable() : map.scrollWheelZoom.enable();
+}
+
 createMuuriElems(data)
 
 function createMuuriElems(obj) {
@@ -67,8 +97,21 @@ function createMuuriElems(obj) {
     if (placeInfo.length > 0) {
         grid.add(setmap())
         setMarkers(placeInfo)
+        const enlargeBtn = document.getElementById('map-large')
+        const currentMapCont = document.getElementById('map-large-cont')
+        const currentMap = document.getElementById('map')
+        enlargeBtn.addEventListener('click', event => {
+            setTimeout(() => {
+                currentMap.classList.toggle('large-map')
+                currentMapCont.classList.toggle('large-map')
+                map.invalidateSize()
+                moveToFirst('map')
+                grid.refreshItems().layout();
+            }, 400);
+        })
 
     }
+
 
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
@@ -181,11 +224,16 @@ function setGallery(images) {
 function setmap() {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    itemTemplate.dataset.id = 'map'
     itemTemplate.innerHTML = `
     <div class="item-content">
-      <div class="card">
+      <div class="card" id="map-large-cont">
         <div class="card-body map-body">
-            <div id="map"></div>
+            <div id="map">
+            <div class="btn-panel text-end ">
+            <a href="#"  id="map-large" class="img-btn line-fade-m"><i class="bi bi-arrows-fullscreen"></i></a>
+            </div>
+        </div>
         </div>
       </div>
     </div>
@@ -223,7 +271,7 @@ function extractPlaceInfo(data) {
             })
         }
     }
-    
+
     const uniqueObjectsMap = new Map();
 
     placeInfo.forEach(obj => {
