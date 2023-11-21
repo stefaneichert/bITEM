@@ -315,9 +315,9 @@ function addMuuri(data) {
           ${images ? '<div class="list-col-8">' : ''}
             <h5 class="card-title">${getLabelTranslation(data)}</h5>
             ${data.type ? `<p class="card-title">${getTypeTranslation(data.type)}</p>` : ''}
-            ${both ? `<p class="card-title">${makeLocalDate(data.start)} - ${makeLocalDate(data.end)}</p>` : ''}
-            ${first ? `<p class="card-title">${makeLocalDate(data.start)}</p>` : ''}
-            ${last ? `<p class="card-title">${makeLocalDate(data.end)}</p>` : ''}
+            ${both ? `<p class="card-title">${makeLocalDate(data.start).localdate} - ${makeLocalDate(data.end).localdate}</p>` : ''}
+            ${first ? `<p class="card-title">${makeLocalDate(data.start).localdate}</p>` : ''}
+            ${last ? `<p class="card-title">${makeLocalDate(data.end).localdate}</p>` : ''}
             ${modelthere ? `<div class="model-content">
                     <model-viewer
                             class="model-3d"

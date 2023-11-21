@@ -238,20 +238,25 @@ function setMarkers(data) {
             const label = languageTranslations._locationof + ' ' + getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
             for (const invo of place.link) {
+                let propname = ''
+                if (invo.property.name === 'is composed of') {
+                    propname = languageTranslations._iscomposedof
+                } else {propname = getTypeTranslation(invo.property)}
                 const currentlink = getTypeTranslation(invo.origin);
-                links += '<i>' + getTypeTranslation(invo.property) + ':     </i>' + currentlink + '<br>'
+                links += '<i>' + propname + ':     </i>' + currentlink + '<br>'
             }
 
             let desc = ''
+            let center = ''
+            if (place.geometryClass === 'derived_point') center = languageTranslations._centerpointof
             if (place.name || place.description) {
                 desc = '<br>'
-                if (place.geometryClass === 'derived_point') desc += languageTranslations._centerpointof + ' '
                 if (place.name) desc += place.name
                 if (place.name && place.description) desc += ': ' + place.description
                 if (!place.name && place.description) desc += place.description
                 desc += '<br>'
             }
-            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>
+            const popupContent = `${center} <a href="/view/${place.id}">${label}</a> (${type})<br>
                                             ${desc}
                                            <br>${links}`;
             const circleMarker = L.circleMarker([longitude, latitude], CircleStyle)
@@ -264,20 +269,23 @@ function setMarkers(data) {
             const label = languageTranslations._locationof + ' ' + getLabelTranslation(place);
             const type = getTypeTranslation(place.type);
             for (const invo of place.link) {
+                let propname = ''
+                if (invo.property.name === 'is composed of') {
+                    propname = languageTranslations._iscomposedof
+                } else {propname = getTypeTranslation(invo.property)}
                 const currentlink = getTypeTranslation(invo.origin);
-                links += '<i>' + getTypeTranslation(invo.property) + ':     </i>' + currentlink + '<br>'
+                links += '<i>' + propname + ':     </i>' + currentlink + '<br>'
             }
 
             let desc = ''
             if (place.name || place.description) {
                 desc = '<br>'
-                if (place.geometryClass === 'derived_point') desc += languageTranslations._centerpointof + ' '
                 if (place.name) desc += place.name
                 if (place.name && place.description) desc += ': ' + place.description
                 if (!place.name && place.description) desc += place.description
                 desc += '<br>'
             }
-            const popupContent = `<a href="/view/${place.id}">${label}</a> (${type})<br>
+            const popupContent = `${languageTranslations._areaof} <a href="/view/${place.id}">${label}</a> (${type})<br>
                                             ${desc}
                                            <br>${links}`;
             const polygon = {
@@ -337,9 +345,9 @@ function addMuuri(data) {
             <h3 class="card-title">${getLabelTranslation(data)}</h3>
             ${getAliases(data)}
             ${data.type ? `<p class="card-title">${getTypeTranslation(data.type)}</p>` : ''}
-            ${both ? `<p class="card-title">${makeLocalDate(data.start)} - ${makeLocalDate(data.end)}</p>` : ''}
-            ${first ? `<p class="card-title">${makeLocalDate(data.start)}</p>` : ''}
-            ${last ? `<p class="card-title">${makeLocalDate(data.end)}</p>` : ''}
+            ${both ? `<p class="card-title">${makeLocalDate(data.start).localdate} - ${makeLocalDate(data.end).localdate}</p>` : ''}
+            ${first ? `<p class="card-title">${makeLocalDate(data.start).localdate}</p>` : ''}
+            ${last ? `<p class="card-title">${makeLocalDate(data.end).localdate}</p>` : ''}
             <p class="card-text mt-2">${getLanguage(data.content)}</p>
             ${getTypes(data)}
             ${getMatchingNodes(refSys, data)}
@@ -551,7 +559,7 @@ function setEvents(current_data) {
     <div class="item-content tl-cont">
       <div class="card">
         <div class="card-body">
-        <h5 id="timeline-header" class="card-title">${current_data.length + ' ' + languageTranslations._event + ' (' + makeLocalDate(eventdates[0]) + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]) + ')'}</h5>
+        <h5 id="timeline-header" class="card-title">${current_data.length + ' ' + languageTranslations._event + ' (' + makeLocalDate(eventdates[0]).localdate + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]) + ')'}</h5>
             <div class="timeline" data-visible-items="5" data-mode="horizontal" data-move-items="3" data-force-vertical-mode="900">
                 <div class="timeline__wrap">
                     <div class="timeline__items">
@@ -560,7 +568,8 @@ function setEvents(current_data) {
 
     for (const event of current_data) {
         const label = getLabelTranslation(event);
-        const type = getTypeTranslation(event.type);
+        let type = ''
+        if (event.type) type = getTypeTranslation(event.type);
         let titleString = ''
         let htmlClass = ''
         for (const invo of event.involvement) {
@@ -599,9 +608,9 @@ function setEvents(current_data) {
         
          <div class="timeline__item">
                 <div class="timeline__content ${htmlClass}" title="${titleString}">
-                    ${both ? `<span class="h6">${makeLocalDate(event.begin)} - ${makeLocalDate(event.end)}</span>` : ''}
-                    ${first ? `<span class="h6">${makeLocalDate(event.begin)}</span>` : ''}
-                    ${last ? `<span class="h6">${makeLocalDate(event.end)}</span>` : ''}    <br>
+                    ${both ? `<span class="h6">${makeLocalDate(event.begin)} - ${makeLocalDate(event.end).localdate}</span>` : ''}
+                    ${first ? `<span class="h6">${makeLocalDate(event.begin).localdate}</span>` : ''}
+                    ${last ? `<span class="h6">${makeLocalDate(event.end.localdate)}</span>` : ''}    <br>
                     ${label} (${type})<a class="info-buttons-d line-fade line-fade-d" href="/view/${event.id}"><i class="bi bi-arrow-up-right-square"></i></a>
                 </div>
             </div>
@@ -712,7 +721,7 @@ function setEnts(current_data, class_) {
 
 
                                 if (spec.invbegin !== undefined) {
-                                    propstring += makeLocalDate(spec.invbegin)
+                                    propstring += makeLocalDate(spec.invbegin).localdate
                                 }
 
                                 if (spec.invbegin !== undefined && spec.invend !== undefined) {
@@ -743,7 +752,7 @@ function setEnts(current_data, class_) {
 
 
                                 if (spec.invbegin !== undefined) {
-                                    current_spec += makeLocalDate(spec.invbegin)
+                                    current_spec += makeLocalDate(spec.invbegin).localdate
                                 }
 
                                 if (spec.invbegin !== undefined && spec.invend !== undefined) {
@@ -751,7 +760,7 @@ function setEnts(current_data, class_) {
                                 }
 
                                 if (spec.invend !== undefined) {
-                                    current_spec += languageTranslations._until + ' ' + makeLocalDate(spec.invend) + ' '
+                                    current_spec += languageTranslations._until + ' ' + makeLocalDate(spec.invend).localdate + ' '
                                 }
 
 

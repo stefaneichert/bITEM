@@ -108,21 +108,45 @@ function customSortInvolvement(a, b) {
 }
 
 function makeLocalDate(dateString) {
-    const date = new Date(dateString);
+
+    let result = {'datestring': dateString, 'localdate': ''}
+    let addition = ''
+    let addValue = 0
+    if (typeof (dateString) === 'undefined') return '?'
+
+    if (dateString[0] === '-') {
+        addition = ' BC'
+        addValue = 1
+    }
+
+    let parts = dateString.split('-');
+    let year = parseInt(parts[0 + addValue], 10);
+    let month = parseInt(parts[1 + addValue], 10) - 1; // months are zero-based
+    let day = parseInt(parts[2 + addValue], 10);
+    let date = new Date(year, month, day);
+
+
+    if (dateString.includes('-01-01') || isNaN(month)) {
+        result.localdate = year + addition
+        return result
+    }
 
 // Format the date based on the user's locale
 
     if (isValidDate(date)) {
         const formattedDate = new Intl.DateTimeFormat(language).format(date);
-        return formattedDate;
+        result.localdate = formattedDate + addition
+        return result;
     } else {
         return '?'
     }
 }
 
 function isValidDate(d) {
+
     return d instanceof Date && !isNaN(d);
 }
+
 
 function returnTranslation(key) {
     if (languageTranslations.hasOwnProperty(key)) {

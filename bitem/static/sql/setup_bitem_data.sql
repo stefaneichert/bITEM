@@ -1,6 +1,28 @@
 DROP schema IF EXISTS bitem CASCADE;
 CREATE schema IF NOT EXISTS bitem;
 
+CREATE OR REPLACE FUNCTION bitem.getdates(first TIMESTAMP WITHOUT TIME ZONE, last TIMESTAMP WITHOUT TIME ZONE, comment TEXT)
+    RETURNS TEXT
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_date TEXT;
+BEGIN
+    CASE
+        WHEN comment LIKE '-%' THEN
+            -- Use the comment as a negative year with leading zeros
+            SELECT TO_CHAR(comment::INTEGER, 'FM000000000') INTO return_date;
+        ELSE
+            -- Use the date logic
+            SELECT TO_CHAR(LEAST(first, last), 'FM00000YYYY-MM-DD') INTO return_date;
+        CASE WHEN EXTRACT(YEAR FROM (LEAST(first, last)::DATE)) < 1 THEN SELECT '-' || return_date INTO return_date; ELSE NULL; END CASE;
+    END CASE;
+
+    RETURN return_date;
+END;
+$$;
+
 -- get all ids of certain classes from one case study resp. a root case study
 DROP FUNCTION IF EXISTS bitem.get_entities CASCADE;
 CREATE OR REPLACE FUNCTION bitem.get_entities(classes TEXT[], root INT)
@@ -423,7 +445,7 @@ BEGIN
         CASE WHEN loc_id NOT IN (SELECT location_id FROM bitem.geometries) THEN
               RETURN bitem.get_place_coords(current_id);
         ELSE
-            NULL;
+            RETURN (SELECT geometry FROM bitem.geometries WHERE location_id = loc_id);
         END CASE;
 
     ELSE
@@ -437,9 +459,9 @@ BEGIN
     WHERE g.location_id = loc_id
       AND loc_id IN (SELECT location_id FROM bitem.geometries);
 
-    CASE WHEN return_geometry IS NULL AND class_ = 'object_location' THEN
-        SELECT domain_id FROM model.link WHERE range_id = loc_id AND property_code = 'P53' INTO loc_id;
-        RETURN bitem.get_place_coords(loc_id); ELSE NULL; END CASE;
+    --CASE WHEN return_geometry IS NULL AND class_ = 'object_location' THEN
+    --    SELECT domain_id FROM model.link WHERE range_id = loc_id AND property_code = 'P53' INTO loc_id;
+    --    RETURN bitem.get_place_coords(loc_id); ELSE NULL; END CASE;
 
     RETURN return_geometry;
 END;
@@ -651,8 +673,8 @@ DECLARE
 
 BEGIN
     SELECT jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
-            'invbegin', (LEAST(l.begin_from, l.begin_to)::DATE)::TEXT,
-            'invend', (GREATEST(l.end_from, l.end_to)::DATE)::TEXT,
+            'invbegin', bitem.getdates(l.begin_from, l.begin_to, l.begin_comment),
+            'invend', bitem.getdates(l.end_from, l.end_to, l.end_comment),
             'info', NULLIF(l.description, ''),
             'qualifier', (CASE
                               WHEN l.type_id IN (SELECT type_id FROM model.link WHERE property_code != 'OA7')
@@ -712,8 +734,8 @@ BEGIN
                         e.openatlas_class_name,
                         e.name,
                         e.description,
-                        (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT AS mainfirst,
-                        (GREATEST(e.end_from, e.end_to)::DATE)::TEXT  AS mainlast,
+                        bitem.getdates(e.begin_from, e.begin_to, e.begin_comment) AS mainfirst,
+                        bitem.getdates(e.end_from, e.end_to, e.end_comment) AS mainlast,
                         e.id,
                         p.code,
                         CASE
@@ -737,8 +759,8 @@ BEGIN
                         e.openatlas_class_name,
                         e.name,
                         e.description,
-                        (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT                AS mainfirst,
-                        (GREATEST(e.end_from, e.end_to)::DATE)::TEXT                 AS mainlast,
+                        bitem.getdates(e.begin_from, e.begin_to, e.begin_comment)                AS mainfirst,
+                        bitem.getdates(e.end_from, e.end_to, e.begin_comment)                 AS mainlast,
                         e.id,
                         p.code,
                         CASE
@@ -760,8 +782,8 @@ BEGIN
                         e3.openatlas_class_name,
                         e3.name,
                         e3.description,
-                        (LEAST(e3.begin_from, e3.begin_to)::DATE)::TEXT AS mainfirst,
-                        (GREATEST(e3.end_from, e3.end_to)::DATE)::TEXT  AS mainlast,
+                        bitem.getdates(e3.begin_from, e3.begin_to, e3.end_comment) AS mainfirst,
+                        bitem.getdates(e3.end_from, e3.end_to, e3.end_comment) AS mainlast,
                         e3.id,
                         p.code,
                         CASE
@@ -787,8 +809,8 @@ BEGIN
                         qactor.openatlas_class_name,
                         qactor.name,
                         qactor.description,
-                        (LEAST(qactor.begin_from, qactor.begin_to)::DATE)::TEXT AS mainfirst,
-                        (GREATEST(qactor.end_from, qactor.end_to)::DATE)::TEXT  AS mainlast,
+                        bitem.getdates(qactor.begin_from, qactor.begin_to, qactor.begin_comment) AS mainfirst,
+                        bitem.getdates(qactor.end_from, qactor.end_to, qactor.end_comment)  AS mainlast,
                         qactor.id,
                         p.code,
                         CASE
@@ -853,11 +875,11 @@ BEGIN
                                                                                    'origin_id',
                                                                                    origin_id,
                                                                                    'begin',
-                                                                                   (SELECT (LEAST(begin_from, begin_to)::DATE)::TEXT
+                                                                                   (SELECT (bitem.getdates(begin_from, begin_to, begin_comment))::TEXT
                                                                                     FROM model.entity
                                                                                     WHERE id = origin_id),
                                                                                    'end',
-                                                                                   (SELECT (LEAST(end_from, end_to)::DATE)::TEXT
+                                                                                   (SELECT (bitem.getdates(end_from, end_to, end_comment))
                                                                                     FROM model.entity
                                                                                     WHERE id = origin_id),
                                                                                    'root_type', bitem.translation(
@@ -888,11 +910,7 @@ CREATE VIEW bitem.allitems AS
 SELECT e.id,
        bitem.all_caseids(196063, e.id)                       AS casestudies,
        CASE
-           WHEN e.openatlas_class_name IN ('artifact', 'feature', 'stratigraphic_unit') THEN JSONB_AGG(bitem.get_place_coords(e.id))::jsonb
-           WHEN e.openatlas_class_name IN ('place') THEN (SELECT JSONB_AGG(bitem.get_coords(range_id))
-                                                          FROM model.link
-                                                          WHERE domain_id = e.id
-                                                            AND property_code = 'P53')
+           WHEN e.openatlas_class_name IN ('place', 'artifact', 'feature', 'stratigraphic_unit') THEN JSONB_AGG(bitem.get_coords(e.id))::jsonb
            WHEN e.openatlas_class_name IN
                 ('acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification')
                THEN (SELECT JSONB_AGG(bitem.get_coords(range_id))::jsonb
@@ -911,8 +929,8 @@ SELECT e.id,
        e.description,
        bitem.get_imgs(e.id)                                  AS images,
        bitem.get_three_d_models(e.id)                        AS models,
-       (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT         AS begin,
-       (GREATEST(e.end_from, e.end_to)::DATE)::TEXT          AS end,
+        bitem.getdates(e.begin_from, e.begin_to, e.begin_comment)         AS begin,
+        bitem.getdates(e.end_from, e.end_to, e.end_comment)          AS end,
        (SELECT jsonb_agg(jsonb_build_object('class',
                                             (CASE WHEN class_ = 'object_location' THEN 'place' ELSE class_ END),
                                             'nodes', connections)) c1
@@ -926,8 +944,8 @@ WHERE e.id IN (SELECT ids
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
                     ))
-GROUP BY e.id, e.name, e.openatlas_class_name, e.description, (LEAST(e.begin_from, e.begin_to)::DATE)::TEXT,
-         (GREATEST(e.end_from, e.end_to)::DATE)::TEXT;
+GROUP BY e.id, e.name, e.openatlas_class_name, e.description,  bitem.getdates(e.begin_from, e.begin_to, e.begin_comment),
+          bitem.getdates(e.end_from, e.end_to, e.end_comment);
 
 
 DROP TABLE IF EXISTS bitem.tbl_allitems;

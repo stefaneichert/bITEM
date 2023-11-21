@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-15 15:46+0100\n"
+"POT-Creation-Date: 2023-11-17 14:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,6 +87,14 @@ msgstr ""
 
 #: bitem/templates/layout.html:126
 msgid "center of"
+msgstr ""
+
+#: bitem/templates/layout.html:127
+msgid "contains"
+msgstr ""
+
+#: bitem/templates/layout.html:128
+msgid "area of"
 msgstr ""
 
 #: bitem/templates/submenu.html:3

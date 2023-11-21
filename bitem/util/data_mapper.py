@@ -224,7 +224,7 @@ def makeItemTable():
     """
 
     g.cursor.execute(sql)
-    #g.cursor.execute('select id AS ids from model.entity WHERE id in (196767)')
+    #g.cursor.execute('select id AS ids from model.entity WHERE id in (196069, 213189, 196952, 208459)')
 
     ids = g.cursor.fetchall()
 
