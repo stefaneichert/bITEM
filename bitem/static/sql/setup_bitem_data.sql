@@ -440,16 +440,23 @@ DECLARE
     loc_id INT;
 BEGIN
     SELECT openatlas_class_name FROM model.entity WHERE id = current_id INTO class_;
+    RAISE NOTICE '%', class_;
     CASE WHEN class_ IN ('place', 'feature', 'stratigraphic_unit', 'artifact') THEN
         SELECT range_id FROM model.link WHERE domain_id = current_id AND property_code = 'P53' INTO loc_id;
         CASE WHEN loc_id NOT IN (SELECT location_id FROM bitem.geometries) THEN
               RETURN bitem.get_place_coords(current_id);
         ELSE
-            RETURN (SELECT geometry FROM bitem.geometries WHERE location_id = loc_id);
         END CASE;
-
     ELSE
         SELECT current_id INTO loc_id;
+        SELECT geometry FROM bitem.geometries WHERE location_id = loc_id INTO return_geometry;
+            CASE WHEN class_ = 'object_location' AND return_geometry IS NULL THEN
+                SELECT domain_id FROM model.link WHERE range_id = current_id AND property_code = 'P53' INTO loc_id;
+                SELECT bitem.get_place_coords(loc_id) INTO return_geometry;
+                RETURN return_geometry;
+                ELSE NULL;
+                END CASE;
+
     END CASE;
 
 
@@ -800,7 +807,7 @@ BEGIN
           AND e.openatlas_class_name IN ('person', 'group', 'artifact')
           AND e2.id != e.id
           AND e3.id != e.id
-          AND l1.property_code IN ('P11', 'P12', 'P14', 'P25')
+          AND l1.property_code IN ('P11', 'P12', 'P14', 'P25', 'P24', 'P31', 'P108')
           AND e3.openatlas_class_name IN ('person', 'group', 'artifact', 'place', 'object_location')
         UNION ALL
         -- actors and artifacts indirect to places

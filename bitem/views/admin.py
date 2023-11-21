@@ -4,6 +4,6 @@ from bitem.util import iiiftools, data_mapper
 
 @app.route('/admin')
 def admin() -> str:
-    #iiiftools.makeFileList()
-    #data_mapper.makeGeomTable()
+    iiiftools.makeFileList()
+    data_mapper.makeGeomTable()
     data_mapper.makeItemTable()

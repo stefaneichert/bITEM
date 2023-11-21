@@ -202,28 +202,50 @@ function extractPlaceInfo(data) {
     for (const connection of connections) {
         if (connection.class === 'place') {
             const nodes = connection.nodes;
-            nodes.forEach((node) =>  {
+            nodes.forEach((node) => {
                 if (typeof (node.spatialinfo) !== 'undefined') {
                     const spatialEnts = node.spatialinfo.geometry.geometries
                     for (const geom of spatialEnts) {
-                    let current_geom = {
-                        'id': node.spatialinfo.properties.place_id,
-                        '_label': node.spatialinfo.properties._label,
-                        'type': node.spatialinfo.properties.type,
-                        'link': node.involvement,
-                        'coordinates': geom.coordinates,
-                        'geometryType': geom.type,
-                        'name': geom.name,
-                        'description': geom.description,
-                        'geometryClass': geom.geomtype
-                    }
-                    placeInfo.push(current_geom)
+                        let current_geom = {
+                            'id': node.spatialinfo.properties.place_id,
+                            '_label': node.spatialinfo.properties._label,
+                            'type': node.spatialinfo.properties.type,
+                            'link': node.involvement,
+                            'coordinates': geom.coordinates,
+                            'geometryType': geom.type,
+                            'name': geom.name,
+                            'description': geom.description,
+                            'geometryClass': geom.geomtype
+                        }
+                        placeInfo.push(current_geom)
                     }
                 }
             })
         }
     }
-    return placeInfo
+    
+    const uniqueObjectsMap = new Map();
+
+    placeInfo.forEach(obj => {
+        // Exclude the "link" property for comparison
+        const {link, ...objectWithoutLink} = obj;
+
+        // Convert the remaining properties to a string for use as a Map key
+        const key = JSON.stringify(objectWithoutLink);
+
+        // If the key doesn't exist in the Map, add it with the original object
+        if (!uniqueObjectsMap.has(key)) {
+            uniqueObjectsMap.set(key, obj);
+        } else {
+            // If the key already exists, merge the "link" properties
+            uniqueObjectsMap.get(key).link.push(...obj.link);
+        }
+    });
+
+// Convert the Map values back to an array
+    const mergedData = Array.from(uniqueObjectsMap.values());
+
+    return mergedData
 
 }
 
@@ -241,7 +263,9 @@ function setMarkers(data) {
                 let propname = ''
                 if (invo.property.name === 'is composed of') {
                     propname = languageTranslations._iscomposedof
-                } else {propname = getTypeTranslation(invo.property)}
+                } else {
+                    propname = getTypeTranslation(invo.property)
+                }
                 const currentlink = getTypeTranslation(invo.origin);
                 links += '<i>' + propname + ':     </i>' + currentlink + '<br>'
             }
@@ -272,7 +296,9 @@ function setMarkers(data) {
                 let propname = ''
                 if (invo.property.name === 'is composed of') {
                     propname = languageTranslations._iscomposedof
-                } else {propname = getTypeTranslation(invo.property)}
+                } else {
+                    propname = getTypeTranslation(invo.property)
+                }
                 const currentlink = getTypeTranslation(invo.origin);
                 links += '<i>' + propname + ':     </i>' + currentlink + '<br>'
             }
@@ -539,10 +565,23 @@ function setEvents(current_data) {
         current_data.push(main_node)
     }
 
+    current_data.forEach((node) => {
+        if (node.begin) node.sortField = node.begin
+        if (!node.begin && node.end) node.sortField = node.end
+    })
+
+
     current_data.sort((a, b) => {
-        const dateA = new Date(a.begin);
-        const dateB = new Date(b.begin);
-        return dateA - dateB;
+        const dateA = (a.sortField);
+        const dateB = (b.sortField);
+
+        if (dateA < dateB) {
+            return -1;
+        } else if (dateA > dateB) {
+            return 1;
+        } else {
+            return 0;
+        }
     });
 
 
@@ -567,6 +606,7 @@ function setEvents(current_data) {
             `
 
     for (const event of current_data) {
+
         const label = getLabelTranslation(event);
         let type = ''
         if (event.type) type = getTypeTranslation(event.type);
@@ -610,7 +650,7 @@ function setEvents(current_data) {
                 <div class="timeline__content ${htmlClass}" title="${titleString}">
                     ${both ? `<span class="h6">${makeLocalDate(event.begin).localdate} - ${makeLocalDate(event.end).localdate}</span>` : ''}
                     ${first ? `<span class="h6">${makeLocalDate(event.begin).localdate}</span>` : ''}
-                    ${last ? `<span class="h6">${makeLocalDate(event.end.localdate)}</span>` : ''}    <br>
+                    ${last ? `<span class="h6">${makeLocalDate(event.end).localdate}</span>` : ''}    <br>
                     ${label} (${type})<a class="info-buttons-d line-fade line-fade-d" href="/view/${event.id}"><i class="bi bi-arrow-up-right-square"></i></a>
                 </div>
             </div>
@@ -645,15 +685,15 @@ function makeEnts(data, array) {
 
     for (const ent of allEnts) {
         ent.involvement.sort((a, b) => {
-            const dateA = new Date(a.begin);
-            const dateB = new Date(b.begin);
+            const dateA = (a.begin);
+            const dateB = (b.begin);
             return dateA - dateB;
         });
     }
 
     allEnts.sort((a, b) => {
-        const dateA = new Date(a.begin);
-        const dateB = new Date(b.begin);
+        const dateA = (a.begin);
+        const dateB = (b.begin);
         return dateA - dateB;
     });
 
@@ -783,7 +823,7 @@ function setEnts(current_data, class_) {
                     '  <div class="accordion-item">\n' +
                     '    <h2 class="accordion-header">\n' +
                     '      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-' + class_ + '_' + iteration + '" aria-expanded="false" aria-controls="flush-collapseOne">\n' +
-                    '        ' + subevents + ' ' + languageTranslations._indirect +'' +
+                    '        ' + subevents + ' ' + languageTranslations._indirect + '' +
                     '      </button>\n' +
                     '    </h2>\n' +
                     '    <div id="flush-collapse-' + class_ + '_' + iteration + '" class="accordion-collapse collapse" data-bs-parent="#subInfoAccordion-' + class_ + '_' + iteration + '">\n' +
