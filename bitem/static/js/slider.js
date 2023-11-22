@@ -11,22 +11,35 @@ datecheck.addEventListener('change', function () {
 function prepareTimeData() {
     //primary stringarray
     const eventdates = []
+    const negeventdates = []
     for (const node of data) {
-        if (node.start) eventdates.push(node.start)
-        if (node.end) eventdates.push(node.end)
+        if (node.start) {
+            if (node.start[0] !== '-') {
+                eventdates.push(node.start)
+            } else {
+                negeventdates.push(node.start)
+            }
+        }
+        if (node.end) {
+            if (node.end[0] !== '-') {
+                eventdates.push(node.end)
+            } else {
+                negeventdates.push(node.end)
+            }
+        }
     }
 
 // Define a custom function to extract the date part for sorting
     const extractDate = (dateStr) => {
         // Assuming the format is 'YYYY-MM-DD'
-        return dateStr.slice(-10);
+        return dateStr;
     };
 
 // Use a Set to keep track of unique dates while sorting
     const uniqueDates = new Set();
 
 // Sort and filter for unique dates
-    const finaldates = eventdates
+    const finalPosDates = eventdates
         .sort((a, b) => {
             const dateA = extractDate(a);
             const dateB = extractDate(b);
@@ -47,6 +60,34 @@ function prepareTimeData() {
             }
             return false;
         });
+
+
+    const uniqueNegDates = new Set();
+
+    const finalNegdates = negeventdates
+        .sort((a, b) => {
+            const dateA = extractDate(a);
+            const dateB = extractDate(b);
+
+            if (dateA < dateB) {
+                return 1;
+            } else if (dateA > dateB) {
+                return -1;
+            } else {
+                return 0;
+            }
+        })
+        .filter((dateStr) => {
+            const date = extractDate(dateStr);
+            if (!uniqueNegDates.has(date)) {
+                uniqueNegDates.add(date);
+                return true;
+            }
+            return false;
+        });
+
+
+    const finaldates = finalNegdates.concat(finalPosDates)
 
     let begin = finaldates[0]
     let end = finaldates[finaldates.length - 1]
@@ -72,29 +113,6 @@ function prepareTimeData() {
 }
 
 prepareTimeData()
-
-function controlFromInput(fromSlider, fromInput, toInput, controlSlider) {
-    const [from, to] = getParsed(fromInput, toInput);
-    fillSlider(fromInput, toInput, '#C6C6C6', '#0d6efd', controlSlider);
-    if (from > to) {
-        fromSlider.value = to;
-        fromInput.value = makeLocalDate(to).localdate;
-    } else {
-        fromSlider.value = from;
-    }
-}
-
-function controlToInput(toSlider, fromInput, toInput, controlSlider) {
-    const [from, to] = getParsed(fromInput, toInput);
-    fillSlider(fromInput, toInput, '#C6C6C6', '#0d6efd', controlSlider);
-    setToggleAccessible(toInput);
-    if (from <= to) {
-        toSlider.value = to;
-        toInput.value = makeLocalDate(to).localdate;
-    } else {
-        toInput.value = makeLocalDate(from).localdate;
-    }
-}
 
 function controlFromSlider(fromSlider, toSlider, fromInput) {
     const [from, to] = getParsed(fromSlider, toSlider);
@@ -130,12 +148,16 @@ function getDateArray() {
     const filteredItems = allItems.filter(item => {
         const element = item.getElement();
         let start = element.getAttribute('data-begin')
+
         let end = element.getAttribute('data-end')
         if (start === "null") start = end
         if (end === "null") end = start
         if (start === "null" && end === "null" && dateless) return true
-        const beginIsLaterOrSame = start >= firstDate;
-        const endIsEarlierOrSame = end <= lastDate;
+
+        let beginIsLaterOrSame = start >= firstDate;
+        if (start[0] === '-') beginIsLaterOrSame = start <= firstDate
+        let endIsEarlierOrSame = end <= lastDate;
+        if (end[0] === '-') beginIsLaterOrSame = end <= lastDate;
         if (beginIsLaterOrSame && endIsEarlierOrSame) {
             return true
         }

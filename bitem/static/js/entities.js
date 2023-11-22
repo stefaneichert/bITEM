@@ -95,7 +95,9 @@ switchList.addEventListener('click', listSwitch);
 
 function applycheckFilters(selectedValues, andOr) {
     let items = grid.getItems();
-    if (timethere) items = getDateArray()
+    if (timethere) {
+        items = getDateArray()
+    }
     searchValue = searchField.value.toLowerCase();
 
     // Filter items based on selected values
