@@ -396,6 +396,7 @@ function addMuuri(data) {
     let first = false;
     let last = false;
     let both = false;
+    let year = makeLocalDate(data.start).localdate === makeLocalDate(data.end).localdate
 
     if (data.start !== undefined) {
         first = true;
@@ -409,6 +410,12 @@ function addMuuri(data) {
         first = false;
         last = false;
         both = true;
+    }
+
+    if (year) {
+        first = true;
+        last = false;
+        both = false;
     }
 
     itemTemplate.innerHTML = `
@@ -674,6 +681,7 @@ function setEvents(current_data) {
         let first = false;
         let last = false;
         let both = false;
+        let year = makeLocalDate(event.begin).localdate === makeLocalDate(event.end).localdate
 
         if (event.begin !== undefined) {
             first = true;
@@ -687,6 +695,12 @@ function setEvents(current_data) {
             first = false;
             last = false;
             both = true;
+        }
+
+        if (year) {
+            first = true;
+            last = false;
+            both = false;
         }
 
         let links = '';
@@ -816,7 +830,7 @@ function setEnts(current_data, class_) {
                                 }
 
                                 if (spec.invend !== undefined) {
-                                    propstring += languageTranslations._until + ' ' + makeLocalDate(spec.invend)
+                                    propstring += languageTranslations._until + ' ' + makeLocalDate(spec.invend).localdate
                                 }
 
                                 propstring += ' '

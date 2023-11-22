@@ -265,6 +265,7 @@ function addMuuri(data) {
     let first = false;
     let last = false;
     let both = false;
+    let year = makeLocalDate(data.start).localdate === makeLocalDate(data.end).localdate
 
     if (data.start !== undefined) {
         first = true;
@@ -282,6 +283,12 @@ function addMuuri(data) {
         first = false;
         last = false;
         both = true;
+    }
+
+    if (year) {
+        first = true;
+        last = false;
+        both = false;
     }
 
     let images = Boolean(data.images);

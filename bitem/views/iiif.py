@@ -104,6 +104,7 @@ def getManifest(img_id):
     manifest = Manifest(
         id=request.base_url,
         label=image_name,
+        rights=license_uri,
         requiredStatement=KeyValueString(label="Attribution",
                                          value=attribution)
     )

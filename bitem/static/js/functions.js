@@ -126,7 +126,7 @@ function makeLocalDate(dateString) {
     let date = new Date(year, month, day);
 
 
-    if (dateString.includes('-01-01') || isNaN(month)) {
+    if (dateString.includes('-01-01') || dateString.includes('-12-31') || isNaN(month)) {
         result.localdate = year + addition
         return result
     }
