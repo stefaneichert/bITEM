@@ -312,7 +312,8 @@ function setMarkers(data) {
                     propname = getTypeTranslation(invo.property)
                 }
                 const currentlink = getTypeTranslation(invo.origin);
-                links += '<i>' + propname + ':     </i>' + currentlink + '<br>'
+                let link = '<i>' + propname + ':     </i>' + currentlink + '<br>'
+                if (!links.includes(link)) links += link
             }
 
             let desc = ''
@@ -345,7 +346,8 @@ function setMarkers(data) {
                     propname = getTypeTranslation(invo.property)
                 }
                 const currentlink = getTypeTranslation(invo.origin);
-                links += '<i>' + propname + ':     </i>' + currentlink + '<br>'
+                let link = '<i>' + propname + ':     </i>' + currentlink + '<br>'
+                if (!links.includes(link)) links += link
             }
 
             let desc = ''
