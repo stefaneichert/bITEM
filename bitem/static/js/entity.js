@@ -45,9 +45,6 @@ const grid = new Muuri('.grid', {
 function moveToFirst(itemId) {
     // Find the item by data-id
     const itemToMove = grid.getItems().find(item => item.getElement().dataset.id === itemId);
-    console.log(itemToMove)
-    console.log(itemToMove.index)
-
     if (itemToMove) {
         // Get the first item in the grid
         if (mapindex === 0) {
