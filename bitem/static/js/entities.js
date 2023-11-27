@@ -410,3 +410,24 @@ function exchangeListClass() {
 
 sortGrid('names')
 
+
+//toggle opacity on filterBar
+
+const myFilterBar = document.getElementById('filterBar');
+
+// Add event listener for mouseenter
+myFilterBar.addEventListener('mouseenter', function () {
+    // Add the 'highlight' class on mouseenter
+    this.classList.remove('offcanvas-opacity');
+});
+
+// Add event listener for mouseleave
+myFilterBar.addEventListener('mouseleave', function () {
+    // Remove the 'highlight' class on mouseleave
+    this.classList.add('offcanvas-opacity');
+});
+
+myFilterBar.addEventListener('shown.bs.offcanvas', function () {
+    this.classList.remove('offcanvas-opacity');
+    searchField.focus();
+})

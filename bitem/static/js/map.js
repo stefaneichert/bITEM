@@ -75,6 +75,43 @@ let sidebar = L.control.sidebar('sidebar', {
 
 map.addControl(sidebar);
 
+const backToTopButton = document.createElement('button');
+backToTopButton.type = 'button';
+backToTopButton.className = 'btn btn-secondary btn-floating btn-lg btn-back-to-top';
+backToTopButton.id = 'map-btn-back-to-top';
+backToTopButton.innerHTML = '<i class="bi bi-arrow-up"></i>';
+
+
+
+// Find the 'sidebar' element by its ID
+const sidebarElement = document.getElementById('sidebar');
+
+// Insert the new button as a sibling immediately after the 'sidebar' element
+sidebarElement.insertAdjacentElement('afterend', backToTopButton);
+
+function sidebarBackToTop() {
+    // Set the scroll position of the 'sidebar' element to the top
+    sidebarElement.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+function scrollFunction() {
+    // Check the scroll position of the 'sidebar' element
+    if (sidebarElement.scrollTop > 300) {
+        backToTopButton.style.opacity = '0.9';
+    } else {
+        backToTopButton.style.opacity = '0';
+    }
+}
+
+// Listen for the 'scroll' event on the 'sidebar' element
+sidebarElement.addEventListener('scroll', scrollFunction);
+
+// Listen for the button click to scroll back to the top
+backToTopButton.addEventListener('click', sidebarBackToTop);
+
 setTimeout(() => {
     sidebar.show();
     setTimeout(() => {
@@ -89,9 +126,6 @@ changeClasses('add', 'leaflet-left', 'map-both')
 
 
 //create/update Geojson
-
-
-
 
 
 let hovermarkers = L.layerGroup().addTo(map)
@@ -273,10 +307,4 @@ function setListWitdh() {
     }
     grid.refreshItems().layout()
 }
-
-
-
-
-
-
 
