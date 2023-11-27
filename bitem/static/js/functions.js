@@ -262,14 +262,10 @@ function calculateTimeBP(dateString) {
     let monthFromString = (parseInt(dateString.substring(stringLength + 1, stringLength + 3)))-1 || 0;
     let dayFromString = parseInt(dateString.substring(stringLength + 4, stringLength + 6)) || 0;
 
-    //console.log(yearFromString + ' ' + monthFromString + ' ' + dayFromString);
-
     const daysToZero = isNegative
         ? (yearFromString * 365.2525 - (monthFromString) * daysPerMonth) + dayFromString
         : yearFromString * 365.2525 + monthFromString * daysPerMonth + dayFromString;
 
-    //console.log('current days since zero: ' + daysSinceZero);
-    //console.log('date days to zero: ' + daysToZero);
     const daysBP = daysSinceZero - daysToZero;
     return daysBP
 }

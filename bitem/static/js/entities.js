@@ -14,6 +14,9 @@ let grid = new Muuri('.grid', {
         fillGaps: true,
     },
     sortData: {
+        id: function (item, element) {
+            return element.getAttribute('data-id');
+        },
         types: function (item, element) {
             return element.getAttribute('data-type').toUpperCase();
         },
@@ -30,7 +33,10 @@ let grid = new Muuri('.grid', {
             if (isNaN(value)) value = -9999999;
             return value;
         },
-    },
+        casestudies: function (item, element) {
+            return element.getAttribute('data-casestudies').toUpperCase();
+        }
+    }
 });
 
 const countField = document.getElementById("item-count");
