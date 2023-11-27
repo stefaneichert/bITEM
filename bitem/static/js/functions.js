@@ -112,7 +112,10 @@ function makeLocalDate(dateString) {
     let result = {'datestring': dateString, 'localdate': ''}
     let addition = ''
     let addValue = 0
-    if (typeof (dateString) === 'undefined') {result.localdate = '?'; return result}
+    if (typeof (dateString) === 'undefined') {
+        result.localdate = '?';
+        return result
+    }
 
     if (dateString[0] === '-') {
         addition = ' BC'
@@ -238,8 +241,38 @@ function enlarge3d(model, poster, name) {
         });
 }
 
-// Immutable hash state identifiers.
+function calculateTimeBP(dateString) {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const currentDay = today.getDate();
 
+    const daysPerMonth = 365.2525 / 12;
+    const daysSinceZero = currentYear * 365.2525 + currentMonth * daysPerMonth + currentDay;
+
+    let isNegative = false;
+    let stringLength = 9;
+
+    if (dateString[0] === '-') {
+        stringLength += 1;
+        isNegative = true;
+    }
+
+    let yearFromString = parseInt(dateString.substring(0, stringLength)) || 0;
+    let monthFromString = (parseInt(dateString.substring(stringLength + 1, stringLength + 3)))-1 || 0;
+    let dayFromString = parseInt(dateString.substring(stringLength + 4, stringLength + 6)) || 0;
+
+    //console.log(yearFromString + ' ' + monthFromString + ' ' + dayFromString);
+
+    const daysToZero = isNegative
+        ? (yearFromString * 365.2525 - (monthFromString) * daysPerMonth) + dayFromString
+        : yearFromString * 365.2525 + monthFromString * daysPerMonth + dayFromString;
+
+    //console.log('current days since zero: ' + daysSinceZero);
+    //console.log('date days to zero: ' + daysToZero);
+    const daysBP = daysSinceZero - daysToZero;
+    return daysBP
+}
 
 function toggleInfo() {
     const infoFooter = document.getElementById('info-footer')
@@ -250,4 +283,73 @@ async function getImageExt(id) {
     const response = await fetch("/iiif/" + id + ".json");
     const message = await response.json();
     return (message)
+}
+
+function prepareTimeDataSet(data) {
+    //primary stringarray
+    const eventdates = []
+    const negeventdates = []
+    for (const node of data) {
+        if (node.start) {
+            if (node.start[0] !== '-') {
+                eventdates.push(node.start)
+            } else {
+                negeventdates.push(node.start)
+            }
+        }
+        if (node.end) {
+            if (node.end[0] !== '-') {
+                eventdates.push(node.end)
+            } else {
+                negeventdates.push(node.end)
+            }
+        }
+    }
+
+// Use a Set to keep track of unique dates while sorting
+    const uniqueDates = new Set();
+
+// Sort and filter for unique dates
+    const finalPosDates = eventdates
+        .sort((a, b) => {
+            if (a < b) {
+                return -1;
+            } else if (a > b) {
+                return 1;
+            } else {
+                return 0;
+            }
+        })
+        .filter((dateStr) => {
+            if (!uniqueDates.has(dateStr)) {
+                uniqueDates.add(dateStr);
+                return true;
+            }
+            return false;
+        });
+
+
+    const uniqueNegDates = new Set();
+
+    const finalNegdates = negeventdates
+        .sort((a, b) => {
+            if (a < b) {
+                return 1;
+            } else if (a > b) {
+                return -1;
+            } else {
+                return 0;
+            }
+        })
+        .filter((dateStr) => {
+            if (!uniqueNegDates.has(dateStr)) {
+                uniqueNegDates.add(dateStr);
+                return true;
+            }
+            return false;
+        });
+
+
+    const finaldates = finalNegdates.concat(finalPosDates)
+    return finaldates
 }

@@ -396,7 +396,9 @@ function addMuuri(data) {
     let first = false;
     let last = false;
     let both = false;
-    let year = makeLocalDate(data.start).localdate === makeLocalDate(data.end).localdate
+    const startDate = makeLocalDate(data.start).localdate;
+    const endDate = makeLocalDate(data.end).localdate;
+    const year = startDate !== '?' && endDate !== '?' && startDate === endDate;
 
     if (data.start !== undefined) {
         first = true;
@@ -681,7 +683,10 @@ function setEvents(current_data) {
         let first = false;
         let last = false;
         let both = false;
-        let year = makeLocalDate(event.begin).localdate === makeLocalDate(event.end).localdate
+
+        const startDate = makeLocalDate(data.start).localdate;
+        const endDate = makeLocalDate(data.end).localdate;
+        const year = startDate !== '?' && endDate !== '?' && startDate === endDate;
 
         if (event.begin !== undefined) {
             first = true;

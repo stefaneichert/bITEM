@@ -14,9 +14,6 @@ let grid = new Muuri('.grid', {
         fillGaps: true,
     },
     sortData: {
-        id: function (item, element) {
-            return element.getAttribute('data-id');
-        },
         types: function (item, element) {
             return element.getAttribute('data-type').toUpperCase();
         },
@@ -24,13 +21,14 @@ let grid = new Muuri('.grid', {
             return element.getAttribute('data-name').toUpperCase();
         },
         begin: function (item, element) {
-            return element.getAttribute('data-begin').toUpperCase();
+            let value = parseInt(element.getAttribute('data-sortbegin'));
+            if (isNaN(value)) value = -9999999;
+            return value;
         },
         end: function (item, element) {
-            return element.getAttribute('data-end').toUpperCase();
-        },
-        casestudies: function (item, element) {
-            return element.getAttribute('data-casestudies').toUpperCase();
+            let value = parseInt(element.getAttribute('data-sortend'));
+            if (isNaN(value)) value = -9999999;
+            return value;
         },
     },
 });
@@ -82,7 +80,7 @@ resetBtn.addEventListener('click', function () {
     });
     datecheck.checked = true;
     dateless = true;
-    prepareTimeData()
+    prepareTimeData(data)
     fillSlider(fromSlider, toSlider, '#C6C6C6', '#0d6efd', toSlider);
     applycheckFilters([], andOr)
 });
@@ -214,10 +212,10 @@ createMuuriElems(data)
 
 //define variables for sort order
 sortorder = {
+    'begin': 'desc',
+    'end': 'desc',
     'names': 'asc',
-    'types': 'asc',
-    'begin': 'asc',
-    'end': 'asc'
+    'types': 'desc'
 }
 
 
@@ -245,7 +243,9 @@ function addMuuri(data) {
     itemTemplate.dataset.typeid = null;
     itemTemplate.dataset.id = data.id;
     itemTemplate.dataset.begin = null;
+    itemTemplate.dataset.sortbegin = null;
     itemTemplate.dataset.end = null;
+    itemTemplate.dataset.sortend = null;
     itemTemplate.dataset.media = '';
     itemTemplate.dataset.name = getLabelTranslation(data);
     itemTemplate.dataset.casestudies = data.casestudies;
@@ -265,18 +265,22 @@ function addMuuri(data) {
     let first = false;
     let last = false;
     let both = false;
-    let year = makeLocalDate(data.start).localdate === makeLocalDate(data.end).localdate
+    const startDate = makeLocalDate(data.start).localdate;
+    const endDate = makeLocalDate(data.end).localdate;
+    const year = startDate !== '?' && endDate !== '?' && startDate === endDate;
 
     if (data.start !== undefined) {
         first = true;
         itemTemplate.dataset.begin = data.start;
-        dataAll += data.start;
+        itemTemplate.dataset.sortbegin = calculateTimeBP(data.start);
+        dataAll += ' ' + startDate + ' ';
     }
 
     if (data.end !== undefined) {
         last = true;
         itemTemplate.dataset.end = data.end;
-        dataAll += data.end;
+        itemTemplate.dataset.sortend = calculateTimeBP(data.end);
+        dataAll += ' ' + endDate + ' ';
     }
 
     if (first && last) {
@@ -289,6 +293,14 @@ function addMuuri(data) {
         first = true;
         last = false;
         both = false;
+    }
+
+    if (first) {
+        itemTemplate.dataset.sortend = calculateTimeBP(data.start);
+    }
+
+    if (last) {
+        itemTemplate.dataset.sortbegin = calculateTimeBP(data.end);
     }
 
     let images = Boolean(data.images);
