@@ -1,6 +1,43 @@
 const Clmarkers = L.markerClusterGroup({singleMarkerMode: true, maxClusterRadius: 1})
 let mapindex = 0;
 
+const filterClasses = document.getElementById('filterClasses')
+
+const classFilterOptions = {
+    'main': {
+        'icon': '<i class="bi  bi-info-lg"></i>',
+        'title': 'Info',
+    },
+    'source': {
+        'icon': '<i class="bi  bi-book"></i>',
+        'title': languageTranslations._sources,
+    },
+    'imgs': {
+        'icon': '<i class="bi  bi-images"></i>',
+        'title': languageTranslations._img,
+    },
+    'threed': {
+        'icon': '<i class="bi  bi-badge-3d"></i>',
+        'title': '3D',
+    },
+    'map': {
+        'icon': '<i class="bi  bi-map"></i>',
+        'title': languageTranslations._map,
+    },
+    'actors': {
+        'icon': '<i class="bi  bi-people"></i>',
+        'title': languageTranslations._actors,
+    },
+    'items': {
+        'icon': '<i class="bi  bi-box-seam"></i>',
+        'title': languageTranslations._items,
+    },
+    'events': {
+        'icon': '<i class="bi  bi-calendar4-week"></i>',
+        'title': languageTranslations._events,
+    },
+}
+
 window.onload = function () {
     if (typeof (grid2) != 'undefined') grid2.refreshItems().layout();
     grid.refreshItems().layout();
@@ -77,17 +114,22 @@ function createMuuriElems(obj) {
     let models = (obj.models)
     if (models) {
         make3d(models)
+        addFilter('threed')
     }
 
 
     let sourceConnections = data.connections.filter(
         (connection) => ['external_reference', 'bibliography'].includes(connection.class)
     );
-    if (sourceConnections.length > 0) grid.add(getSources(sourceConnections))
+    if (sourceConnections.length > 0) {
+        grid.add(getSources(sourceConnections));
+        addFilter('source')
+    }
 
     let actors = makeEnts(obj, ['group', 'person'])
     if (actors.length > 0) {
         grid.add(setEnts(actors, '_actor'))
+        addFilter('actors')
     }
 
     const placeInfo = extractPlaceInfo(data)
@@ -106,6 +148,7 @@ function createMuuriElems(obj) {
                 grid.refreshItems().layout();
             }, 400);
         })
+        addFilter('map')
 
     }
 
@@ -113,18 +156,21 @@ function createMuuriElems(obj) {
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
         grid.add(setEnts(items, '_item'))
+        addFilter('items')
     }
 
 
     let images = (obj.images)
     if (images) {
         extractImages(images);
+        addFilter('imgs')
     }
 
     let events = makeEnts(obj, ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'])
     if (events.length > 0) {
         grid.add(setEvents(events))
         timeline(document.querySelectorAll('.timeline'));
+        addFilter('events')
     }
 
 
@@ -140,6 +186,7 @@ function make3d(models) {
         }
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
+        itemTemplate.dataset.class = 'threed';
         itemTemplate.innerHTML = `
     <div class="item-content item-3d">
       <div class="card">
@@ -176,6 +223,7 @@ function extractImages(images) {
     if (galLength > 5) galClass = 'item-content gal-100'
 
     itemTemplate.className = 'item';
+
     itemTemplate.innerHTML = `
     <div class="${galClass}">
       <div class="card">
@@ -199,6 +247,7 @@ function setGallery(images) {
 
     for (const img of images) {
         const itemTemplate = document.createElement('div');
+        itemTemplate.dataset.class = 'imgs'
         let currentStyle = 'max-width: 350px; max-height: 350px';
 
         itemTemplate.className = 'gal-item';
@@ -222,6 +271,7 @@ function setmap() {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.id = 'map'
+    itemTemplate.dataset.class = 'map'
     itemTemplate.innerHTML = `
     <div class="item-content">
       <div class="card" id="map-large-cont">
@@ -392,6 +442,7 @@ function setMarkers(data) {
 function addMuuri(data) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    itemTemplate.dataset.class = 'main'
 
     let first = false;
     let last = false;
@@ -420,6 +471,8 @@ function addMuuri(data) {
         both = false;
     }
 
+    filterClasses.innerHTML += '<h4>'+getLabelTranslation(data)+'</h4>'
+
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
       <div class="card">
@@ -437,7 +490,6 @@ function addMuuri(data) {
       </div>
     </div>
   `;
-
 
     return itemTemplate;
 }
@@ -543,6 +595,7 @@ function getSources(sourceConnections) {
 
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    itemTemplate.dataset.class = 'source'
 
     let returnHtml = `
     <div class="item-content bib-cont">
@@ -643,6 +696,7 @@ function setEvents(current_data) {
 
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    itemTemplate.dataset.class = 'events'
 
     eventdates = []
     for (const node of current_data) {
@@ -771,6 +825,8 @@ function makeEnts(data, array) {
 function setEnts(current_data, class_) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    if (class_ === '_actor') itemTemplate.dataset.class = 'actors'
+    if (class_ === '_item') itemTemplate.dataset.class = 'items'
 
     returnHtml = `
     <div class="item-content ent-content">
@@ -784,6 +840,7 @@ function setEnts(current_data, class_) {
         iteration += 1
         let icon = '<div><i class="h2 bi bi-person me-2"></i></div>'
         if (currentDatum.class === 'group') icon = '<div><i class="h2 bi bi-people me-2"></i></div>'
+        if (currentDatum.class === 'artifact') icon = ''
         let img = ''
         if (currentDatum.images) img = returnImage(50, currentDatum.images[0])
         const label = getLabelTranslation(currentDatum);
@@ -925,3 +982,39 @@ function returnImage(height, id) {
     return ''
 }
 
+function addFilter(class_) {
+    // Look up class options based on the provided class_
+    const classOptions = classFilterOptions[class_];
+
+    if (classOptions) {
+        const {icon, title} = classOptions;
+
+        let elementHtml = `
+            <div title="${title}" class="pb-1" onlick="console.log('this.id')">
+                <input type="checkbox" class="btn-check mt-2" autocomplete="off" id="classSwitch${class_}" checked>
+                <label id="switchLabel${class_}" class="btn filter-label" for="classSwitch${class_}">${icon}<span class="ms-2 filter-title">${title}</span></label>
+                               
+            </div>
+        `;
+
+        // Assuming filterClasses is a reference to the container where you want to add the HTML
+        filterClasses.innerHTML += elementHtml;
+    }
+}
+
+document.querySelectorAll('.btn-check').forEach(checkbox => {
+    checkbox.addEventListener('change', updateGrid);
+});
+
+function updateGrid() {
+    // Get the checked classes from the checkboxes
+    const checkedClasses = Array.from(document.querySelectorAll('.btn-check:checked'))
+        .map(checkbox => checkbox.id.replace('classSwitch', ''));
+    checkedClasses.push('main')
+
+    // Filter the grid items based on the checked classes
+    grid.filter((item) => {
+        const itemClass = item.getElement().getAttribute('data-class');
+        return checkedClasses.includes(itemClass);
+    });
+}

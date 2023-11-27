@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-17 14:33+0100\n"
+"POT-Creation-Date: 2023-11-27 15:02+0100\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -71,30 +71,42 @@ msgid "item(s)"
 msgstr "Objekt(e)"
 
 #: bitem/templates/layout.html:122
+msgid "map"
+msgstr "Karte"
+
+#: bitem/templates/layout.html:123 bitem/templates/submenu.html:87
+msgid "images"
+msgstr "Bilder"
+
+#: bitem/templates/layout.html:124
 msgid "current"
 msgstr "aktuelles"
 
-#: bitem/templates/layout.html:123 bitem/views/iiif.py:99
+#: bitem/templates/layout.html:125 bitem/views/iiif.py:99
 msgid "source(s)"
 msgstr "Quelle(n)"
 
-#: bitem/templates/layout.html:124
+#: bitem/templates/layout.html:126
+msgid "sources"
+msgstr "Quellen"
+
+#: bitem/templates/layout.html:127
 msgid "indirect connection(s)"
 msgstr "indirekte Verbindung(en)"
 
-#: bitem/templates/layout.html:125
+#: bitem/templates/layout.html:128
 msgid "Location of"
 msgstr "Standort von"
 
-#: bitem/templates/layout.html:126
+#: bitem/templates/layout.html:129
 msgid "center of"
 msgstr "Mittelpunkt von"
 
-#: bitem/templates/layout.html:127
+#: bitem/templates/layout.html:130
 msgid "contains"
 msgstr "beinhaltet"
 
-#: bitem/templates/layout.html:128
+#: bitem/templates/layout.html:131
 msgid "area of"
 msgstr "Fläche von"
 
@@ -164,10 +176,6 @@ msgstr "Medien"
 msgid "3D models"
 msgstr "3D Modelle"
 
-#: bitem/templates/submenu.html:87
-msgid "images"
-msgstr "Bilder"
-
 #: bitem/templates/submenu.html:96
 msgid "no media"
 msgstr "keine Medien"
@@ -184,7 +192,7 @@ msgstr "Zeitspanne"
 msgid "include entries without date"
 msgstr "inklusive Einträge ohne Datum"
 
-#: bitem/templates/entity/entity.html:18 bitem/templates/iiif/iiif.html:7
+#: bitem/templates/entity/entity.html:17 bitem/templates/iiif/iiif.html:7
 #: bitem/templates/item/view.html:21 bitem/templates/submenu.html:177
 msgid "loading"
 msgstr "lade"

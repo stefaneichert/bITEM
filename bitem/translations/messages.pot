@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-17 14:33+0100\n"
+"POT-Creation-Date: 2023-11-27 15:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,30 +70,42 @@ msgid "item(s)"
 msgstr ""
 
 #: bitem/templates/layout.html:122
-msgid "current"
+msgid "map"
 msgstr ""
 
-#: bitem/templates/layout.html:123 bitem/views/iiif.py:99
-msgid "source(s)"
+#: bitem/templates/layout.html:123 bitem/templates/submenu.html:87
+msgid "images"
 msgstr ""
 
 #: bitem/templates/layout.html:124
-msgid "indirect connection(s)"
+msgid "current"
 msgstr ""
 
-#: bitem/templates/layout.html:125
-msgid "Location of"
+#: bitem/templates/layout.html:125 bitem/views/iiif.py:99
+msgid "source(s)"
 msgstr ""
 
 #: bitem/templates/layout.html:126
-msgid "center of"
+msgid "sources"
 msgstr ""
 
 #: bitem/templates/layout.html:127
-msgid "contains"
+msgid "indirect connection(s)"
 msgstr ""
 
 #: bitem/templates/layout.html:128
+msgid "Location of"
+msgstr ""
+
+#: bitem/templates/layout.html:129
+msgid "center of"
+msgstr ""
+
+#: bitem/templates/layout.html:130
+msgid "contains"
+msgstr ""
+
+#: bitem/templates/layout.html:131
 msgid "area of"
 msgstr ""
 
@@ -163,10 +175,6 @@ msgstr ""
 msgid "3D models"
 msgstr ""
 
-#: bitem/templates/submenu.html:87
-msgid "images"
-msgstr ""
-
 #: bitem/templates/submenu.html:96
 msgid "no media"
 msgstr ""
@@ -183,7 +191,7 @@ msgstr ""
 msgid "include entries without date"
 msgstr ""
 
-#: bitem/templates/entity/entity.html:18 bitem/templates/iiif/iiif.html:7
+#: bitem/templates/entity/entity.html:17 bitem/templates/iiif/iiif.html:7
 #: bitem/templates/item/view.html:21 bitem/templates/submenu.html:177
 msgid "loading"
 msgstr ""
