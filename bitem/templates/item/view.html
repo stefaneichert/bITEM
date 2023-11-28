@@ -1,168 +1,79 @@
-{% extends "layout.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Visualization with vis.js</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+</head>
+<body>
 
-<script src="/static/js/functions.js"></script>
+<!-- Container for the network -->
+<div id="network"></div>
 
-<script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
+<script>
+    // Your JSON data
+    const jsonData = {
+        "_class": "person",
+        "_label": {"name": "Alexander von Humboldt"},
+        "casestudies": [196063, 197085],
+        "connections": [
+            {
+                "class": "appellation",
+                "nodes": [
+                    {
+                        "_label": {"name": "Friedrich Wilhelm Heinrich Alexander von Humboldt"},
+                        "id": 208455,
+                        "involvement": [
+                            {
+                                "_label": {"name": "Friedrich Wilhelm Heinrich Alexander von Humboldt"},
+                                "begin": "000001769-09-14",
+                                "end": "000001859-05-06",
+                                "origin": {"name": "Alexander von Humboldt"},
+                                "origin_id": 208454,
+                                "property": {"DE": "bezeichnet", "EN": "identifies", "name": "identifies", "property_code": "P1"}
+                            }
+                        ]
+                    }
+                ]
+            },
+            // ... other connections
+        ]
+    };
 
-<link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
-<script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
-<link rel="stylesheet" href="/static/vendor/node_modules/vis-network/dist/dist/vis-network.min.css"/>
-<script src="/static/vendor/node_modules/vis-network/dist/vis-network.min.js"></script>
+    // Create nodes and edges for vis.js
+    const nodes = [];
+    const edges = [];
 
-<script src="/static/vendor/timeline-master/dist/js/timeline.min.js"></script>
-<link href="/static/vendor/timeline-master/dist/css/timeline.min.css" rel="stylesheet"/>
+    // Add main node
+    nodes.push({ id: jsonData._label.name, label: jsonData._label.name, shape: 'circle' });
 
-<link rel="stylesheet" href="/static/css/item.css"/>
-<main>
+    // Add connection nodes and edges
+    jsonData.connections.forEach(connection => {
+        const targetNode = connection.nodes[0];
+        nodes.push({ id: targetNode._label.name, label: targetNode._label.name, shape: 'circle' });
+        edges.push({ from: jsonData._label.name, to: targetNode._label.name });
+    });
 
-    <div class="loading">
-        <div class="spinner-grow text-light" role="status">
-            <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
-        </div>
-    </div>
-    <div class="grid">
+    // Create a data object
+    const data = {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+    };
 
-        <div class="item">
-            <div class="item-content">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">"Venus" of Willendorf</h5>
-                        <p class="card-text">The Venus of Willendorf is an 11.1-centimetre-tall (4.4 in) Venus figurine
-                            estimated to have been made around 25,000–30,000 years ago. It was found on August 7,
-                            1908, by a workman named Johann Veran or Josef Veram during excavations conducted by
-                            archaeologists Josef Szombathy, Hugo Obermaier, and Josef Bayer at a Paleolithic site near
-                            Willendorf, a village in Lower Austria. It is carved from an oolitic limestone that is
-                            not local to the area, and tinted with red ochre. The figurine is now in the Natural History
-                            Museum in Vienna, Austria.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    // Options for the network
+    const options = {
+        nodes: {
+            shape: 'circle',
+            size: 20,
+        }
+    };
 
-        <div class="item">
-            <div class="item-content">
-                <div class="tl-cont">
-                    <div class="timeline" id="timeline-horizontal">
-                        <div class="timeline__wrap">
-                            <div class="timeline__items">
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>30000 BCE</h2>
-                                        <p>Venus has been produced of an oolitic limestone that stems either from
-                                            northern Italy or Ukraine.</p>
-                                        <img class="tl-media" src="/static/images/test/venus.jpg"/>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2015</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus.</p>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2014</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus.</p>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2012</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2010</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2007</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus.</p>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2004</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus.</p>
-                                    </div>
-                                </div>
-                                <div class="timeline__item">
-                                    <div class="timeline__content">
-                                        <h2>2002</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dignissim
-                                            neque condimentum
-                                            lacus dapibus.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#" onclick="alert('hallo')" class="btn img-btn"
-                   title="{{_('open details')}}"><i class="bi bi-box-arrow-up-right"></i></a>
-            </div>
-        </div>
+    // Create a network
+    const networkContainer = document.getElementById('network');
+    const network = new vis.Network(networkContainer, data, options);
+</script>
 
-        <div class="item">
-            <div class="item-content">
-
-                <model-viewer
-                        alt="Moa"
-                        src="/static/3dmodels/kuffarn.glb"
-                        shadow-intensity="1"
-                        auto-rotate
-                        auto-rotate-delay="0"
-                ></model-viewer>
-                <a href="#" onclick="alert('hallo')" class="btn img-btn"
-                   title="{{_('open details')}}"><i class="bi bi-box-arrow-up-right"></i></a>
-            </div>
-        </div>
-
-        <div class="item">
-            <div class="item-content">
-                <div id="map"></div>
-                <a href="#" onclick="alert('hallo')" class="btn img-btn"
-                   title="{{_('open details')}}"><i class="bi bi-box-arrow-up-right"></i></a>
-            </div>
-        </div>
-
-
-        <div class="item">
-            <div class="item-content">
-                <img src="/static/images/test/3.jpg"/>
-                <a href="#" onclick="alert('hallo')" class="btn img-btn"
-                   title="{{_('open details')}}"><i class="bi bi-box-arrow-up-right"></i></a>
-            </div>
-        </div>
-
-
-        <div class="item">
-            <div class="item-content">
-                <div id="mynetwork"></div>
-                <a href="#" onclick="alert('hallo')" class="btn img-btn"
-                   title="{{_('open details')}}"><i class="bi bi-box-arrow-up-right"></i></a>
-            </div>
-        </div>
-    </div>
-</main>
-
-<script src="/static/js/item.js"></script>
-{% include 'footer.html' %}
-
-{% endblock %}
+</body>
+</html>

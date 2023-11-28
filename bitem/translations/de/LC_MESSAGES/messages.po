@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-28 11:35+0100\n"
+"POT-Creation-Date: 2023-11-28 15:49+0100\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -114,6 +114,10 @@ msgstr "Fläche von"
 msgid "3D models"
 msgstr "3D Modelle"
 
+#: bitem/templates/layout.html:133
+msgid "network"
+msgstr "Netzwerk"
+
 #: bitem/templates/submenu.html:3
 msgid "of"
 msgstr "von"
@@ -192,20 +196,14 @@ msgstr "Zeitspanne"
 msgid "include entries without date"
 msgstr "inklusive Einträge ohne Datum"
 
-#: bitem/templates/entity/entity.html:17 bitem/templates/iiif/iiif.html:7
-#: bitem/templates/item/view.html:21 bitem/templates/submenu.html:177
+#: bitem/templates/entity/entity.html:19 bitem/templates/iiif/iiif.html:7
+#: bitem/templates/submenu.html:177
 msgid "loading"
 msgstr "lade"
 
 #: bitem/templates/index/index.html:22
 msgid "learn more"
 msgstr "mehr"
-
-#: bitem/templates/item/view.html:118 bitem/templates/item/view.html:133
-#: bitem/templates/item/view.html:141 bitem/templates/item/view.html:150
-#: bitem/templates/item/view.html:159
-msgid "open details"
-msgstr "Details"
 
 #~ msgid "items"
 #~ msgstr "Objekte"
@@ -245,4 +243,7 @@ msgstr "Details"
 
 #~ msgid "is composed of"
 #~ msgstr ""
+
+#~ msgid "open details"
+#~ msgstr "Details"
 

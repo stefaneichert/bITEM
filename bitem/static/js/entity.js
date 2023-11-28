@@ -37,6 +37,10 @@ const classFilterOptions = {
         'icon': '<i class="bi  bi-calendar4-week"></i>',
         'title': languageTranslations._events,
     },
+    'network': {
+        'icon': '<i class="bi bi-diagram-3"></i>',
+        'title': languageTranslations._network,
+    },
 }
 
 window.onload = function () {
@@ -133,6 +137,9 @@ function createMuuriElems(obj) {
         addFilter('actors', actors.length)
     }
 
+    makeNetwork()
+    addFilter('network', 0)
+
     const placeInfo = extractPlaceInfo(data)
     if (placeInfo.length > 0) {
         grid.add(setmap())
@@ -173,7 +180,7 @@ function createMuuriElems(obj) {
         timeline(document.querySelectorAll('.timeline'));
         addFilter('events', events.length)
     }
-    }
+}
 
 function make3d(models) {
     for (const model of models) {
@@ -470,7 +477,7 @@ function addMuuri(data) {
         both = false;
     }
 
-    headlineBox.innerHTML += '<h4>'+getLabelTranslation(data)+'</h4>'
+    headlineBox.innerHTML += '<h4>' + getLabelTranslation(data) + '</h4>'
 
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
@@ -491,6 +498,136 @@ function addMuuri(data) {
   `;
 
     return itemTemplate;
+}
+
+function makeNetwork() {
+    const itemTemplate = document.createElement('div');
+    itemTemplate.className = 'item';
+    itemTemplate.dataset.class = 'network'
+    itemTemplate.dataset.id = 'network'
+    itemTemplate.innerHTML = `
+    <div class="item-content item-content-network" id="network-cont">
+    <div id="network" ></div>
+    <a href="#"  id="ntw-large" class="img-btn"><i class="bi bi-arrows-fullscreen"></i></a>
+    </div>
+  `;
+
+    let group = ''
+    const nodes = [];
+    const edges = []
+
+    const mainNode = {
+        'id': data.id,
+        'label': getLabelTranslation(data),
+        'group': data._class,
+        'size': 20,
+        'color': returnGroupColor(data._class)
+    }
+    nodes.push(mainNode)
+
+    for (const connection of data.connections) {
+        group = connection.class
+        connection.nodes.forEach(node => {
+            let newnode = {
+                'id': node.id,
+                'label': getTypeTranslation(node._label),
+                'group': group,
+                'color': returnGroupColor(group)
+            }
+            //console.log(newnode)
+            nodes.push(newnode);
+            node.involvement.forEach(invo => {
+                let newedge = {
+                    to: invo.origin_id,
+                    from: node.id,
+                    label: invo.property.name,
+                    arrows: {
+                        to: {
+                            enabled: true,
+                            type: 'triangle',
+                        },
+                    },
+                }
+                //console.log(newedge)
+                if (!edges.includes(newedge)) edges.push(newedge);
+            })
+        })
+    }
+
+
+    grid.add(itemTemplate);
+
+    const enlargeNtBtn = document.getElementById('ntw-large')
+    const currentNtCont = document.getElementById('network-cont')
+    enlargeNtBtn.addEventListener('click', event => {
+        setTimeout(() => {
+            currentNtCont.classList.toggle('large-map')
+            currentNtCont.classList.toggle('item-content-network')
+            moveToFirst('network')
+            grid.refreshItems().layout();
+        }, 400);
+    })
+
+
+    const networkData = {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+    };
+
+    // Options for the network
+    const options = {
+        nodes: {
+            shape: 'dot',
+            borderWidth: 0,
+            size: 10,
+            font: {
+                size: 10,
+                color: 'white',
+                strokeWidth: 0,
+            },
+        },
+        edges: {
+            font: {
+                size: 10,
+                color: 'white',
+                strokeWidth: 0,
+            },
+            arrows: {
+                to: {
+                    scaleFactor: 0.25
+                }
+            }
+        },
+    };
+
+
+    // Create a network
+    const networkContainer = document.getElementById('network');
+    const network = new vis.Network(networkContainer, networkData, options);
+}
+
+function returnGroupColor(group) {
+    const style = {
+    'rgb(255, 102, 102)': ['person'], // Salmon Pink for 'person'
+    'rgb(255, 178, 102)': ['file'], // Light Orange for 'file'
+    'rgb(102, 178, 255)': ['group'], // Sky Blue for 'group'
+    'rgb(102, 255, 178)': ['artifact'], // Mint Green for 'artifact'
+    'rgb(255, 102, 178)': ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'], // Orchid Pink for various activities
+    'rgb(178, 102, 255)': ['place'], // Lavender Purple for 'place'
+    'rgb(255, 204, 102)': ['reference_system', 'external_reference'], // Peach for 'reference_system' and 'external_reference'
+    'rgb(255, 102, 255)': ['bibliography'], // Pink for 'bibliography'
+    'rgb(102, 255, 255)': ['source'], // Turquoise for 'source'
+    'rgb(153, 204, 255)': ['type'], // Baby Blue for 'type'
+    'rgb(102, 255, 204)': ['appellation'], // Mint Turquoise for 'appellation'
+};
+
+    for (const color in style) {
+        if (style[color].includes(group)) {
+            return color;
+        }
+    }
+    // Return a default color or handle the case when group is not found
+    return 'rgb(133,50,50)';
 }
 
 function getAliases(data) {
@@ -981,10 +1118,14 @@ function returnImage(height, id) {
     return ''
 }
 
-function addFilter(class_, count= 0) {
+function addFilter(class_, count = 0) {
     // Look up class options based on the provided class_
     const classOptions = classFilterOptions[class_];
-    if (count > 0) {count = ': ' + count} else {count = ''}
+    if (count > 0) {
+        count = ': ' + count
+    } else {
+        count = ''
+    }
     if (classOptions) {
         const {icon, title} = classOptions;
 
@@ -1020,22 +1161,24 @@ function updateGrid() {
 
 var lastScrollTop = 0;
 
-    window.addEventListener("scroll", function () {
-        var st = window.pageYOffset || document.documentElement.scrollTop;
-        if (st > lastScrollTop) {
-            // Scroll down
-            document.querySelector('.nav-second').style.top = '-100px';
-        } else {
-            // Scroll up
-            document.querySelector('.nav-second').style.top = '56px';
-        }
-        lastScrollTop = st;
-    });
+window.addEventListener("scroll", function () {
+    var st = window.pageYOffset || document.documentElement.scrollTop;
+    if (st > lastScrollTop) {
+        // Scroll down
+        document.querySelector('.nav-second').style.top = '-100px';
+    } else {
+        // Scroll up
+        document.querySelector('.nav-second').style.top = '56px';
+    }
+    lastScrollTop = st;
+});
 
-    // Optional: Hide navbar when the mouse is not at the top
-    window.addEventListener("mousemove", function (event) {
-        if (event.clientY < 300) {
-            // Mouse near the top
-            document.querySelector('.nav-second').style.top = '56px';
-        }
-    });
+// Optional: Hide navbar when the mouse is not at the top
+window.addEventListener("mousemove", function (event) {
+    if (event.clientY < 300) {
+        // Mouse near the top
+        document.querySelector('.nav-second').style.top = '56px';
+    }
+});
+
+

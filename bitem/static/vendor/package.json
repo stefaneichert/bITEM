@@ -10,6 +10,7 @@
     "mirador": "^3.3.0",
     "muuri": "^0.9.5",
     "shave": "^5.0.2",
-    "typed.js": "^2.0.15"
+    "typed.js": "^2.0.15",
+    "vis-network": "^9.1.9"
   }
 }

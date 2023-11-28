@@ -32,9 +32,37 @@ body {
     cursor: pointer;
 }
 
-.hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i {
+.hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i  {
     opacity: 0.7;
     transition: opacity 0.3s !important;
+}
+
+#network-cont *:hover + .img-btn, #network-cont *:hover + .img-btn > i  {
+    opacity: 0.8;
+    transition: opacity 0.3s !important;
+    color: whitesmoke;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.item-content > .img-btn:hover {
+    opacity: 1!important;
+    box-shadow: none!important;
+    border-radius: 0!important;
+}
+
+.item-content > .img-btn:hover + i {
+    opacity: 1!important;
+    box-shadow: none!important;
+    border-radius: 0!important;
+    color: whitesmoke;
+    color: whitesmoke!important;
+    border: none;
+}
+
+#ntw-large * {
+    color: whitesmoke;
+    opacity: 1!important;
 }
 
 #map:hover .btn-panel > .img-btn, #map:hover .btn-panel > .img-btn > i {
@@ -51,7 +79,7 @@ body {
     position: absolute;
     left: 1rem;
     bottom: 1rem;
-    width: 2.5rem;
+    width: 2.5rem!important;
     height: auto;
     z-index: 500;
     border: 5px solid;
@@ -107,7 +135,7 @@ body {
         height: 40vh;
     }
 
-    .large-map {
+    .large-map, .item-content-network {
         height: calc(97vh - 15.5rem) !important;
         width: calc(100vw - (4rem + 15px)) !important;
     }
@@ -115,6 +143,7 @@ body {
     .img-btn {
         opacity: 1;
     }
+
 }
 
 .tl-cont {
@@ -156,6 +185,11 @@ body {
     .bib-cont > * {
         width: calc(100vw - (4rem + 15px));
     }
+
+    .item-content-network {
+        height: calc(80vh - 12.5rem) !important;
+        width: calc(100vw - (4rem + 15px)) !important;
+    }
 }
 
 
@@ -176,6 +210,11 @@ body {
     .large-map {
         height: calc(97vh - 10.5rem) !important;
         width: calc(100vw - (3rem + 15px)) !important;
+    }
+
+    .item-content-network {
+        height: calc(60vh - 10.5rem) !important;
+        width: calc(40vw - (2rem + 3px)) !important;
     }
 
     .tl-cont > * {
@@ -403,5 +442,28 @@ body {
 }
 
 .timeline__content {
-    border-radius: 0!important;
+    border-radius: 0 !important;
+}
+
+.timeline-header {
+    padding: 1rem;
+}
+
+.item-content-network {
+    height: 50vh;
+}
+
+#network {
+    width: 100%;
+    height: 100%;
+}
+
+.kdk {
+    color: rgba(0, 38, 255, 0.8);
+    color: rgba(37, 218, 165, 0.8);
+    color: rgba(211, 30, 30, 0.8);
+    color: rgba(238, 97, 97, 0.8);
+    color: rgba(180, 97, 67, 0.8);
+    color: rgba(217, 44, 194, 0.8);
+    color: rgba(109, 128, 236, 0.8);
 }

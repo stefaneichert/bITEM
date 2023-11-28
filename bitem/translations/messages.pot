@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-28 11:35+0100\n"
+"POT-Creation-Date: 2023-11-28 15:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,6 +113,10 @@ msgstr ""
 msgid "3D models"
 msgstr ""
 
+#: bitem/templates/layout.html:133
+msgid "network"
+msgstr ""
+
 #: bitem/templates/submenu.html:3
 msgid "of"
 msgstr ""
@@ -191,18 +195,12 @@ msgstr ""
 msgid "include entries without date"
 msgstr ""
 
-#: bitem/templates/entity/entity.html:17 bitem/templates/iiif/iiif.html:7
-#: bitem/templates/item/view.html:21 bitem/templates/submenu.html:177
+#: bitem/templates/entity/entity.html:19 bitem/templates/iiif/iiif.html:7
+#: bitem/templates/submenu.html:177
 msgid "loading"
 msgstr ""
 
 #: bitem/templates/index/index.html:22
 msgid "learn more"
-msgstr ""
-
-#: bitem/templates/item/view.html:118 bitem/templates/item/view.html:133
-#: bitem/templates/item/view.html:141 bitem/templates/item/view.html:150
-#: bitem/templates/item/view.html:159
-msgid "open details"
 msgstr ""
 
