@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-27 15:02+0100\n"
+"POT-Creation-Date: 2023-11-28 11:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,6 +109,10 @@ msgstr ""
 msgid "area of"
 msgstr ""
 
+#: bitem/templates/layout.html:132 bitem/templates/submenu.html:78
+msgid "3D models"
+msgstr ""
+
 #: bitem/templates/submenu.html:3
 msgid "of"
 msgstr ""
@@ -169,10 +173,6 @@ msgstr ""
 
 #: bitem/templates/submenu.html:68
 msgid "media"
-msgstr ""
-
-#: bitem/templates/submenu.html:78
-msgid "3D models"
 msgstr ""
 
 #: bitem/templates/submenu.html:96

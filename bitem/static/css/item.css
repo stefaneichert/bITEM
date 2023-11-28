@@ -1,5 +1,5 @@
 body {
-    padding-top: 6.5rem;
+    padding-top: 10.5rem;
 }
 
 .grid {
@@ -32,7 +32,7 @@ body {
     cursor: pointer;
 }
 
-.hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i  {
+.hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i {
     opacity: 0.8;
     transition: opacity 0.5s !important;
 }
@@ -44,7 +44,7 @@ body {
 }
 
 .img-btn:hover {
-    opacity: 1!important;
+    opacity: 1 !important;
 }
 
 .img-btn {
@@ -62,7 +62,7 @@ body {
 
 .img-btn:active {
     box-shadow: 0 0 1px 1px rgb(141, 141, 141) !important;
-    opacity: 1!important;
+    opacity: 1 !important;
 }
 
 .item-content > * {
@@ -87,6 +87,10 @@ body {
 
 @media screen and (max-width: 768px) {
 
+    body {
+        padding-top: 15.5rem;
+    }
+
     .filter-title {
         display: none;
     }
@@ -110,7 +114,7 @@ body {
 }
 
 .tl-cont {
-    max-height: unset!important;
+    max-height: unset !important;
 }
 
 .large-map {
@@ -119,6 +123,10 @@ body {
 }
 
 @media screen and (min-width: 769px) {
+
+    body {
+        padding-top: 12.5rem;
+    }
 
     .filter-title {
         display: inline-flex;
@@ -148,6 +156,11 @@ body {
 
 
 @media screen and (min-width: 1200px) {
+
+    body {
+        padding-top: 10.5rem;
+    }
+
     .item-content > * {
         width: calc(33vw - (2rem + 3px));
     }
@@ -358,20 +371,30 @@ body {
     width: 100%;
     z-index: 1000;
     top: 56px;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    padding-bottom: 3rem;
+    padding-top: 2rem;
     flex-wrap: wrap;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+    transition: top 0.3s ease-in-out; /* Add smooth transition for better user experience */
 }
 
 
 .filter-label {
-    color: rgba(255, 255, 255, 0.55)!important;
+    color: rgba(255, 255, 255, 0.55) !important;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
 }
 
 .filter-label:hover {
-    color: rgba(255, 255, 255, 0.80)!important;
+    color: rgba(255, 255, 255, 0.80) !important;
+}
+
+#filterClasses {
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 

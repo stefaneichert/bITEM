@@ -2,6 +2,7 @@ const Clmarkers = L.markerClusterGroup({singleMarkerMode: true, maxClusterRadius
 let mapindex = 0;
 
 const filterClasses = document.getElementById('filterClasses')
+const headlineBox = document.getElementById('headlineBox')
 
 const classFilterOptions = {
     'main': {
@@ -18,7 +19,7 @@ const classFilterOptions = {
     },
     'threed': {
         'icon': '<i class="bi  bi-badge-3d"></i>',
-        'title': '3D',
+        'title': languageTranslations._threedModel,
     },
     'map': {
         'icon': '<i class="bi  bi-map"></i>',
@@ -114,7 +115,7 @@ function createMuuriElems(obj) {
     let models = (obj.models)
     if (models) {
         make3d(models)
-        addFilter('threed')
+        addFilter('threed', models.length)
     }
 
 
@@ -123,13 +124,13 @@ function createMuuriElems(obj) {
     );
     if (sourceConnections.length > 0) {
         grid.add(getSources(sourceConnections));
-        addFilter('source')
+        addFilter('source', sourceConnections.length)
     }
 
     let actors = makeEnts(obj, ['group', 'person'])
     if (actors.length > 0) {
         grid.add(setEnts(actors, '_actor'))
-        addFilter('actors')
+        addFilter('actors', actors.length)
     }
 
     const placeInfo = extractPlaceInfo(data)
@@ -156,25 +157,23 @@ function createMuuriElems(obj) {
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
         grid.add(setEnts(items, '_item'))
-        addFilter('items')
+        addFilter('items', items.length)
     }
 
 
     let images = (obj.images)
     if (images) {
         extractImages(images);
-        addFilter('imgs')
+        addFilter('imgs', images.length)
     }
 
     let events = makeEnts(obj, ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'])
     if (events.length > 0) {
         grid.add(setEvents(events))
         timeline(document.querySelectorAll('.timeline'));
-        addFilter('events')
+        addFilter('events', events.length)
     }
-
-
-}
+    }
 
 function make3d(models) {
     for (const model of models) {
@@ -471,7 +470,7 @@ function addMuuri(data) {
         both = false;
     }
 
-    filterClasses.innerHTML += '<h4>'+getLabelTranslation(data)+'</h4>'
+    headlineBox.innerHTML += '<h4>'+getLabelTranslation(data)+'</h4>'
 
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
@@ -982,17 +981,17 @@ function returnImage(height, id) {
     return ''
 }
 
-function addFilter(class_) {
+function addFilter(class_, count= 0) {
     // Look up class options based on the provided class_
     const classOptions = classFilterOptions[class_];
-
+    if (count > 0) {count = ': ' + count} else {count = ''}
     if (classOptions) {
         const {icon, title} = classOptions;
 
         let elementHtml = `
             <div title="${title}" class="pb-1" onlick="console.log('this.id')">
                 <input type="checkbox" class="btn-check mt-2" autocomplete="off" id="classSwitch${class_}" checked>
-                <label id="switchLabel${class_}" class="btn filter-label" for="classSwitch${class_}">${icon}<span class="ms-2 filter-title">${title}</span></label>
+                <label id="switchLabel${class_}" class="btn filter-label" for="classSwitch${class_}">${icon}<span class="ms-2 filter-title">${title} ${count}</span></label>
                                
             </div>
         `;
@@ -1018,3 +1017,25 @@ function updateGrid() {
         return checkedClasses.includes(itemClass);
     });
 }
+
+var lastScrollTop = 0;
+
+    window.addEventListener("scroll", function () {
+        var st = window.pageYOffset || document.documentElement.scrollTop;
+        if (st > lastScrollTop) {
+            // Scroll down
+            document.querySelector('.nav-second').style.top = '-100px';
+        } else {
+            // Scroll up
+            document.querySelector('.nav-second').style.top = '56px';
+        }
+        lastScrollTop = st;
+    });
+
+    // Optional: Hide navbar when the mouse is not at the top
+    window.addEventListener("mousemove", function (event) {
+        if (event.clientY < 300) {
+            // Mouse near the top
+            document.querySelector('.nav-second').style.top = '56px';
+        }
+    });
