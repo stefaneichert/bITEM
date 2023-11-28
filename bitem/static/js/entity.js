@@ -201,8 +201,8 @@ function make3d(models) {
                 auto-rotate
                 auto-rotate-delay="0"
         ></model-viewer>
-        <div class="btn-panel text-end ">
-            <span onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + model.name + '\''})" class="img-btn line-fade-m"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
+        <div class="btn-panel">
+            <span onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + model.name + '\''})" class="img-btn"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
         </div>              
       </div>
       </div>
@@ -254,8 +254,8 @@ function setGallery(images) {
         returnHtml += `
     <div className="gal-item-content">
         <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">
-        <div class="btn-panel text-end ">
-            <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn line-fade-m"><img src="/static/icons/iiif.png"></a>
+        <div class="btn-panel">
+            <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn"><img src="/static/icons/iiif.png"></a>
         </div>
     </div>
   `
@@ -276,8 +276,8 @@ function setmap() {
       <div class="card" id="map-large-cont">
         <div class="card-body map-body">
             <div id="map">
-            <div class="btn-panel text-end ">
-            <a href="#"  id="map-large" class="img-btn line-fade-m"><i class="bi bi-arrows-fullscreen"></i></a>
+            <div class="btn-panel">
+            <a href="#"  id="map-large" class="img-btn"><i class="bi bi-arrows-fullscreen"></i></a>
             </div>
         </div>
         </div>

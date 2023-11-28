@@ -33,13 +33,13 @@ body {
 }
 
 .hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i {
-    opacity: 0.8;
-    transition: opacity 0.5s !important;
+    opacity: 0.7;
+    transition: opacity 0.3s !important;
 }
 
 #map:hover .btn-panel > .img-btn, #map:hover .btn-panel > .img-btn > i {
     opacity: 0.8;
-    transition: opacity 0.5s !important;
+    transition: opacity 0.3s !important;
     color: whitesmoke;
 }
 
@@ -51,13 +51,17 @@ body {
     position: absolute;
     left: 1rem;
     bottom: 1rem;
-    width: auto !important;
+    width: 2.5rem;
+    height: auto;
     z-index: 500;
     border: 5px solid;
     background: rgb(122, 122, 122) !important;
     color: rgb(117, 117, 117) !important;
     opacity: 0;
     transition: 1s !important;
+    font-size: 1.5rem;
+    text-align: center;
+    display: inline-table;
 }
 
 .img-btn:active {
@@ -104,7 +108,7 @@ body {
     }
 
     .large-map {
-        height: calc(90vh - 56px) !important;
+        height: calc(97vh - 15.5rem) !important;
         width: calc(100vw - (4rem + 15px)) !important;
     }
 
@@ -141,7 +145,7 @@ body {
     }
 
     .large-map {
-        height: calc(90vh - 56px) !important;
+        height: calc(97vh - 12.5rem) !important;
         width: calc(100vw - (4rem + 15px)) !important;
     }
 
@@ -170,7 +174,7 @@ body {
     }
 
     .large-map {
-        height: calc(90vh - 56px) !important;
+        height: calc(97vh - 10.5rem) !important;
         width: calc(100vw - (3rem + 15px)) !important;
     }
 
@@ -398,3 +402,6 @@ body {
     justify-content: space-evenly;
 }
 
+.timeline__content {
+    border-radius: 0!important;
+}
