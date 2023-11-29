@@ -28,11 +28,19 @@ body {
     transition: background 1s, box-shadow 1s;
 }
 
+.about-card img {
+    max-width: 120%;
+    height: auto;
+}
+
+
+
+
 @media screen and (min-width: 501px) {
 
     .about-card {
         padding: 2rem;
-        margin: 2rem;
+        margin: 1rem;
     }
 
     .about-container {
@@ -65,4 +73,49 @@ body {
 
 }
 
+.about-card-team {
+    background: rgb(245 245 245 / 15%);
+    color: whitesmoke;
+    --bs-card-border-width: none;
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 15%);
+    transition: background 1s, box-shadow 1s;
+}
 
+
+
+@media screen and (min-width: 501px) {
+
+    .about-card-team {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .about-container-team {
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+    }
+
+}
+
+
+.about-card-team:hover {
+    background: rgb(245 245 245 / 26%);
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 26%);
+    transition: background 1s, box-shadow 1s;
+}
+
+
+@media screen and (max-width: 500px) {
+
+    .about-container-team {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .about-card-team {
+        padding: 1rem;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+}
