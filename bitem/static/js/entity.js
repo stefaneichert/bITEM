@@ -509,51 +509,57 @@ function makeNetwork() {
     <div class="item-content item-content-network" id="network-cont">
     <div id="network" ></div>
     <a href="#"  id="ntw-large" class="img-btn"><i class="bi bi-arrows-fullscreen"></i></a>
+    <span class="bitem-text" id="loadingspinner">
+        <div class="spinner-border" role="status"></div>
+    </span>
     </div>
   `;
 
     let group = ''
     const nodes = [];
-    const edges = []
+    const edges = [];
 
     const mainNode = {
         'id': data.id,
         'label': getLabelTranslation(data),
+        'hiddenlabel': getLabelTranslation(data),
         'group': data._class,
         'size': 20,
-        'color': returnGroupColor(data._class)
+        'borderWidth': 5,
+        'color': returnGroupColor(data._class),
+        'font': {
+            size: 12,
+            color: 'rgb(245, 245, 245)'
+        },
     }
     nodes.push(mainNode)
-
+    let i = 0
     for (const connection of data.connections) {
         group = connection.class
+
         connection.nodes.forEach(node => {
             let newnode = {
                 'id': node.id,
                 'label': getTypeTranslation(node._label),
+                'hiddenlabel': getTypeTranslation(node._label),
                 'group': group,
+                'size': 10,
                 'color': returnGroupColor(group)
             }
-            //console.log(newnode)
-            nodes.push(newnode);
+            if (!nodes.includes(newnode)) nodes.push(newnode);
             node.involvement.forEach(invo => {
                 let newedge = {
                     to: invo.origin_id,
                     from: node.id,
-                    label: invo.property.name,
-                    arrows: {
-                        to: {
-                            enabled: true,
-                            type: 'triangle',
-                        },
-                    },
+                    label: undefined,
+                    property_code: invo.property.property_code,
+                    hiddenlabel: getTypeTranslation(invo.property),
                 }
-                //console.log(newedge)
                 if (!edges.includes(newedge)) edges.push(newedge);
+
             })
         })
     }
-
 
     grid.add(itemTemplate);
 
@@ -568,58 +574,151 @@ function makeNetwork() {
         }, 400);
     })
 
-
     const networkData = {
         nodes: new vis.DataSet(nodes),
         edges: new vis.DataSet(edges)
     };
 
-    // Options for the network
+    let physics = {
+            "repulsion": {
+                "centralGravity": 0,
+                "springLength": 100,
+                "springConstant": 1,
+                "nodeDistance": edges.length
+            },
+            "solver": "repulsion"
+        }
+
+    console.log(edges.length)
+    let curveStyle = 'dynamic'
+    if (edges.length > 400) {
+        curveStyle = 'continuous'
+        physics = {
+            "repulsion": {
+                "springLength": 100,
+                "springConstant": 0.1,
+                "nodeDistance": edges.length
+            },
+            "solver": "repulsion"
+        }
+
+    }
+
+
     const options = {
+        interaction: {
+            hover: true,
+            hoverConnectedEdges: true,
+            selectable: false,
+            selectConnectedEdges: false,
+        },
         nodes: {
             shape: 'dot',
             borderWidth: 0,
-            size: 10,
             font: {
                 size: 10,
-                color: 'white',
+                color: 'rgba(245, 245, 245, 0.5)',
                 strokeWidth: 0,
             },
         },
         edges: {
             font: {
                 size: 10,
-                color: 'white',
+                color: 'whitesmoke',
                 strokeWidth: 0,
             },
             arrows: {
                 to: {
-                    scaleFactor: 0.25
-                }
-            }
+                    scaleFactor: 0.25,
+                },
+            },
+            smooth: {type: curveStyle}
         },
+        physics: physics
     };
 
 
-    // Create a network
     const networkContainer = document.getElementById('network');
     const network = new vis.Network(networkContainer, networkData, options);
+    network.once("stabilizationIterationsDone", function () {
+        setTimeout(function () {
+            document.getElementById('loadingspinner').classList.add('d-none')
+        }, 200);
+    });
+
+
+    let hoveredNodeId
+    let connectedEdges
+    let connectedNodes
+// Event handler for hover
+    network.on('hoverNode', function (params) {
+        hoveredNodeId = params.node;
+
+
+        // Get all edges connected to the hovered node
+        connectedEdges = network.getConnectedEdges(hoveredNodeId);
+        connectedNodes = network.getConnectedNodes(hoveredNodeId);
+        connectedNodes.push(hoveredNodeId)
+
+
+        // Show labels for the connected edges
+        connectedEdges.forEach(function (edgeId) {
+            const edge = networkData.edges.get(edgeId);
+            const to = edges.find((edge) => edge.id === edgeId).to
+            const from = edges.find((edge) => edge.id === edgeId).from
+            const property_code = edges.find((edge) => edge.id === edgeId).property_code
+            if (from === hoveredNodeId) {
+                edge.label = edges.find((edge) => edge.id === edgeId).hiddenlabel;
+            }
+            if (to === hoveredNodeId) {
+                edge.label = returnDirectedProperty(property_code, (edges.find((edge) => edge.id === edgeId).hiddenlabel));
+            }
+            networkData.edges.update(edge);
+            edge.label = edges.find((edge) => edge.id === edgeId).hiddenlabel;
+        });
+
+        connectedNodes.forEach(function (nodeId) {
+            const node = networkData.nodes.get(nodeId);
+            node.font = {color: 'white', size: 15};
+            if (node.id === hoveredNodeId) node.size = (node.size + 10);
+            networkData.nodes.update(node);
+        });
+    });
+
+    network.on('blurNode', function () {
+        connectedEdges.forEach(function (edgeId) {
+            const edge = networkData.edges.get(edgeId);
+            edge.label = ' ';
+            networkData.edges.update(edge);
+        });
+
+    });
+
+    network.on('blurNode', function () {
+        connectedNodes.forEach(function (nodeId) {
+            const node = networkData.nodes.get(nodeId);
+            node.font = {color: 'rgba(245, 245, 245, 0.5)', size: 10};
+            if (node.id === hoveredNodeId) node.size = (node.size - 10);
+            networkData.nodes.update(node);
+        });
+    });
+
 }
 
 function returnGroupColor(group) {
     const style = {
-    'rgb(255, 102, 102)': ['person'], // Salmon Pink for 'person'
-    'rgb(255, 178, 102)': ['file'], // Light Orange for 'file'
-    'rgb(102, 178, 255)': ['group'], // Sky Blue for 'group'
-    'rgb(102, 255, 178)': ['artifact'], // Mint Green for 'artifact'
-    'rgb(255, 102, 178)': ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'], // Orchid Pink for various activities
-    'rgb(178, 102, 255)': ['place'], // Lavender Purple for 'place'
-    'rgb(255, 204, 102)': ['reference_system', 'external_reference'], // Peach for 'reference_system' and 'external_reference'
-    'rgb(255, 102, 255)': ['bibliography'], // Pink for 'bibliography'
-    'rgb(102, 255, 255)': ['source'], // Turquoise for 'source'
-    'rgb(153, 204, 255)': ['type'], // Baby Blue for 'type'
-    'rgb(102, 255, 204)': ['appellation'], // Mint Turquoise for 'appellation'
-};
+        '#324c6b': ['person'], // Salmon Pink for 'person'
+        'rgb(255, 178, 102)': ['file'], // Light Orange for 'file'
+        '#0088ce': ['group'], // Sky Blue for 'group'
+        '#a1c3e8': ['artifact'], // Mint Green for 'artifact'
+        '#3aada1': ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'], // Orchid Pink for various activities
+        'rgb(178, 102, 255)': ['place'], // Lavender Purple for 'place'
+        'rgb(255, 204, 102)': ['reference_system', 'external_reference'], // Peach for 'reference_system' and 'external_reference'
+        'rgb(255, 102, 255)': ['bibliography'], // Pink for 'bibliography'
+        'rgb(102, 255, 255)': ['source'], // Turquoise for 'source'
+        'rgb(153, 204, 255)': ['type'], // Baby Blue for 'type'
+        'rgb(102, 255, 204)': ['appellation'], // Mint Turquoise for 'appellation'
+    };
 
     for (const color in style) {
         if (style[color].includes(group)) {
@@ -628,6 +727,21 @@ function returnGroupColor(group) {
     }
     // Return a default color or handle the case when group is not found
     return 'rgb(133,50,50)';
+}
+
+function returnDirectedProperty(property_code, current_text) {
+    let returntext = current_text
+    for (const property of propTranslations) {
+        if (property.property_code === property_code && current_text === property.text && property.locale === language) {
+            returntext = property.text_inverse
+        } else {
+            if (property.property_code === property_code && current_text === property.text_inverse && property.locale === language) {
+                returntext = property.text
+            }
+        }
+    }
+    if (returntext !== null) return returntext
+    return current_text
 }
 
 function getAliases(data) {
@@ -1130,7 +1244,7 @@ function addFilter(class_, count = 0) {
         const {icon, title} = classOptions;
 
         let elementHtml = `
-            <div title="${title}" class="pb-1" onlick="console.log('this.id')">
+            <div title="${title}" class="pb-1">
                 <input type="checkbox" class="btn-check mt-2" autocomplete="off" id="classSwitch${class_}" checked>
                 <label id="switchLabel${class_}" class="btn filter-label" for="classSwitch${class_}">${icon}<span class="ms-2 filter-title">${title} ${count}</span></label>
                                
@@ -1182,3 +1296,78 @@ window.addEventListener("mousemove", function (event) {
 });
 
 
+function neighbourhoodHighlight(params) {
+    // if something is selected:
+    if (params.nodes.length > 0) {
+        highlightActive = true;
+        var i, j;
+        var selectedNode = params.nodes[0];
+        var degrees = 2;
+
+        // mark all nodes as hard to read.
+        for (var nodeId in allNodes) {
+            allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+            if (allNodes[nodeId].hiddenLabel === undefined) {
+                allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+                allNodes[nodeId].label = undefined;
+            }
+        }
+        var connectedNodes = network.getConnectedNodes(selectedNode);
+        var allConnectedNodes = [];
+
+        // get the second degree nodes
+        for (i = 1; i < degrees; i++) {
+            for (j = 0; j < connectedNodes.length; j++) {
+                allConnectedNodes = allConnectedNodes.concat(
+                    network.getConnectedNodes(connectedNodes[j])
+                );
+            }
+        }
+
+        // all second degree nodes get a different color and their label back
+        for (i = 0; i < allConnectedNodes.length; i++) {
+            allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+            if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+                allNodes[allConnectedNodes[i]].label =
+                    allNodes[allConnectedNodes[i]].hiddenLabel;
+                allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+            }
+        }
+
+        // all first degree nodes get their own color and their label back
+        for (i = 0; i < connectedNodes.length; i++) {
+            allNodes[connectedNodes[i]].color = undefined;
+            if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+                allNodes[connectedNodes[i]].label =
+                    allNodes[connectedNodes[i]].hiddenLabel;
+                allNodes[connectedNodes[i]].hiddenLabel = undefined;
+            }
+        }
+
+        // the main node gets its own color and its label back.
+        allNodes[selectedNode].color = undefined;
+        if (allNodes[selectedNode].hiddenLabel !== undefined) {
+            allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+            allNodes[selectedNode].hiddenLabel = undefined;
+        }
+    } else if (highlightActive === true) {
+        // reset all nodes
+        for (var nodeId in allNodes) {
+            allNodes[nodeId].color = undefined;
+            if (allNodes[nodeId].hiddenLabel !== undefined) {
+                allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+                allNodes[nodeId].hiddenLabel = undefined;
+            }
+        }
+        highlightActive = false;
+    }
+
+    // transform the object into an array
+    var updateArray = [];
+    for (nodeId in allNodes) {
+        if (allNodes.hasOwnProperty(nodeId)) {
+            updateArray.push(allNodes[nodeId]);
+        }
+    }
+    nodesDataset.update(updateArray);
+}

@@ -100,16 +100,13 @@ body {
 .item-content > * {
     background: rgb(245 245 245 / 10%);
     color: whitesmoke;
-    border-radius: 6px;
     --bs-card-border-width: none;
-    box-shadow: 0 0 5px 5px rgb(245 245 245 / 10%);
-    transition: background 1s, box-shadow 1s;
+    transition: background 1s;
 }
 
 .item-content:hover > * {
     background: rgb(245 245 245 / 30%);
-    box-shadow: 0 0 5px 5px rgb(245 245 245 / 30%);
-    transition: background 1s, box-shadow 1s;
+    transition: background 1s;
 
 }
 
@@ -458,12 +455,14 @@ body {
     height: 100%;
 }
 
-.kdk {
-    color: rgba(0, 38, 255, 0.8);
-    color: rgba(37, 218, 165, 0.8);
-    color: rgba(211, 30, 30, 0.8);
-    color: rgba(238, 97, 97, 0.8);
-    color: rgba(180, 97, 67, 0.8);
-    color: rgba(217, 44, 194, 0.8);
-    color: rgba(109, 128, 236, 0.8);
+#loadingspinner {
+    z-index: 5001;
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    background: none;
+}
+
+.card {
+    border-radius: 0!important;
 }

@@ -15,7 +15,15 @@ def entity(entity_id: int):
     # data[0]['connections'] = mapview.get_connections(entity_id)
     #    return json.dumps(data)
 
-    return render_template("/entity/entity.html", data=data)
+    sql = """
+    SELECT jsonb_agg(jsonb_build_object('property_code', property_code, 'locale', language_code, 'text', text, 'text_inverse', text_inverse)) AS translations FROM model.property_i18n i
+    """
+
+    g.cursor.execute(sql)
+
+    translations = g.cursor.fetchone()
+
+    return render_template("/entity/entity.html", data=data, translations=translations.translations)
 
 
 @app.route('/update')

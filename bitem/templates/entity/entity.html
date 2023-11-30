@@ -2,7 +2,10 @@
 {% block content %}
 <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="/static/vendor/node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
-<script>const data = {{ data | tojson }}</script>
+<script>
+    const data = {{ data | tojson }};
+    const propTranslations = {{ translations | tojson}}
+</script>
 <link rel="stylesheet" href="/static/css/item.css"/>
 <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
 <script src="/static/vendor/node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
