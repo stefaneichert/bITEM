@@ -527,6 +527,7 @@ function makeNetwork() {
     let group = ''
     const nodes = [];
     const edges = [];
+    const excludeArray = Object.values(translationIDs)
 
     const mainNode = {
         'id': data.id,
@@ -555,7 +556,7 @@ function makeNetwork() {
                 'size': 10,
                 'color': returnGroupColor(group)
             }
-            if (!nodes.includes(newnode)) nodes.push(newnode);
+            if (!nodes.includes(newnode) && !excludeArray.includes(newnode.id)) nodes.push(newnode);
             node.involvement.forEach(invo => {
                 let newedge = {
                     to: invo.origin_id,
@@ -564,7 +565,7 @@ function makeNetwork() {
                     property_code: invo.property.property_code,
                     hiddenLabel: getTypeTranslation(invo.property),
                 }
-                if (!edges.includes(newedge)) edges.push(newedge);
+                if (!edges.includes(newedge) && !excludeArray.includes(newedge.to)) edges.push(newedge);
 
             })
         })

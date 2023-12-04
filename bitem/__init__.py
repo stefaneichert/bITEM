@@ -73,4 +73,5 @@ def inject_conf_var() -> dict[str, Any]:
         IIIF_BASE=app.config['IIIF_BASE'],
         REFERENCE_SYSTEMS=app.config['REFERENCE_SYSTEMS'],
         UPLOAD_FOLDER=app.config['OPENATLAS_UPLOAD_FOLDER'],
-        IMAGE_EXTENSION=app.config['IMAGE_EXTENSION'])
+        IMAGE_EXTENSION=app.config['IMAGE_EXTENSION'],
+        TRANSLATION_IDS=app.config['TRANSLATION_IDS'], )
