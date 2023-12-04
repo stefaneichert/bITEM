@@ -1003,13 +1003,15 @@ function setEvents(current_data) {
         if (node.begin) eventdates.push(node.begin)
         if (node.end) eventdates.push(node.end)
     }
+    let visItems = current_data.length
+    if (visItems > 5) visItems = 5
 
     returnHtml = `
     <div class="item-content tl-cont">
       <div class="card">
         <div class="card-body">
         <h5 id="timeline-header" class="card-title">${current_data.length + ' ' + languageTranslations._event + ' (' + makeLocalDate(eventdates[0]).localdate + ' ' + languageTranslations._until + ' ' + makeLocalDate(eventdates[eventdates.length - 1]).localdate + ')'}</h5>
-            <div class="timeline" data-visible-items="5" data-mode="horizontal" data-move-items="3" data-force-vertical-mode="900">
+            <div class="timeline" data-visible-items="${visItems}" data-mode="horizontal" data-move-items="3" data-force-vertical-mode="900">
                 <div class="timeline__wrap">
                     <div class="timeline__items">
                 
