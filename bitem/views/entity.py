@@ -7,9 +7,11 @@ from bitem.util import map_entities
 
 
 @app.route('/view/<int:entity_id>')
-def entity(entity_id: int):
+@app.route('/view/<int:entity_id>/<format_>')
+def entity(entity_id: int, format_=None):
     data = map_entities.getlist(None, entity_id)[0]
-
+    if format_ == 'JSON':
+        return json.dumps(data)
     # if data:
     # g.cursor.execute("INSERT INTO bitem.checkaccess (access_type, entity_id) VALUES ('access', %(entity_id)s)",{'entity_id':entity_id})
     # data[0]['connections'] = mapview.get_connections(entity_id)

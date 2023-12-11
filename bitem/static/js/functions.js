@@ -242,6 +242,7 @@ function enlarge3d(model, poster, name) {
 }
 
 function calculateTimeBP(dateString) {
+    if (!dateString) dateString = '-9999999999999999999999999999999999999999999999999999-'
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();

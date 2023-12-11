@@ -13,10 +13,10 @@ babel = Babel(app)
 csrf = CSRFProtect(app)  # Make sure all forms are CSRF protected
 csrf.init_app(app)
 
-app.config.from_object('config.default')  # Load config/INSTANCE_NAME.py
-app.config.from_pyfile('production.py')  # Load instance/INSTANCE_NAME.py
+app.config.from_object('config.default')
+app.config.from_pyfile('production.py')
 
-from bitem.views import index, about, item, entities, entity, iiif, admin
+from bitem.views import index, about, item, entities, entity, iiif, admin, story
 from bitem.util.util import uc_first
 
 

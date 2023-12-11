@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+<link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="/static/vendor/node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+<link rel="stylesheet" href="/static/css/story.css"/>
+<link rel="stylesheet" href="/static/vendor/node_modules/swiper/swiper-bundle.min.css"/>
+<script src="/static/vendor/node_modules/swiper/swiper-bundle.min.js"></script>
+<script>
+    const data = {{ data | tojson }};
+</script>
+
+
+<main>
+    <div class="story-container" id="storyContainer">
+        <a id="backbutton" href="/view/{{data.id}}">back</a>
+        <div class="swiper main-swiper">
+            <div class="swiper-wrapper" id="mainWrapper">
+                <div data-hash="1" id="startSlide" class="swiper-slide"></div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button swiper-button-left"><i class="bi bi-arrow-left"></i></div>
+            <div class="swiper-button swiper-button-right"><i class="bi bi-arrow-right"></i></div>
+            <div class="swiper-button swiper-button-hover"><i class="bi bi-dpad"></i></div>
+        </div>
+    </div>
+</main>
+
+<script src="/static/js/functions.js"></script>
+<script src="/static/js/story.js"></script>
+{% endblock %}%}
