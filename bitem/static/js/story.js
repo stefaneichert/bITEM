@@ -1,3 +1,17 @@
+function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
+
+let noTouchDevice
+
+if (isTouchDevice()) {
+    noTouchDevice = false
+    console.log('This is a touch device.');
+} else {
+    noTouchDevice = true
+    console.log('This is not a touch device.');
+}
+
 //create elements
 //add first slide
 const startSlide = document.getElementById('startSlide');
@@ -70,8 +84,8 @@ startSlide.appendChild(itemTemplate);
 if (data.start || data.end) {
     const itemTlTemplate = document.createElement('div');
     itemTlTemplate.className = "tl-container"
-    let begin =''
-    let end =''
+    let begin = ''
+    let end = ''
     let styleToUse = ' style="width: 100%"'
     if (data.start && data.end) styleToUse = ' style="width: 50%"'
     if (data.start) begin = `<li ${styleToUse}>${makeLocalDate(data.start).localdate}</li>`
@@ -149,7 +163,7 @@ function createSlides(dataToUse, class_) {
           <div class="swiper-wrapper" id="${class_}Wrapper"></div>
           <div class="swiper-pagination"></div>
           <div class="swiper-button swiper-button-up"><i class="bi bi-arrow-up"></i></div>
-          <div class="swiper-button swiper-button-down"><i class="bi bi-arrow-down"></i></div>
+          <div class="swiper-button swiper-button-down"><i class="bi bi-arrow-down"></i></div>          
     </div>
     `
     mainWrapper.appendChild(itemTemplate);
@@ -207,7 +221,7 @@ function createSlides(dataToUse, class_) {
 
         itemTemplate.innerHTML = `
         ${timelineHTML}
-        <div class="bitem-text text-objects">
+        <div class="bitem-text text-objects sub-swiper-elem">
         <div class="title-text opacity-100">${label}</div>
         <div class="container connection-container">
         <div class="row connection-row justify-content-center">
@@ -218,9 +232,9 @@ function createSlides(dataToUse, class_) {
         </div>
         <div class="desc-text">${getLanguage(node.content)}</div>
         </div>
-        ${imageToAdd}
-        
+        ${imageToAdd}       
         `
+
         subWrapper.appendChild(itemTemplate)
 
     }
@@ -241,7 +255,6 @@ function createSlides(dataToUse, class_) {
             prevEl: ".swiper-button-up",
             nextEl: ".swiper-button-down",
         },
-
         grabCursor: true,
         effect: "creative",
         creativeEffect: {
@@ -253,8 +266,132 @@ function createSlides(dataToUse, class_) {
                 translate: ['0%', '100%', 0], // For vertical direction
             },
         },
+        allowTouchMove: false
     });
 
+    if (!noTouchDevice) {
+
+        var scrollTop = 0;
+        var scrollHeight
+        var clientHeight
+        var top = false
+        var bottom = false
+        var lastScrollTop = 0;
+        var currentScrollTop = 0
+        var up = true
+        var indexNumbers = [0]
+
+
+        var textObjects = document.querySelectorAll('.sub-swiper-elem');
+        textObjects.forEach(function (element) {
+
+
+            element.addEventListener('touchstart', function () {
+                console.log('touchstart')
+                subSwiper.allowTouchMove = false
+            })
+
+            element.addEventListener('touchcancel', function () {
+                console.log('touchcancel')
+                subSwiper.allowTouchMove = false
+            })
+
+            element.addEventListener('touchend', function () {
+                subSwiper.allowTouchMove = false
+                console.log('touchend')
+            })
+
+        });
+
+        const firstSlide = subSwiper.slides[0]
+        let element = firstSlide.querySelectorAll('.text-objects')[0]
+        element.addEventListener('touchmove', function () {
+            subSwiper.allowTouchMove = false
+            console.log('first slide begin of touchmove: ' + subSwiper.allowTouchMove)
+            top = false
+            bottom = false
+            currentScrollTop = window.scrollY || element.scrollTop;
+            scrollTop = element.scrollTop;
+            scrollHeight = element.scrollHeight;
+            clientHeight = element.clientHeight;
+            if (scrollTop === 0) top = true
+            if (scrollTop + clientHeight === scrollHeight) bottom = true
+            if (currentScrollTop > lastScrollTop) {
+                up = false
+            } else if (currentScrollTop < lastScrollTop) {
+                up = true
+            }
+
+            if (up) {
+                console.log('up')
+            } else {
+                console.log('down')
+            }
+            console.log('bottom: ' + bottom + '; top: ' + top)
+
+            lastScrollTop = currentScrollTop;
+            if ((up && top) || (!up && bottom)) {
+                subSwiper.allowTouchMove = true
+            } else {
+                subSwiper.allowTouchMove = false
+            }
+            console.log('first slide end of touchmove: ' + subSwiper.allowTouchMove)
+        });
+
+        subSwiper.on('slideChange', function () {
+            const currentSlide = subSwiper.slides[subSwiper.activeIndex]
+            let element = currentSlide.querySelectorAll('.text-objects')[0]
+            top = false
+            bottom = false
+            currentScrollTop = window.scrollY || element.scrollTop;
+            scrollTop = element.scrollTop;
+            scrollHeight = element.scrollHeight;
+            clientHeight = element.clientHeight;
+            if (scrollTop === 0) top = true
+            if (scrollTop + clientHeight === scrollHeight) bottom = true
+            if (currentScrollTop > lastScrollTop) {
+                up = false
+            } else if (currentScrollTop < lastScrollTop) {
+                up = true
+            }
+            lastScrollTop = currentScrollTop;
+            if (!indexNumbers.includes(subSwiper.activeIndex)) {
+                indexNumbers.push(subSwiper.activeIndex)
+                element.addEventListener('touchmove', function () {
+                    subSwiper.allowTouchMove = false
+                    console.log('slide begin of touchmove: ' + subSwiper.allowTouchMove)
+                    top = false
+                    bottom = false
+                    currentScrollTop = window.scrollY || element.scrollTop;
+                    scrollTop = element.scrollTop;
+                    scrollHeight = element.scrollHeight;
+                    clientHeight = element.clientHeight;
+                    if (scrollTop === 0) top = true
+                    if (scrollTop + clientHeight === scrollHeight) bottom = true
+                    if (currentScrollTop > lastScrollTop) {
+                        up = false
+                    } else if (currentScrollTop < lastScrollTop) {
+                        up = true
+                    }
+
+                    if (up) {
+                        console.log('up')
+                    } else {
+                        console.log('down')
+                    }
+                    console.log('bottom: ' + bottom + '; top: ' + top)
+
+                    lastScrollTop = currentScrollTop;
+                    if ((up && top) || (!up && bottom)) {
+                        subSwiper.allowTouchMove = true
+                    } else {
+                        subSwiper.allowTouchMove = false
+                    }
+                    console.log('slide end of touchmove: ' + subSwiper.allowTouchMove)
+                });
+            }
+        })
+    }
 
     subSwiper.on('slideNextTransitionStart', function () {
         let tlArray = document.getElementsByClassName('tl-container')
@@ -319,7 +456,6 @@ let mainSwiper = new Swiper(".main-swiper", {
         },
     },
 });
-
 
 
 /*const myGlobe = Globe();
