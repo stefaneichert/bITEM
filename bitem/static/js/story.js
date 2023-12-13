@@ -266,7 +266,7 @@ function createSlides(dataToUse, class_) {
                 translate: ['0%', '100%', 0], // For vertical direction
             },
         },
-        allowTouchMove: false
+        allowTouchMove: noTouchDevice
     });
 
     if (!noTouchDevice) {
