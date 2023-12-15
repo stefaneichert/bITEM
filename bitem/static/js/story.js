@@ -249,7 +249,7 @@ function createSlides(dataToUse, class_) {
         let width_
         if (i === 0 || i === dataToUse.length - 1) firstLast = ' style ="width: 50%;" '
         if (!noTouchDevice) {
-            firstLast = 'style = "width: 92%;" '
+            firstLast = 'style = "float: unset; width: unset;"'
         }
         let thisEvent = `<li ${firstLast} class="active">${getTimelineDate(dataToUse[i])}</li>`
         if (i > 0 && noTouchDevice) {
