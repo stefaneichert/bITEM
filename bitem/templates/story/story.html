@@ -12,12 +12,15 @@
 
 <main>
     <div class="story-container" id="storyContainer">
-        <a id="backbutton" href="/view/{{data.id}}">back</a>
+        <a id="backbutton" class="swiper-button-touch" href="/view/{{data.id}}"><i class="bi bi-box-arrow-left"></i></a>
         <div class="swiper main-swiper">
             <div class="swiper-wrapper" id="mainWrapper">
-                <div data-hash="1" id="startSlide" class="swiper-slide"></div>
+                <div data-hash="1" id="startSlide" data-label="{{_('mainpage')|uc_first}}" class="swiper-slide"></div>
             </div>
             <div class="swiper-pagination"></div>
+            <div class="swiper-button-touch-container" id="touchNavs">
+            <a class="swiper-button-touch d-none" id="touchBackbutton" href="/view/{{data.id}}"><i class="bi bi-box-arrow-right"></i></a>
+            </div>
             <div class="swiper-button swiper-button-left"><i class="bi bi-arrow-left"></i></div>
             <div class="swiper-button swiper-button-right"><i class="bi bi-arrow-right"></i></div>
             <div class="swiper-button swiper-button-hover"><i class="bi bi-dpad"></i></div>

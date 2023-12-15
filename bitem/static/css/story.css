@@ -97,6 +97,36 @@
     z-index: 3 !important;
 }
 
+.swiper-button-touch-container {
+    position: absolute;
+    bottom: 0;
+    justify-content: space-around;
+    display: flex;
+    max-width: 100%;
+    width: 100%;
+    overflow-x: auto;
+    z-index: 10;
+    padding: 0.5rem;
+}
+
+.swiper-button-touch {
+    display: flex;
+    background: #3aada1;
+    border-radius: 6px;
+    width: auto;
+    height: 25px;
+    z-index: 3 !important;
+    text-align: center;
+    padding: 0 0.5rem;
+    margin: 0 0.5rem;
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+.swiper-button-touch:active {
+    background: #7cb4ae;
+}
+
 .swiper-button > i {
     font-size: 1.5rem;
     color: whitesmoke;
@@ -290,10 +320,15 @@
 }
 
 #backbutton {
+    color: whitesmoke;
     position: fixed;
-    top: 2rem;
-    right: 2rem;
+    bottom: 0.5rem;
+    right: 0.5rem;
     z-index: 10;
+}
+
+#backbutton:hover {
+    color: white!important;
 }
 
 #globe {
@@ -394,4 +429,53 @@ ul:nth-child(1) {
 .timeline li.active:before {
     background: rgba(59, 201, 186, 0.9);
     color: #f5f5f5;
+}
+
+.x-hand {
+  color: #ffffff;
+  font-size:4em;
+  height:100px;
+  left:calc(50% - 22px);
+  opacity:.8;
+  position:absolute;
+  top:calc(50% - 5px);
+  transform-origin:bottom;
+  width:100px;
+}
+
+.x-swipe-msg{
+  position: absolute;
+  top: calc(50% - 30px);
+  left : 40%;
+  font-family:'Verdana';
+  font-weight : bold;
+}
+.x-swipe-indicator {
+  position: absolute;
+  top: calc(50% - 60px);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 5px dotted whitesmoke;
+  animation: swipe-animation 2s ease-in-out infinite;
+}
+
+@keyframes swipe-animation {
+  0% {
+    left: 10vw;
+  }
+  50% {
+    left: 80vw;
+  }
+  100% {
+    left: 10vw;
+  }
+}
+
+#slideIndicator {
+    transition: opacity 1s;
+}
+
+.zero-op {
+    opacity: 0;
 }

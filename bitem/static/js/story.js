@@ -1,3 +1,5 @@
+let nextslide = 1
+
 function isTouchDevice() {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 }
@@ -16,6 +18,7 @@ if (isTouchDevice()) {
 //add first slide
 const startSlide = document.getElementById('startSlide');
 const mainWrapper = document.getElementById('mainWrapper');
+const touchNavs = document.getElementById('touchNavs');
 let mainImage = ''
 //set 3d Model as background if available
 let model = data.models
@@ -53,20 +56,31 @@ if (image && !model) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = "image-container"
     itemTemplate.innerHTML = `
-        <img class="title-image" src="${iiifUrl + data.image.id}/full/max/0/default.jpg">
+        <img loading="lazy"  class="title-image" src="${iiifUrl + data.image.id}/full/max/0/default.jpg">
     `
     startSlide.appendChild(itemTemplate);
 }
 let label = getLabelTranslation(data)
 let mainImageSide
 if (mainImage !== '') {
-    mainImage = '<img class="main-image" src=' + mainImage + '>'
-    mainImageSide = mainImage
+    let path = mainImage
+    mainImage = '<img loading="lazy"  class="main-image" src=' + path + '>'
+    mainImageSide = '<img loading="lazy"  class="main-image" src=' + path + '>'
 } else {
     mainImageSide = `
         <div class="main-image ent-card">
             ${label}
         </div>`
+}
+
+function setTouchNavButton(index, label) {
+    let touchNavItemTemplate = document.createElement('div')
+    touchNavItemTemplate.className = 'swiper-button-touch'
+    touchNavItemTemplate.innerHTML = label
+    touchNavItemTemplate.onclick = function () {
+        mainSwiper.slideTo(index, 100, false);
+    };
+    if (!noTouchDevice) touchNavs.appendChild(touchNavItemTemplate)
 }
 
 //set label and description
@@ -96,11 +110,33 @@ if (data.start || data.end) {
             ${end}                   
             </ul>`
     startSlide.appendChild(itemTlTemplate)
+
+    if (!noTouchDevice) {
+        let slideIndicator = document.createElement('div')
+        slideIndicator.id = 'slideIndicator'
+        slideIndicator.innerHTML = `
+        <div>
+          <span class="x-swipe-indicator">
+          <i class="x-hand bi bi-hand-index-fill"></i>
+          </span>
+        </div>
+        <div class="x-swipe-msg"></div>
+        `
+        startSlide.appendChild(slideIndicator)
+        setTouchNavButton(0, languageTranslations._startPage)
+        document.getElementById('touchBackbutton').classList.remove('d-none')
+        document.getElementById('backbutton').classList.add('d-none')
+    }
 }
 
 
 window.onload = function () {
     document.getElementById('entLabel').classList.add('fade-in')
+    if (!noTouchDevice) {
+        setTimeout(function () {
+            document.getElementById('slideIndicator').classList = 'zero-op';
+        }, 2000)
+    }
 };
 
 
@@ -156,7 +192,9 @@ function getTimelineDate(currentDatum) {
 function createSlides(dataToUse, class_) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = "swiper-slide"
+    itemTemplate.lazy = "true"
     itemTemplate.dataset.hash = class_
+    itemTemplate.dataset.label = eval('languageTranslations._' + class_)
     itemTemplate.id = class_
     itemTemplate.innerHTML = `
     <div class="swiper ${class_}-swiper swiper-v">
@@ -166,9 +204,15 @@ function createSlides(dataToUse, class_) {
           <div class="swiper-button swiper-button-down"><i class="bi bi-arrow-down"></i></div>          
     </div>
     `
-    mainWrapper.appendChild(itemTemplate);
+    let subWrapper
+    if (noTouchDevice) {
+        mainWrapper.appendChild(itemTemplate);
+        subWrapper = document.getElementById(class_ + 'Wrapper')
+    } else {
+        subWrapper = mainWrapper
+        setTouchNavButton(nextslide, eval('languageTranslations._' + class_))
+    }
 
-    const subWrapper = document.getElementById(class_ + 'Wrapper')
     let i = 0;
     for (const node of dataToUse) {
         let timelineHTML = ''
@@ -182,7 +226,8 @@ function createSlides(dataToUse, class_) {
         const label = getTypeTranslation(node._label)
         const itemTemplate = document.createElement('div');
         itemTemplate.className = "swiper-slide"
-        itemTemplate.dataset.hash = node.id
+        itemTemplate.lazy = "true"
+        itemTemplate.dataset.hash = class_ + '-' + node.id
         itemTemplate.dataset.date = makeLocalDate(node.begin).localdate
         let sideImage = `
             <div class="main-image ent-card">
@@ -192,21 +237,25 @@ function createSlides(dataToUse, class_) {
         if (node.images) {
             imageToAdd = `
         <div class="image-container">
-        <img class="title-image" src="${iiifUrl + node.images[Math.floor(Math.random() * node.images.length)]}/full/max/0/default.jpg">
+        <img loading="lazy" class="title-image" src="${iiifUrl + node.images[Math.floor(Math.random() * node.images.length)]}/full/max/0/default.jpg">
         </div>
         `;
-            sideImage = '<img class="main-image" src="' + iiifUrl + node.images[Math.floor(Math.random() * node.images.length)] + '/full/max/0/default.jpg">'
+            sideImage = '<img loading="lazy"  class="main-image" src="' + iiifUrl + node.images[Math.floor(Math.random() * node.images.length)] + '/full/max/0/default.jpg">'
         }
 
         let previous = ''
         let next = ''
         let firstLast = ''
+        let width_
         if (i === 0 || i === dataToUse.length - 1) firstLast = ' style ="width: 50%;" '
+        if (!noTouchDevice) {
+            firstLast = 'style = "width: 92%;" '
+        }
         let thisEvent = `<li ${firstLast} class="active">${getTimelineDate(dataToUse[i])}</li>`
-        if (i > 0) {
+        if (i > 0 && noTouchDevice) {
             previous = `<li ${firstLast}>${getTimelineDate(dataToUse[i - 1])}</li>`
         }
-        if (i + 1 < dataToUse.length) {
+        if (i + 1 < dataToUse.length && noTouchDevice) {
             next = `<li ${firstLast}>${getTimelineDate(dataToUse[i + 1])}</li>`
         }
 
@@ -236,194 +285,71 @@ function createSlides(dataToUse, class_) {
         `
 
         subWrapper.appendChild(itemTemplate)
+        nextslide += 1
 
     }
-    let subSwiper = new Swiper(`.${class_}-swiper`, {
-        direction: "vertical",
-        keyboard: {
-            enabled: true,
-        },
-        spaceBetween: 0,
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-            renderBullet: function (index, className) {
-                return '<span class="' + className + '"><span class="hover-bullettext">' + this.slides[index].attributes['data-date'].value + "</span></span>";
-            }
-        },
-        navigation: {
-            prevEl: ".swiper-button-up",
-            nextEl: ".swiper-button-down",
-        },
-        grabCursor: true,
-        effect: "creative",
-        creativeEffect: {
-            prev: {
-                shadow: true,
-                translate: ['0%', '-20%', -1], // For vertical direction
+
+    let subSwiper
+
+    if (noTouchDevice) {
+        subSwiper = new Swiper(`.${class_}-swiper`, {
+            direction: "vertical",
+            keyboard: {
+                enabled: true,
             },
-            next: {
-                translate: ['0%', '100%', 0], // For vertical direction
+            spaceBetween: 0,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+                renderBullet: function (index, className) {
+                    return '<span class="' + className + '"><span class="hover-bullettext">' + this.slides[index].attributes['data-date'].value + "</span></span>";
+                }
             },
-        },
-        allowTouchMove: noTouchDevice
-    });
-
-    if (!noTouchDevice) {
-
-        var scrollTop = 0;
-        var scrollHeight
-        var clientHeight
-        var top = false
-        var bottom = false
-        var lastScrollTop = 0;
-        var currentScrollTop = 0
-        var up = true
-        var indexNumbers = [0]
-
-
-        var textObjects = document.querySelectorAll('.sub-swiper-elem');
-        textObjects.forEach(function (element) {
-
-
-            element.addEventListener('touchstart', function () {
-                console.log('touchstart')
-                subSwiper.allowTouchMove = false
-            })
-
-            element.addEventListener('touchcancel', function () {
-                console.log('touchcancel')
-                subSwiper.allowTouchMove = false
-            })
-
-            element.addEventListener('touchend', function () {
-                subSwiper.allowTouchMove = false
-                console.log('touchend')
-            })
-
+            navigation: {
+                prevEl: ".swiper-button-up",
+                nextEl: ".swiper-button-down",
+            },
+            grabCursor: true,
+            allowTouchMove: true,
+            hashNavigation: {
+                watchState: true,
+            },
         });
+    }
 
-        const firstSlide = subSwiper.slides[0]
-        let element = firstSlide.querySelectorAll('.text-objects')[0]
-        element.addEventListener('touchmove', function () {
-            subSwiper.allowTouchMove = false
-            console.log('first slide begin of touchmove: ' + subSwiper.allowTouchMove)
-            top = false
-            bottom = false
-            currentScrollTop = window.scrollY || element.scrollTop;
-            scrollTop = element.scrollTop;
-            scrollHeight = element.scrollHeight;
-            clientHeight = element.clientHeight;
-            if (scrollTop === 0) top = true
-            if (scrollTop + clientHeight === scrollHeight) bottom = true
-            if (currentScrollTop > lastScrollTop) {
-                up = false
-            } else if (currentScrollTop < lastScrollTop) {
-                up = true
+    if (noTouchDevice) {
+        subSwiper.on('slideNextTransitionStart', function () {
+            let tlArray = document.getElementsByClassName('tl-container')
+            for (var i = 0; i < tlArray.length; i++) {
+                tlArray[i].classList = 'move-left tl-container';
+                tlArray[i].classList.add('move-right');
+                tlArray[i].classList.remove('move-left');
             }
+        })
 
-            if (up) {
-                console.log('up')
-            } else {
-                console.log('down')
+        subSwiper.on('slideNextTransitionEnd', function () {
+            let tlArray = document.getElementsByClassName('tl-container')
+            for (var i = 0; i < tlArray.length; i++) {
+                tlArray[i].classList = 'tl-container moved-right';
             }
-            console.log('bottom: ' + bottom + '; top: ' + top)
+        })
 
-            lastScrollTop = currentScrollTop;
-            if ((up && top) || (!up && bottom)) {
-                subSwiper.allowTouchMove = true
-            } else {
-                subSwiper.allowTouchMove = false
+        subSwiper.on('slidePrevTransitionStart', function () {
+            let tlArray = document.getElementsByClassName('tl-container')
+            for (var i = 0; i < tlArray.length; i++) {
+                tlArray[i].classList = 'move-right tl-container';
+                tlArray[i].classList.add('move-left');
+                tlArray[i].classList.remove('move-right');
             }
-            console.log('first slide end of touchmove: ' + subSwiper.allowTouchMove)
-        });
+        })
 
-        subSwiper.on('slideChange', function () {
-            const currentSlide = subSwiper.slides[subSwiper.activeIndex]
-            let element = currentSlide.querySelectorAll('.text-objects')[0]
-            top = false
-            bottom = false
-            currentScrollTop = window.scrollY || element.scrollTop;
-            scrollTop = element.scrollTop;
-            scrollHeight = element.scrollHeight;
-            clientHeight = element.clientHeight;
-            if (scrollTop === 0) top = true
-            if (scrollTop + clientHeight === scrollHeight) bottom = true
-            if (currentScrollTop > lastScrollTop) {
-                up = false
-            } else if (currentScrollTop < lastScrollTop) {
-                up = true
-            }
-            lastScrollTop = currentScrollTop;
-            if (!indexNumbers.includes(subSwiper.activeIndex)) {
-                indexNumbers.push(subSwiper.activeIndex)
-                element.addEventListener('touchmove', function () {
-                    subSwiper.allowTouchMove = false
-                    console.log('slide begin of touchmove: ' + subSwiper.allowTouchMove)
-                    top = false
-                    bottom = false
-                    currentScrollTop = window.scrollY || element.scrollTop;
-                    scrollTop = element.scrollTop;
-                    scrollHeight = element.scrollHeight;
-                    clientHeight = element.clientHeight;
-                    if (scrollTop === 0) top = true
-                    if (scrollTop + clientHeight === scrollHeight) bottom = true
-                    if (currentScrollTop > lastScrollTop) {
-                        up = false
-                    } else if (currentScrollTop < lastScrollTop) {
-                        up = true
-                    }
-
-                    if (up) {
-                        console.log('up')
-                    } else {
-                        console.log('down')
-                    }
-                    console.log('bottom: ' + bottom + '; top: ' + top)
-
-                    lastScrollTop = currentScrollTop;
-                    if ((up && top) || (!up && bottom)) {
-                        subSwiper.allowTouchMove = true
-                    } else {
-                        subSwiper.allowTouchMove = false
-                    }
-                    console.log('slide end of touchmove: ' + subSwiper.allowTouchMove)
-                });
+        subSwiper.on('slidePrevTransitionEnd', function () {
+            let tlArray = document.getElementsByClassName('tl-container')
+            for (var i = 0; i < tlArray.length; i++) {
+                tlArray[i].classList = 'tl-container moved-left';
             }
         })
     }
-
-    subSwiper.on('slideNextTransitionStart', function () {
-        let tlArray = document.getElementsByClassName('tl-container')
-        for (var i = 0; i < tlArray.length; i++) {
-            tlArray[i].classList = 'move-left tl-container';
-            tlArray[i].classList.add('move-right');
-            tlArray[i].classList.remove('move-left');
-        }
-    })
-
-    subSwiper.on('slideNextTransitionEnd', function () {
-        let tlArray = document.getElementsByClassName('tl-container')
-        for (var i = 0; i < tlArray.length; i++) {
-            tlArray[i].classList = 'tl-container moved-right';
-        }
-    })
-
-    subSwiper.on('slidePrevTransitionStart', function () {
-        let tlArray = document.getElementsByClassName('tl-container')
-        for (var i = 0; i < tlArray.length; i++) {
-            tlArray[i].classList = 'move-right tl-container';
-            tlArray[i].classList.add('move-left');
-            tlArray[i].classList.remove('move-right');
-        }
-    })
-
-    subSwiper.on('slidePrevTransitionEnd', function () {
-        let tlArray = document.getElementsByClassName('tl-container')
-        for (var i = 0; i < tlArray.length; i++) {
-            tlArray[i].classList = 'tl-container moved-left';
-        }
-    })
 }
 
 let mainSwiper = new Swiper(".main-swiper", {
@@ -434,27 +360,23 @@ let mainSwiper = new Swiper(".main-swiper", {
     spaceBetween: 0,
     pagination: {
         el: ".swiper-pagination",
-        clickable: true,
+        clickable: noTouchDevice,
         renderBullet: function (index, className) {
-            return '<span class="' + className + '"><span class="hover-bullettext">' + this.slides[index].id + "</span></span>";
+            if (noTouchDevice) {
+                return '<span class="' + className + '"><span class="hover-bullettext">' + this.slides[index].attributes['data-label'].value + "</span></span>";
+            } else {
+                return ''
+            }
         }
     },
     navigation: {
         prevEl: ".swiper-button-left",
         nextEl: ".swiper-button-right",
     },
-
     grabCursor: true,
-    effect: "creative",
-    creativeEffect: {
-        prev: {
-            shadow: true,
-            translate: ["-20%", 0, -1],
-        },
-        next: {
-            translate: ["100%", 1, 0],
-        },
-    },
+    hashNavigation: {
+        watchState: true,
+      }
 });
 
 
@@ -463,3 +385,4 @@ myGlobe(document.getElementById('globe'))
     .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
     .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
     .backgroundColor('rgba(255,255,255,0)')*/
+

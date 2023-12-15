@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-11-28 15:49+0100\n"
+"POT-Creation-Date: 2023-12-15 12:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:52 bitem/templates/layout.html:120
+#: bitem/templates/layout.html:52 bitem/templates/layout.html:121
 msgid "items"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 msgid "groups"
 msgstr ""
 
-#: bitem/templates/layout.html:61 bitem/templates/layout.html:118
+#: bitem/templates/layout.html:61 bitem/templates/layout.html:119
 msgid "events"
 msgstr ""
 
@@ -41,80 +41,84 @@ msgstr ""
 msgid "about"
 msgstr ""
 
-#: bitem/templates/layout.html:113
+#: bitem/templates/layout.html:114
 msgid "until"
 msgstr ""
 
-#: bitem/templates/layout.html:114
+#: bitem/templates/layout.html:115
 msgid "as"
 msgstr ""
 
-#: bitem/templates/layout.html:115
+#: bitem/templates/layout.html:116
 msgid "actors"
 msgstr ""
 
-#: bitem/templates/layout.html:116
+#: bitem/templates/layout.html:117
 msgid "actor(s)"
 msgstr ""
 
-#: bitem/templates/layout.html:117
+#: bitem/templates/layout.html:118
 msgid "open image in viewer"
 msgstr ""
 
-#: bitem/templates/layout.html:119
+#: bitem/templates/layout.html:120
 msgid "event(s)"
 msgstr ""
 
-#: bitem/templates/layout.html:121
+#: bitem/templates/layout.html:122
 msgid "item(s)"
 msgstr ""
 
-#: bitem/templates/layout.html:122
+#: bitem/templates/layout.html:123
 msgid "map"
 msgstr ""
 
-#: bitem/templates/layout.html:123 bitem/templates/submenu.html:87
+#: bitem/templates/layout.html:124 bitem/templates/submenu.html:87
 msgid "images"
 msgstr ""
 
-#: bitem/templates/layout.html:124
+#: bitem/templates/layout.html:125
 msgid "current"
 msgstr ""
 
-#: bitem/templates/layout.html:125 bitem/views/iiif.py:99
+#: bitem/templates/layout.html:126 bitem/views/iiif.py:99
 msgid "source(s)"
 msgstr ""
 
-#: bitem/templates/layout.html:126
+#: bitem/templates/layout.html:127
 msgid "sources"
 msgstr ""
 
-#: bitem/templates/layout.html:127
+#: bitem/templates/layout.html:128
 msgid "indirect connection(s)"
 msgstr ""
 
-#: bitem/templates/layout.html:128
+#: bitem/templates/layout.html:129
 msgid "Location of"
 msgstr ""
 
-#: bitem/templates/layout.html:129
+#: bitem/templates/layout.html:130
 msgid "center of"
 msgstr ""
 
-#: bitem/templates/layout.html:130
+#: bitem/templates/layout.html:131
 msgid "contains"
 msgstr ""
 
-#: bitem/templates/layout.html:131
+#: bitem/templates/layout.html:132
 msgid "area of"
 msgstr ""
 
-#: bitem/templates/layout.html:132 bitem/templates/submenu.html:78
+#: bitem/templates/layout.html:133 bitem/templates/submenu.html:78
 msgid "3D models"
 msgstr ""
 
-#: bitem/templates/layout.html:133
+#: bitem/templates/layout.html:134
 msgid "network"
+msgstr ""
+
+#: bitem/templates/layout.html:135 bitem/templates/story/story.html:18
+msgid "mainpage"
 msgstr ""
 
 #: bitem/templates/submenu.html:3
@@ -195,7 +199,7 @@ msgstr ""
 msgid "include entries without date"
 msgstr ""
 
-#: bitem/templates/entity/entity.html:19 bitem/templates/iiif/iiif.html:7
+#: bitem/templates/entity/entity.html:21 bitem/templates/iiif/iiif.html:7
 #: bitem/templates/submenu.html:177
 msgid "loading"
 msgstr ""
