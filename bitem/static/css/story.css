@@ -427,7 +427,7 @@ ul:nth-child(1) {
 }
 
 .timeline li.active:before {
-    background: rgba(59, 201, 186, 0.9);
+    background: rgba(59, 201, 186, 1);
     color: #f5f5f5;
 }
 

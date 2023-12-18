@@ -126,6 +126,12 @@ if (data.start || data.end) {
         setTouchNavButton(0, languageTranslations._startPage)
         document.getElementById('touchBackbutton').classList.remove('d-none')
         document.getElementById('backbutton').classList.add('d-none')
+
+        var styleElement = document.createElement('style');
+        var cssRules = '.timeline li:first-child:after { content: ""; width: 100vw!important; left: -40px!important; }';
+        styleElement.appendChild(document.createTextNode(cssRules));
+        document.head.appendChild(styleElement);
+
     }
 }
 
@@ -376,7 +382,7 @@ let mainSwiper = new Swiper(".main-swiper", {
     grabCursor: true,
     hashNavigation: {
         watchState: true,
-      }
+    }
 });
 
 
