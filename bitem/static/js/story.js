@@ -135,14 +135,26 @@ if (data.start || data.end) {
     }
 }
 
+if (noTouchDevice) {
+    let slideIndicator = document.createElement('div')
+    slideIndicator.id = 'slideIndicator'
+    slideIndicator.innerHTML = `
+        <div>
+          <span class="y-swipe-indicator">
+          <i class="y-hand bi bi-hand-index-fill"></i>
+          </span>
+        </div>
+        <div class="y-swipe-msg">${languageTranslations._swipeMessage}</div>
+        `
+    startSlide.appendChild(slideIndicator)
+}
 
 window.onload = function () {
     document.getElementById('entLabel').classList.add('fade-in')
-    if (!noTouchDevice) {
-        setTimeout(function () {
-            document.getElementById('slideIndicator').classList = 'zero-op';
-        }, 2000)
-    }
+
+    setTimeout(function () {
+        document.getElementById('slideIndicator').classList = 'zero-op';
+    }, 2000)
 };
 
 
@@ -358,6 +370,8 @@ function createSlides(dataToUse, class_) {
     }
 }
 
+makeStoryMap()
+
 let mainSwiper = new Swiper(".main-swiper", {
     direction: "horizontal",
     keyboard: {
@@ -386,9 +400,28 @@ let mainSwiper = new Swiper(".main-swiper", {
 });
 
 
-/*const myGlobe = Globe();
+function makeStoryMap() {
+    const itemTemplate = document.createElement('div');
+    itemTemplate.className = "swiper-slide"
+    itemTemplate.lazy = "true"
+    itemTemplate.dataset.hash = "storymap"
+    itemTemplate.dataset.label = "Storymap"
+    itemTemplate.id = "storyMap"
+    itemTemplate.innerHTML = `<div id="globe"></div>
+        
+    `
+    mainWrapper.appendChild(itemTemplate)
+    setTouchNavButton(nextslide, "Storymap")
+    nextslide += 1
+}
+
+
+
+
+const myGlobe = Globe();
 myGlobe(document.getElementById('globe'))
     .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
     .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-    .backgroundColor('rgba(255,255,255,0)')*/
+    .backgroundColor('rgba(255,255,255,0)')
 
+myGlobe.enablePointerInteraction = false

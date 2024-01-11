@@ -253,12 +253,6 @@ function extractImages(images) {
 
 function setGallery(images) {
 
-    /*grid2 = new Muuri('.gallery', {
-        layout: {
-            fillGaps: true
-        }
-    });*/
-
     for (const img of images) {
         const itemTemplate = document.createElement('div');
         itemTemplate.dataset.class = 'imgs'
@@ -275,7 +269,6 @@ function setGallery(images) {
     </div>
   `
         itemTemplate.innerHTML = returnHtml
-        //grid2.add(itemTemplate);
         grid.add(itemTemplate);
     }
 
@@ -757,17 +750,24 @@ function neighbourhoodHighlight(params) {
 
 function returnGroupColor(group) {
     const style = {
-        '#324c6b': ['person'], // Salmon Pink for 'person'
-        'rgb(255, 178, 102)': ['file'], // Light Orange for 'file'
-        '#0088ce': ['group'], // Sky Blue for 'group'
-        '#a1c3e8': ['artifact'], // Mint Green for 'artifact'
-        '#3aada1': ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'], // Orchid Pink for various activities
-        'rgb(178, 102, 255)': ['place'], // Lavender Purple for 'place'
-        'rgb(255, 204, 102)': ['reference_system', 'external_reference'], // Peach for 'reference_system' and 'external_reference'
-        'rgb(255, 102, 255)': ['bibliography'], // Pink for 'bibliography'
-        'rgb(102, 255, 255)': ['source'], // Turquoise for 'source'
-        'rgb(153, 204, 255)': ['type'], // Baby Blue for 'type'
-        'rgb(102, 255, 204)': ['appellation'], // Mint Turquoise for 'appellation'
+        '#ce4600': ['person'],
+        '#0088ce': ['file'], // Light Orange for 'file'
+        '#f18841': ['group'],
+        '#2DD6D6': ['artifact'],
+        '#29886f': ['acquisition'],
+        '#822dd6': ['event'],
+        '#Da5d0d': ['activity'],
+        '#428829': ['creation'],
+        '#da0d8a': ['move'],
+        '#b3ded2': ['production'],
+        '#294288': ['modification'],
+        '#81d62d': ['place'],
+        '#900026': ['reference_system'],
+        '#520016': ['external_reference'],
+        '#d6c52d': ['bibliography'],
+        '#d62dc5': ['source'],
+        '#00ce98': ['type'], // Baby Blue for 'type'
+        '#ce0036': ['appellation']
     };
 
     for (const color in style) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-15 12:32+0100\n"
+"POT-Creation-Date: 2023-12-18 12:09+0100\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -118,9 +118,13 @@ msgstr "3D Modelle"
 msgid "network"
 msgstr "Netzwerk"
 
-#: bitem/templates/layout.html:135 bitem/templates/story/story.html:18
+#: bitem/templates/layout.html:135 bitem/templates/story/story.html:19
 msgid "mainpage"
 msgstr "Startseite"
+
+#: bitem/templates/layout.html:136
+msgid "swipe or use arrow keys to navigate"
+msgstr "wischen oder mit Pfeiltasten navigieren"
 
 #: bitem/templates/submenu.html:3
 msgid "of"
@@ -250,4 +254,7 @@ msgstr "mehr"
 
 #~ msgid "open details"
 #~ msgstr "Details"
+
+#~ msgid "swipe left/right or use arrow keys to navigate"
+#~ msgstr "nach links/rechts wischen oder mit Pfeiltasten navigieren"
 

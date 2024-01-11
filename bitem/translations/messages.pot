@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-15 12:32+0100\n"
+"POT-Creation-Date: 2023-12-18 12:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -117,8 +117,12 @@ msgstr ""
 msgid "network"
 msgstr ""
 
-#: bitem/templates/layout.html:135 bitem/templates/story/story.html:18
+#: bitem/templates/layout.html:135 bitem/templates/story/story.html:19
 msgid "mainpage"
+msgstr ""
+
+#: bitem/templates/layout.html:136
+msgid "swipe or use arrow keys to navigate"
 msgstr ""
 
 #: bitem/templates/submenu.html:3
