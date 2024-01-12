@@ -154,6 +154,9 @@ window.onload = function () {
 
     setTimeout(function () {
         document.getElementById('slideIndicator').classList = 'zero-op';
+        setTimeout(function () {
+            document.getElementById('slideIndicator').classList = 'zero-op d-none';
+        }, 500)
     }, 2000)
 };
 
@@ -407,21 +410,10 @@ function makeStoryMap() {
     itemTemplate.dataset.hash = "storymap"
     itemTemplate.dataset.label = "Storymap"
     itemTemplate.id = "storyMap"
-    itemTemplate.innerHTML = `<div id="globe"></div>
+    itemTemplate.innerHTML = `<div id="map"></div>
         
     `
     mainWrapper.appendChild(itemTemplate)
     setTouchNavButton(nextslide, "Storymap")
     nextslide += 1
 }
-
-
-
-
-const myGlobe = Globe();
-myGlobe(document.getElementById('globe'))
-    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-    .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-    .backgroundColor('rgba(255,255,255,0)')
-
-myGlobe.enablePointerInteraction = false
