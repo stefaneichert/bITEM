@@ -205,6 +205,11 @@ body {
     text-decoration: none;
 }
 
+.bitem-link:hover {
+    color: #7692b0;
+    text-decoration: underline;
+}
+
 .item-content {
     cursor: unset !important;
     overflow-x: hidden;

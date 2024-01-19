@@ -1,24 +1,50 @@
 body {
-    padding-top: 3.5rem;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgb(0, 0, 0) 15%, rgb(21, 21, 21) 20%, rgb(115, 115, 115) 65%, rgb(151, 151, 151));
+    padding: 3.5rem;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgb(0, 0, 0) 25%, rgb(21, 21, 21) 35%, rgb(115, 115, 115) 85%, rgb(120, 120, 120) 95%, rgb(151, 151, 151));
     min-height: 100vh;
 }
 
-.headline {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    color: white;
+.about-card {
+    background: rgb(245 245 245 / 15%);
+    color: whitesmoke;
+    --bs-card-border-width: none;
+    transition: background 1s, box-shadow 1s;
+    margin: 2rem 1rem 1rem 1rem;
+    padding: 2rem 2rem 3.5rem 2rem;
 }
 
-.fadein-container-about{
-    padding-left: 2rem;
-    padding-right: 2rem;
+.about-card img {
+    width: 170px;
+    height: auto;
 }
 
-.bitem-link {
-    color: #56b3b3;
-    text-decoration: none;
+.about-card h4 {
+    margin-top: 2rem
+}
+
+.about-card h2 {
+    margin-bottom: 2rem
+}
+
+.about-contact {
+    margin-top: 2rem;
+    margin-right: 2rem;
+    display: inline-grid;
 }
 
 
+.about-card:hover {
+    background: rgb(245 245 245 / 26%);
+    transition: background 1s, box-shadow 1s;
+}
+
+@media screen and (max-width: 501px) {
+    .about-card {
+        margin: 3rem 0 0 0;
+    }
+
+    body {
+        padding: 3.5rem 0 3.5rem 0;
+    }
+}
 
