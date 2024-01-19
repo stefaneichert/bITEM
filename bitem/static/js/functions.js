@@ -1,3 +1,11 @@
+function languageToggle(text="hallo welt ") {
+    console.log(text + "language is: " + language)
+    var elementsToShow = language === "de" ? document.querySelectorAll(".de") : document.querySelectorAll(".en");
+
+        elementsToShow.forEach(function(element) {
+            element.style.display = "block";
+        });
+        }
 function fadeIn(elem, time, selector) {
     if (selector == "id") {
         var el = [];
@@ -25,8 +33,7 @@ function makeFade(el, time) {
 }
 
 
-//scroll to top button
-let scrollbutton = document.getElementById("btn-back-to-top");
+
 
 window.onscroll = function () {
     scrollFunction();
@@ -42,8 +49,6 @@ function scrollFunction() {
         scrollbutton.style.display = "none";
     }
 }
-
-scrollbutton.addEventListener("click", backToTop);
 
 function backToTop() {
     document.body.scrollTop = 0;

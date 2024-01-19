@@ -32,6 +32,7 @@
     <script type="module" src="/static/vendor/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
     <link href="/static/vendor/node_modules/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="/static/vendor/node_modules/typed.js/dist/typed.umd.js"></script>
+    <script src="/static/js/functions.js"></script>
 
 </head>
 
@@ -136,9 +137,16 @@
         "_swipeMessage": "{{_('swipe or use arrow keys to navigate')|uc_first}}"
     }
 
+
+
 </script>
+
 {% block content %}
 {% endblock %}
 </body>
+<script>
+    let scrollbutton = document.getElementById("btn-back-to-top");
+    scrollbutton.addEventListener("click", backToTop);
+</script>
 </html>
 
