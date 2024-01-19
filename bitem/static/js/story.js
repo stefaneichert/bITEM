@@ -110,11 +110,12 @@ if (data.start || data.end) {
             ${end}                   
             </ul>`
     startSlide.appendChild(itemTlTemplate)
+}
 
-    if (!noTouchDevice) {
-        let slideIndicator = document.createElement('div')
-        slideIndicator.id = 'slideIndicator'
-        slideIndicator.innerHTML = `
+if (!noTouchDevice) {
+    let slideIndicator = document.createElement('div')
+    slideIndicator.id = 'slideIndicator'
+    slideIndicator.innerHTML = `
         <div>
           <span class="x-swipe-indicator">
           <i class="x-hand bi bi-hand-index-fill"></i>
@@ -122,18 +123,18 @@ if (data.start || data.end) {
         </div>
         <div class="x-swipe-msg"></div>
         `
-        startSlide.appendChild(slideIndicator)
-        setTouchNavButton(0, languageTranslations._startPage)
-        document.getElementById('touchBackbutton').classList.remove('d-none')
-        document.getElementById('backbutton').classList.add('d-none')
+    startSlide.appendChild(slideIndicator)
+    setTouchNavButton(0, languageTranslations._startPage)
+    document.getElementById('touchBackbutton').classList.remove('d-none')
+    document.getElementById('backbutton').classList.add('d-none')
 
-        var styleElement = document.createElement('style');
-        var cssRules = '.timeline li:first-child:after { content: ""; width: 100vw!important; left: -40px!important; }';
-        styleElement.appendChild(document.createTextNode(cssRules));
-        document.head.appendChild(styleElement);
+    var styleElement = document.createElement('style');
+    var cssRules = '.timeline li:first-child:after { content: ""; width: 100vw!important; left: -40px!important; }';
+    styleElement.appendChild(document.createTextNode(cssRules));
+    document.head.appendChild(styleElement);
 
-    }
 }
+
 
 if (noTouchDevice) {
     let slideIndicator = document.createElement('div')

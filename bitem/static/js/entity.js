@@ -131,6 +131,12 @@ function createMuuriElems(obj) {
         addFilter('threed', models.length)
     }
 
+    let images = (obj.images)
+    if (images) {
+        extractImages(images);
+        addFilter('imgs', images.length)
+    }
+
 
     let sourceConnections = data.connections.filter(
         (connection) => ['external_reference', 'bibliography'].includes(connection.class)
@@ -177,11 +183,7 @@ function createMuuriElems(obj) {
     }
 
 
-    let images = (obj.images)
-    if (images) {
-        extractImages(images);
-        addFilter('imgs', images.length)
-    }
+
 
     let events = makeEnts(obj, ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'])
     if (events.length > 0) {
