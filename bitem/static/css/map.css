@@ -228,9 +228,9 @@
 }
 
 .item-content:hover > * {
-    background: rgb(245 245 245 / 26%);
-    box-shadow: 0 0 5px 5px rgb(245 245 245 / 26%);
-    transition: background 1s, box-shadow 1s;
+    background: rgb(245 245 245 / 35%);
+    box-shadow: 0 0 5px 5px rgb(245 245 245 / 35%);
+    transition: background 0.5s, box-shadow 0.5s;
 }
 
 .content-items, .activemap-50, .activemap-100 {

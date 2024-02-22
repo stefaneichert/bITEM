@@ -329,7 +329,8 @@ function addMuuri(data) {
 
     if (images) itemTemplate.dataset.media += "_image";
     if (images === false && modelthere === false) itemTemplate.dataset.media = "_nomedia";
-    const buttons = `
+    const buttons = ''
+    const oldbuttons    = `
     <div class="btn-panel text-end">
       ${images ? `<a href="/iiif/${data.image.id.split('.')[0]}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}
       ${modelthere ? `<a onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + modelname + '\''})" class="info-buttons line-fade"><i class="bi bi-badge-3d"></i></a>` : ''}
@@ -338,6 +339,7 @@ function addMuuri(data) {
   `;
 
     itemTemplate.innerHTML = `
+    <a class="tile-link" href="/view/${data.id}">
     <div class="item-content">
       <div class="card">
         <div class="card-body">
@@ -368,6 +370,7 @@ function addMuuri(data) {
         </div>
       </div>
     </div>
+    </a>
   `;
 
     itemTemplate.dataset.all = dataAll;

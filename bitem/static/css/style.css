@@ -304,3 +304,7 @@ body {
 .de, .en {
     display: none;
 }
+
+.tile-link {
+    text-decoration: none;
+}
