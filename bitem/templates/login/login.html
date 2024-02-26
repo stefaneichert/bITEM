@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<div style="margin-left: 2em; max-width: 600px; width: 80%; margin-right: 20%">
+    <h2 class="bitem-text">Login</h2>
+    <form method="post">
+        {{ form.csrf_token }}
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Username:</span>
+            {{ form.username(class_='required, form-control') }}
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Password:</span>
+            {{ form.password(class_='required, form-control') }}
+            {{ form.save(class_='btn btn-primary') }}
+        </div>
+
+    </form>
+    <h4 class="bitem-text">{{ error_html|safe }}</h4>
+</div>
+
+
+
+
+{% endblock %}

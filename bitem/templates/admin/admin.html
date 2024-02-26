@@ -1,0 +1,12 @@
+{% extends "layout.html" %} {% block content %}
+
+<link href="/static/css/about.css" rel="stylesheet"/>
+
+<div class="about-container">
+    <div id="about-main" class="about-card bitem-text">
+        <a class="btn btn-primary" href="{{ url_for('synchronise') }}" role="button">Synchronise Data</a>
+    </div>
+</div>
+
+
+{% include 'footer.html' %} {% endblock %}

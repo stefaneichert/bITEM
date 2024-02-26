@@ -1183,7 +1183,7 @@ function setEnts(current_data, class_) {
                         propstring += '<div class="mt-2 margin-event">' + getTypeTranslation(involvment.property) + ': <i>' + getTypeTranslation(involvment.origin) + ' </i>'
 
                         if (typeof (involvment.specification) !== 'undefined') {
-                            propstring += ' ('
+                            propstring += ' <br>'
                             for (const spec of involvment.specification) {
 
 
@@ -1202,9 +1202,9 @@ function setEnts(current_data, class_) {
                                 propstring += ' '
 
                                 if (spec.qualifier !== undefined) {
-                                    propstring += languageTranslations._as + ' ' + getTypeTranslation(spec.qualifier)
+                                    propstring += '(' +  languageTranslations._as + ' ' + getTypeTranslation(spec.qualifier) + ')'
                                 }
-                                propstring += ')'
+                                propstring += '<br>'
                             }
 
 

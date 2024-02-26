@@ -32,9 +32,9 @@ def get_cases(root: int) -> tuple[Any]:
               SELECT domain_id AS caseIDS FROM subcategories
               UNION ALL
               SELECT range_id AS caseIDS FROM subcategories
-            ) a
+            ) a WHERE a.caseIDS NOT IN (%(hiddenOnes)s)
     """
-    g.cursor.execute(sql, {'root_': root})
+    g.cursor.execute(sql, {'root_': root, 'hiddenOnes': app.config['HIDDEN_ONES']})
     result = g.cursor.fetchone()
     return tuple(result.ids) if result.ids else (root,)
 
