@@ -125,6 +125,8 @@ function createMuuriElems(obj) {
     const elem = addMuuri(obj);
     grid.add(elem);
 
+    makeStorymapBtn()
+
     let models = (obj.models)
     if (models) {
         make3d(models)
@@ -191,6 +193,44 @@ function createMuuriElems(obj) {
         timeline(document.querySelectorAll('.timeline'));
         addFilter('events', events.length)
     }
+}
+
+function makeStorymapBtn() {
+    const classCounts = {};
+    let totalCount = 0
+    eventList.forEach(className => classCounts[className] = 0);
+
+// Iterate through connections array
+data.connections.forEach(connection => {
+    const className = connection.class;
+    if (eventList.includes(className)) {
+        classCounts[className] += connection.nodes.length;
+        totalCount += classCounts[className]
+    }
+});
+
+// Output the counts
+console.log(classCounts);
+console.log(totalCount);
+if (totalCount >= 2) {
+    const itemTemplate = document.createElement('div');
+    itemTemplate.className = 'item';
+
+    itemTemplate.innerHTML = `
+        <div class="item-content item-content-story">
+          <div class="card">
+            <div>
+            <a class="tile-link bitem-text" href="/story/${data.id}">
+            <img class="story-btn-img" src="/static/images/assets/story.png">
+            <span class="story-btn-text" style="position:absolute; left: 0; top:50%;">Let the story begin</span>            
+            </a>
+            </div>
+          </div>
+        </div>
+      `;
+    grid.add(itemTemplate)
+}
+
 }
 
 function make3d(models) {

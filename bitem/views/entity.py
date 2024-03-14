@@ -25,7 +25,7 @@ def entity(entity_id: int, format_=None):
 
     translations = g.cursor.fetchone()
 
-    return render_template("/entity/entity.html", data=data, translations=translations.translations)
+    return render_template("/entity/entity.html", data=data, translations=translations.translations, events=app.config['VIEW_CLASSES']['events'])
 
 
 @app.route('/update')

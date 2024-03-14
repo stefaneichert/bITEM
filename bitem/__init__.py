@@ -16,7 +16,7 @@ csrf.init_app(app)
 app.config.from_object('config.default')
 app.config.from_pyfile('production.py')
 
-from bitem.views import index, about, item, login, entities, entity, iiif, admin, story
+from bitem.views import index, about, login, entities, entity, iiif, admin, story
 from bitem.util.util import uc_first
 
 
@@ -74,4 +74,5 @@ def inject_conf_var() -> dict[str, Any]:
         REFERENCE_SYSTEMS=app.config['REFERENCE_SYSTEMS'],
         UPLOAD_FOLDER=app.config['OPENATLAS_UPLOAD_FOLDER'],
         IMAGE_EXTENSION=app.config['IMAGE_EXTENSION'],
-        TRANSLATION_IDS=app.config['TRANSLATION_IDS'], )
+        TRANSLATION_IDS=app.config['TRANSLATION_IDS'],
+        STORY_THRESHOLD=app.config['STORY_THRESHOLD'], )

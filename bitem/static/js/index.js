@@ -1,4 +1,4 @@
-fadeIn("modelcont", 2500, "id");
+    fadeIn("modelcont", 2500, "id");
 
 var beyontheitem = {
     strings: ['Bey^40ond the It^40em'],
