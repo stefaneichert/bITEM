@@ -12,6 +12,7 @@ __pycache__/*
 # ide
 .idea
 venv
+.vscode
 
 #tests
 tests/cover/*
