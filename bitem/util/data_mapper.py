@@ -215,16 +215,20 @@ def makeItemTable():
     import json
     from bitem.util import data_mapper, iiiftools
     sql = """
-            SELECT ids
-               FROM bitem.get_entities(
-                       --ARRAY ['group', 'person'],
+            DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
-                   )
+                   )) AND data-> 'casestudies' @> '[197085]' AND NOT data-> 'casestudies' @> '[222268]');
+   
+            
+            SELECT ids
+               FROM bitem.get_entities(
+                       ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                       196063
+                   ) ORDER BY ids DESC;
     """
 
     g.cursor.execute(sql)
-    #g.cursor.execute('select id AS ids from model.entity WHERE id in (196767)')
 
     ids = g.cursor.fetchall()
 
@@ -270,3 +274,12 @@ def makeItemTable():
         """
 
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
+
+    sql_delete = """
+        DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
+                       ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                       196063
+                   )) AND data-> 'casestudies' @> '[197085]' AND NOT data-> 'casestudies' @> '[222268]');
+    """
+
+    g.cursor.execute(sql_delete)

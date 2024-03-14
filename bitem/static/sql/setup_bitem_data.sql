@@ -56,7 +56,7 @@ BEGIN
                                       FROM subcategories
                                       UNION ALL
                                       SELECT range_id AS caseIDS
-                                      FROM subcategories) a) AND l.range_id NOT IN (197087);
+                                      FROM subcategories) a);
 END;
 $$;
 
