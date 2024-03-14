@@ -217,12 +217,12 @@ if (totalCount >= 2) {
     itemTemplate.className = 'item';
 
     itemTemplate.innerHTML = `
-        <div class="item-content item-content-story">
-          <div class="card">
+        <div class="item-content item-content-story item-content-main">
+          <div class="card story-card">
             <div>
             <a class="tile-link bitem-text" href="/story/${data.id}">
             <img class="story-btn-img" src="/static/images/assets/story.png">
-            <span class="story-btn-text" style="position:absolute; left: 0; top:50%;">Let the story begin</span>            
+            <span class="story-btn-text">Story</span>            
             </a>
             </div>
           </div>
