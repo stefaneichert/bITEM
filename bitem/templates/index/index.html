@@ -2,26 +2,108 @@
 {% block content %}
 
 <main>
-    <div class="container text-center" id="modelcont">
+    <div class="container text-center max-screen" id="modelcont">
 
-        <model-viewer
-                class="indexmodel" alt="Moa"
-                alt="3d Model"
-                src="{{model}}"
-                shadow-intensity="1"
-                poster="{{poster}}"
-                loading="lazy"
-                camera-controls
-                auto-rotate
-                auto-rotate-delay="0"
-        ></model-viewer>
+        <model-viewer class="indexmodel" alt="Moa" alt="3d Model" src="{{model}}" shadow-intensity="1"
+            poster="{{poster}}" loading="lazy" camera-controls auto-rotate auto-rotate-delay="0"></model-viewer>
 
         <div id="typetext-container"><span id="typetext" class="text-center"></span></div>
-                <a id="learnmore" class="line-fade line-fade-m fadeabout text-center" href="{{ url_for('about') }}">
+        <a id="learnmore" class="line-fade line-fade-m fadeabout text-center" href="#introText">
+            <!--href + id flys you to the div-->
             <i class="bi bi-box-arrow-in-right me-1"></i>
             <span>{{_('learn more')}}</span>
         </a>
     </div>
+    <div class="container max-screen">
+        <div class="bitem-text" id="introText">
+            <!-- <h2 class="en">Welcome to the bITEM project...</h2>-->
+            <h1>Wilkommen zum bITEM Projekt...</h1>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec nunc
+            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec nunc
+            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec nunc
+            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec nunc
+            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec nunc
+            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec nunc
+        </div>
+        <div id="typetext-container"><span id="typetext" class="text-center"></span></div>
+        <a id="learnmore" class="line-fade line-fade-m fadeabout text-center" href="#caseStudies">
+            <i class="bi bi-box-arrow-in-right me-1"></i>
+            <span>{{_('case studies')}}</span>
+        </a>
+    </div>
+
+
+
+    <div class="container max-screen">
+        <div class="bitem-text" id="caseStudies">
+            <h1>Case studies...</h1>
+            </br>
+            <div class="row" id="caseStudyCards">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="/static/images/placeholder_img/venus.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Venus von Willendorf</h5>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="/static/images/placeholder_img/novara.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Novara Expedition</h5>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="/static/images/placeholder_img/ruine.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Mitterhof</h5>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec purus nec nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                            ultricies ultricies. Nullam nec purus nec nunc ultricies ultricies. Nullam nec purus nec
+                            nunc
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
 </main>
 
 <script src="/static/js/index.js"></script>

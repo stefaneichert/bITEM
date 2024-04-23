@@ -6,6 +6,55 @@ body {
 }
 
 
+
+
+.max-screen {
+    height: calc(100vh - 56px);
+    margin-top: 56px;
+}
+
+#introText {
+    padding-top: 56px;
+    margin-top: -56px;
+    font-size: x-large;
+    margin-bottom: 56px;
+}
+
+#caseStudies {
+    padding-top: 56px;
+    margin-top: -56px;
+    padding-bottom: 56px;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.card {
+    background: rgb(245 245 245 / 15%);
+    color: whitesmoke;
+    --bs-card-border-width: none;
+    transition: background 1s, box-shadow 1s;
+}
+
+.card:hover {
+    background: rgb(245 245 245 / 26%);
+    transition: background 1s, box-shadow 1s;
+}
+
+h1 {
+    margin-top: 56px;
+}
+
+.card-img-top {
+    width: 20%;
+    height: 10vw;
+    object-fit: cover;
+    margin: auto;
+}
+
+
+
 .footercontent {
     flex-wrap: wrap;
     display: flex;
@@ -32,7 +81,7 @@ body {
 }
 
 #modelcont, #learnmore {
-    opacity: 0;
+   /* opacity: 0; */
 }
 
 .bitem-btn:hover {
@@ -307,4 +356,17 @@ body {
 
 .tile-link {
     text-decoration: none;
+}
+
+@media (max-width: 501px) {
+    .card-img-top {
+        width: 100%;
+        height: auto;
+    }
+     #caseStudies {
+        padding-top: 20px;
+        margin-top: 0px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
 }
