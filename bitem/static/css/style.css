@@ -359,6 +359,10 @@ h1 {
 }
 
 @media (max-width: 501px) {
+    .card {
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
     .card-img-top {
         width: 100%;
         height: auto;
