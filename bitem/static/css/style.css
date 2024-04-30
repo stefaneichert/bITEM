@@ -6,18 +6,18 @@ body {
 }
 
 
-
-
 .max-screen {
     height: calc(100vh - 56px);
     margin-top: 56px;
 }
 
+.second-screen {
+    height: 100vh;
+}
+
 #introText {
-    padding-top: 56px;
-    margin-top: -56px;
+    padding-top: calc(56px + 2rem);
     font-size: x-large;
-    margin-bottom: 56px;
 }
 
 #caseStudies {
@@ -42,7 +42,7 @@ body {
     transition: background 1s, box-shadow 1s;
 }
 
-h1 {
+.minus-navbar {
     margin-top: 56px;
 }
 
