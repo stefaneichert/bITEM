@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from flask import render_template, g
 from bitem import app
 import random
@@ -32,6 +31,10 @@ def index():
     g.cursor.execute(sql)
     result = g.cursor.fetchall()
 
+    if not result:
+        # Handle the case where no records are found
+        return render_template("/index/index.html", message="No records found.")
+    
     random_record = random.choice(result)
     model = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + random_record.model
     poster = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + random_record.poster

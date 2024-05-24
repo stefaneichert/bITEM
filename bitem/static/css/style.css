@@ -35,6 +35,7 @@ body {
     color: whitesmoke;
     --bs-card-border-width: none;
     transition: background 1s, box-shadow 1s;
+    border-radius: 0;
 }
 
 .card:hover {
