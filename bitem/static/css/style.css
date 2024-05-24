@@ -11,13 +11,9 @@ body {
     margin-top: 56px;
 }
 
-.second-screen {
-    height: 100vh;
-}
-
 #introText {
     padding-top: calc(56px + 2rem);
-    font-size: x-large;
+    font-size: 2rem;
 }
 
 #caseStudies {
@@ -373,5 +369,12 @@ body {
         margin-top: 0px;
         padding-bottom: 20px;
         margin-bottom: 20px;
+    }
+    #typetext-container {
+        font-size: 2rem;
+    }
+
+    #introText {
+        font-size: 1.5rem;
     }
 }
