@@ -247,9 +247,6 @@ def makeItemTable():
             imagearray = finalimages
 
 
-        print(imagearray)
-
-
 
         sql_insert = """
             DELETE FROM bitem.tbl_allitems WHERE id = %(id)s;
@@ -270,7 +267,7 @@ def makeItemTable():
                'geometry', geometry,
                'connections', connections
            )) AS data
-        FROM bitem.allitems WHERE id = %(id)s)
+        FROM bitem.allitems WHERE id = %(id)s) AND casestudies @> '[197085]' AND NOT casestudies @> '[222268]'
         """
 
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
