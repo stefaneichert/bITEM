@@ -27,11 +27,21 @@ body {
 }
 
 .card {
+
     background: rgb(245 245 245 / 15%);
     color: whitesmoke;
-    --bs-card-border-width: none;
+    --bs-card-border-width: none;    
+    width: 100%;
+    min-height: auto;
     transition: background 1s, box-shadow 1s;
     border-radius: 0;
+    display:inline-block;
+    margin-bottom:10px;
+}
+
+.caseStudyText {
+    padding: 10px;
+    font-size: 1rem;
 }
 
 .card:hover {
@@ -43,11 +53,13 @@ body {
     margin-top: 56px;
 }
 
-.card-img-top {
-    width: 20%;
-    height: 10vw;
-    object-fit: cover;
-    margin: auto;
+.card-img {
+        opacity: 0.25;
+}
+
+.card-img-overlay {
+    width: 100%;
+    height: auto;
 }
 
 
@@ -355,6 +367,44 @@ body {
     text-decoration: none;
 }
 
+@media (max-width: 1201px) {
+
+    .caseStudyText{
+        font-size: 0.9rem;
+        padding: 0px;
+    }
+}
+
+@media (max-width: 994px) {
+    .caseStudyText{
+        font-size: 0.6rem;
+    }
+}
+
+
+@media (max-width: 765px) {
+    .card {
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+     #caseStudies {
+        padding-top: 20px;
+        margin-top: 0px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+    #typetext-container {
+        font-size: 2rem;
+    }
+
+    .caseStudyText{
+        font-size: 1.4rem;
+    }
+}
+
+
+
 @media (max-width: 501px) {
     .card {
         flex-direction: column;
@@ -376,5 +426,21 @@ body {
 
     #introText {
         font-size: 1.5rem;
+    }
+
+    .caseStudyText{
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 376px) {
+    .caseStudyText{
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 334px) {
+    .caseStudyText{
+        font-size: 0.6rem;
     }
 }
