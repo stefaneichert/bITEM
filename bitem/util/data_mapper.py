@@ -246,8 +246,6 @@ def makeItemTable():
                 finalimages.append(iiiftools.setIIIFSize(img, 400, 700))
             imagearray = finalimages
 
-
-
         sql_insert = """
             DELETE FROM bitem.tbl_allitems WHERE id = %(id)s;
             INSERT INTO bitem.tbl_allitems (id, openatlas_class_name, data) (SELECT id,
@@ -267,7 +265,7 @@ def makeItemTable():
                'geometry', geometry,
                'connections', connections
            )) AS data
-        FROM bitem.allitems WHERE id = %(id)s) AND casestudies @> '[197085]' AND NOT casestudies @> '[222268]'
+        FROM bitem.allitems WHERE id = %(id)s AND casestudies @> '[197085]' AND NOT casestudies @> '[222268]')
         """
 
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
