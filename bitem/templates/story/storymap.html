@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<script>
+    const data = {{ data | tojson }};
+</script>
+<link rel="stylesheet" href="/static/css/storymap.css"/>
+
+<main>
+    <h3 class="bitem-text">hallo storymap</h3>
+</main>
+
+<script src="/static/js/storymap.js"></script>
+{% endblock %}%}
