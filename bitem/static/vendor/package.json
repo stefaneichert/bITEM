@@ -12,6 +12,9 @@
     "shave": "^5.0.2",
     "swiper": "^11.0.5",
     "typed.js": "^2.0.15",
-    "vis-network": "^9.1.9"
+    "vis": "^4.21.0-EOL",
+    "vis-data": "^7.1.9",
+    "vis-network": "^9.1.9",
+    "vis-timeline": "^7.7.3"
   }
 }

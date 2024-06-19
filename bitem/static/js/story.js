@@ -411,7 +411,9 @@ function makeStoryMap() {
     itemTemplate.dataset.hash = "storymap"
     itemTemplate.dataset.label = "Storymap"
     itemTemplate.id = "storyMap"
-    itemTemplate.innerHTML = `<div id="map"></div>
+    itemTemplate.innerHTML = `
+    <div id="map"></div>
+    <div id="timeline"></div>
         
     `
     mainWrapper.appendChild(itemTemplate)
