@@ -218,7 +218,7 @@ def makeItemTable():
             DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
-                   )) AND data-> 'casestudies' @> '[197085]' AND NOT data-> 'casestudies' @> '[222268]');
+                   )) AND (data-> 'casestudies' @> '[197085]' OR data-> 'casestudies' @> '[198233]') AND NOT data-> 'casestudies' @> '[222268]');
    
             
             SELECT ids
@@ -246,11 +246,6 @@ def makeItemTable():
                 finalimages.append(iiiftools.setIIIFSize(img, 400, 700))
             imagearray = finalimages
 
-
-        print(imagearray)
-
-
-
         sql_insert = """
             DELETE FROM bitem.tbl_allitems WHERE id = %(id)s;
             INSERT INTO bitem.tbl_allitems (id, openatlas_class_name, data) (SELECT id,
@@ -270,7 +265,7 @@ def makeItemTable():
                'geometry', geometry,
                'connections', connections
            )) AS data
-        FROM bitem.allitems WHERE id = %(id)s)
+        FROM bitem.allitems WHERE id = %(id)s AND (casestudies @> '[197085]' OR casestudies @> '[198233]')  AND NOT casestudies @> '[222268]')
         """
 
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
@@ -279,7 +274,7 @@ def makeItemTable():
         DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
-                   )) AND data-> 'casestudies' @> '[197085]' AND NOT data-> 'casestudies' @> '[222268]');
+                   )) AND (data-> 'casestudies' @> '[197085]' OR data-> 'casestudies' @> '[198233]') z AND NOT data-> 'casestudies' @> '[222268]');
     """
 
     g.cursor.execute(sql_delete)
