@@ -113,20 +113,34 @@ function transformDate(dateString) {
     return new Date(year, month, day);
 }
 
-const timelineData = cleanedGroupedArray.map((item, index) => {
+const timelineData = cleanedGroupedArray.map((item) => {
     if (!item.begin || !item.end) {
         console.error('Missing begin or end date for item:', item);
         return null;
     }
     return {
-        id: index,
+        oid: item.origin_id,
         content: item.origin.name || 'No Origin',
         start: transformDate(item.begin),
         end: transformDate(item.end)
     };
 }).filter(item => item !== null);
+console.log(timelineData);
 
-const items = new vis.DataSet(timelineData);
+const items = new vis.DataSet(timelineData.map(item => {
+  console.log(item);
+  const start = new Date(item.start);
+  const end = new Date(item.end);
+  const duration = (end - start) / (1000 * 60 * 60 * 24); // Convert duration to days
+  item.title = `${item.content} (${start.toDateString()} - ${end.toDateString()})`;
+  item.id = item.oid; 
+  if (duration < 7) {
+      item.type = 'point';
+  } else {
+      item.type = 'range';
+  }
+  return item;
+}));
 
 const options = {
     height: '25vh',
@@ -142,29 +156,13 @@ const options = {
         axis: 5
     },
     orientation: 'bottom',
+
 };
 
 const timelineElement = document.getElementById('timeline');
 const timeline = new vis.Timeline(timelineElement, items, options);
 
-timeline.on('initialDrawComplete', function () {
-    const items = timeline.getItems();
-
-    items.forEach(function (item) {
-        const content = item.content;
-
-        item.dom.root = addEventListener('mouseover', function () {
-            showPopup(content);
-        });
-    });
-});
-
-function showPopup(content) {
-    alert(content);
-};
-
-
-
-
-
-
+document.getElementById('timeline').onclick = function (event) {
+  var props = timeline.getEventProperties(event)
+  console.log(props.item);
+}
