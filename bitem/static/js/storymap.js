@@ -83,23 +83,28 @@ var baseMaps = {
 L.control.layers(baseMaps).addTo(map);
 
 // Function to add markers to the map
-function addMarker(data) {
-    data.places.forEach(function (place) {
-        let pointnotyetfound = true
-        place.spatialinfo.geometry.geometries.forEach(function (geometry) {
-            if (pointnotyetfound) {
-                if (geometry.type === 'Point') {
-                    var coordinates = geometry.coordinates;
-                    var marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
-                    marker.bindPopup("<b>" + data.origin.name + "</b><br>" + data.EN).openPopup();
-                    pointnotyetfound = false
-                }
-            }
-        })
-    });
-}
 
-cleanedGroupedArray.forEach(addMarker);
+mapData[0].nodes.forEach(function (place) {
+    let pointnotyetfound = true
+    if (place.spatialinfo) {
+        if (
+            typeof place.spatialinfo.geometry.geometries[0].coordinates !== "undefined"
+        ) {
+            place.spatialinfo.geometry.geometries.forEach(function (geometry) {
+                if (pointnotyetfound) {
+                    if (geometry.type === 'Point') {
+                        var coordinates = geometry.coordinates;
+                        var marker = L.marker([coordinates[1], coordinates[0]]).addTo(map);
+                        console.log(place)
+                        marker.bindPopup("<b>" + getLabelTranslation(place.spatialinfo.properties) + "</b>").openPopup();
+                        pointnotyetfound = false
+                    }
+                }
+            })
+        }
+    }
+});
+
 
 function transformDate(dateString) {
     if (!dateString) {
@@ -128,18 +133,18 @@ const timelineData = cleanedGroupedArray.map((item) => {
 console.log(timelineData);
 
 const items = new vis.DataSet(timelineData.map(item => {
-  console.log(item);
-  const start = new Date(item.start);
-  const end = new Date(item.end);
-  const duration = (end - start) / (1000 * 60 * 60 * 24); // Convert duration to days
-  item.title = `${item.content} (${start.toDateString()} - ${end.toDateString()})`;
-  item.id = item.oid; 
-  if (duration < 7) {
-      item.type = 'point';
-  } else {
-      item.type = 'range';
-  }
-  return item;
+    console.log(item);
+    const start = new Date(item.start);
+    const end = new Date(item.end);
+    const duration = (end - start) / (1000 * 60 * 60 * 24); // Convert duration to days
+    item.title = `${item.content} (${start.toDateString()} - ${end.toDateString()})`;
+    item.id = item.oid;
+    if (duration < 7) {
+        item.type = 'point';
+    } else {
+        item.type = 'range';
+    }
+    return item;
 }));
 
 const options = {
@@ -163,6 +168,6 @@ const timelineElement = document.getElementById('timeline');
 const timeline = new vis.Timeline(timelineElement, items, options);
 
 document.getElementById('timeline').onclick = function (event) {
-  var props = timeline.getEventProperties(event)
-  console.log(props.item);
+    var props = timeline.getEventProperties(event)
+    console.log(props.item);
 }
