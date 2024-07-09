@@ -411,11 +411,7 @@ function makeStoryMap() {
     itemTemplate.dataset.hash = "storymap"
     itemTemplate.dataset.label = "Storymap"
     itemTemplate.id = "storyMap"
-    itemTemplate.innerHTML = `
-    <div id="map"></div>
-    <div id="timeline"></div>
-        
-    `
+    itemTemplate.innerHTML = `<div id="map"></div>`
     mainWrapper.appendChild(itemTemplate)
     setTouchNavButton(nextslide, "Storymap")
     nextslide += 1

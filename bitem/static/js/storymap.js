@@ -120,23 +120,44 @@ const timelineData = cleanedGroupedArray.map((item, index) => {
 const items = new vis.DataSet(timelineData);
 
 const options = {
-  height: '40vh',
-  width: '100%',
-  stack: true,
-  showCurrentTime: true,
-  verticalScroll: true,
-  zoomKey: 'ctrlKey',
-  min: new Date(1857, 0, 1),
-  max: new Date(1862, 11, 31),
-  start: new Date(1857, 0, 1),
-  end: new Date(1862, 11, 31),
-  margin: {
-    item: 20,
-    axis: 5
-  },
-  orientation: 'bottom'
+    height: '25vh',
+    stack: true,
+    showCurrentTime: true,
+    horizontalScroll: true,
+    zoomKey: 'ctrlKey',
+    min: new Date(1857, 0, 1),
+    max: new Date(1862, 11, 31),
+    width: '100%',
+    margin: {
+        item: 20,
+        axis: 5
+    },
+    orientation: 'bottom',
+    cluster: true,
+    clusterMaxItems: 5,
 };
-
 
 const timelineElement = document.getElementById('timeline');
 const timeline = new vis.Timeline(timelineElement, items, options);
+
+timeline.on('initialDrawComplete', function() {
+  const items = timeline.getItems();
+
+  items.forEach(function (item) {
+    const content = item.content;
+
+    item.dom.root = addEventListener('mouseover', function() {
+      showPopup(content);
+    });
+  });
+});
+
+function showPopup(content) {
+  alert(content);
+};
+
+
+
+
+
+
