@@ -271,10 +271,17 @@ def makeItemTable():
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
 
     sql_delete = """
-        DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
-                       ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
-                       196063
-                   )) AND (data-> 'casestudies' @> '[197087]' OR data-> 'casestudies' @> '[229739]' OR data-> 'casestudies' @> '[197085]' OR data-> 'casestudies' @> '[198233]') z AND NOT data-> 'casestudies' @> '[222268]');
+        DELETE
+        FROM bitem.tbl_allitems
+        WHERE id not in (SELECT id
+                         FROM bitem.tbl_allitems
+                         WHERE id IN (SELECT bitem.get_entities(
+                                                     ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                                                     196063
+                                             ))
+                           AND (data -> 'casestudies' @> '[197087]' OR data -> 'casestudies' @> '[229739]' OR
+                                data -> 'casestudies' @> '[197085]' OR data -> 'casestudies' @> '[198233]')
+                           AND NOT data -> 'casestudies' @> '[222268]');
     """
 
     g.cursor.execute(sql_delete)
