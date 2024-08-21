@@ -233,6 +233,7 @@ def makeItemTable():
     ids = g.cursor.fetchall()
 
     for row in ids:
+        print(row.ids)
         g.cursor.execute(f'SELECT images FROM bitem.allitems WHERE id = {row.ids}')
         images = g.cursor.fetchone()
         mainimage = None
@@ -265,9 +266,9 @@ def makeItemTable():
                'geometry', geometry,
                'connections', connections
            )) AS data
-        FROM bitem.allitems WHERE id = %(id)s AND (data-> 'casestudies' @> '[197087]' OR data-> 'casestudies' @> '[229739]' OR casestudies @> '[197085]' OR casestudies @> '[198233]')  AND NOT casestudies @> '[222268]')
+        FROM bitem.allitems WHERE id = %(id)s AND (casestudies @> '[197087]' OR casestudies @> '[229739]' OR casestudies @> '[197085]' OR casestudies @> '[198233]')  AND NOT casestudies @> '[222268]')
         """
-
+        print(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
 
     sql_delete = """
