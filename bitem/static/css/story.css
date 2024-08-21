@@ -14,7 +14,7 @@
 
 .title-image {
     opacity: 0.2;
-    z-index: -1;
+    z-index: 0;
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -55,6 +55,7 @@
     max-height: calc(100vh - 8rem);
     text-align: center;
     overflow-y: auto;
+    z-index: 1;
 }
 
 #menu-btn {
@@ -114,13 +115,14 @@
     background: #3aada1;
     border-radius: 6px;
     width: auto;
-    height: 25px;
     z-index: 3 !important;
     text-align: center;
     padding: 0 0.5rem;
     margin: 0 0.5rem;
     color: whitesmoke;
     text-decoration: none;
+    cursor: pointer;
+    font-size: 1.5rem;
 }
 
 .swiper-button-touch:active {

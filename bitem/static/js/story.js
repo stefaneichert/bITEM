@@ -14,6 +14,8 @@ if (isTouchDevice()) {
     console.log('This is not a touch device.');
 }
 
+noTouchDevice = false
+
 //create elements
 //add first slide
 const startSlide = document.getElementById('startSlide');
@@ -232,7 +234,7 @@ function createSlides(dataToUse, class_) {
         subWrapper = document.getElementById(class_ + 'Wrapper')
     } else {
         subWrapper = mainWrapper
-        setTouchNavButton(nextslide, eval('languageTranslations._' + class_))
+        //setTouchNavButton(nextslide, eval('languageTranslations._' + class_))
     }
 
     let i = 0;
@@ -374,7 +376,7 @@ function createSlides(dataToUse, class_) {
     }
 }
 
-makeStoryMap()
+//makeStoryMap()
 
 let mainSwiper = new Swiper(".main-swiper", {
     direction: "horizontal",
