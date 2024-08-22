@@ -14,6 +14,12 @@ body {
 #introText {
     padding-top: calc(56px + 2rem);
     font-size: 2rem;
+    text-align: justify;
+}
+
+.case-study-title {
+    margin-top: 8vh;
+    margin-bottom: 5vh;
 }
 
 #caseStudies {
@@ -28,8 +34,8 @@ body {
 
 .card {
 
-    background: rgb(245 245 245 / 15%);
-    color: whitesmoke;
+    background: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
     --bs-card-border-width: none;    
     width: 100%;
     min-height: auto;
@@ -39,13 +45,20 @@ body {
     margin-bottom:10px;
 }
 
+.card-title {
+    margin-top: 2vh;
+    margin-bottom: 4vh;
+    font-size: 1.5rem;
+}
+
 .caseStudyText {
     padding: 10px;
     font-size: 1rem;
+    text-align: justify;
 }
 
 .card:hover {
-    background: rgb(245 245 245 / 26%);
+    background: rgba(38, 27, 5, 0.585);
     transition: background 1s, box-shadow 1s;
 }
 
@@ -54,7 +67,8 @@ body {
 }
 
 .card-img {
-        opacity: 0.25;
+    opacity: 0.33;
+    filter: blur(0.9px);
 }
 
 .card-img-overlay {

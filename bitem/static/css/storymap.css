@@ -7,10 +7,80 @@
 }
 
 #timeline-container {
-    position: absolute;
-    bottom: 0!important;
+  position: absolute;
+  bottom: 0!important;
+  width: 100%;
+  height: 25vh;
+  background-image: url(../images/placeholder_img/leather.jpg);
+  overflow: hidden;
+}
+
+
+.vis-item {
+  font-size: 0.75em; /* Adjust font size to make items smaller */
+  line-height: 1em; /* Adjust line height */
+}
+
+.vis-label {
+  font-size: 0.75em; /* Adjust the font size of group labels */
+}
+
+
+
+#detailsContainer {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  width: 300px;
+  max-height: 500px; /* Set a maximum height to prevent the container from growing too large */
+  background-color: #5c391b;
+  background-image: url(../images/placeholder_img/leather.jpg);
+  border: 3px solid #5c391b;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds container height */
+  overflow-x: hidden; /* Hide horizontal overflow to avoid horizontal scrolling */
+  word-wrap: break-word; /* Ensure long text breaks into a new line instead of overflowing */
+  text-overflow: ellipsis; /* Add ellipsis (...) for overflowing text */
+}
+
+/* Optional: Style images within the container */
+#detailsContainer img {
+  max-width: 100%; /* Ensure images do not exceed the container's width */
+  height: auto; /* Maintain the aspect ratio of images */
+  display: block; /* Ensures proper spacing around images */
+  margin: 10px 0; /* Add some space above and below images */
+}
+  
+  #detailsContainer.hidden {
+    display: none;
+  }
+  
+  #detailsContainer .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+  }
+  
+  #detailsContainer #closeBtn {
+    cursor: pointer;
+    font-size: 20px;
+    align-items: right;
+  }
+
+  .draggable {
+    cursor: move;
+  }
+  
+
+.resizer {
     width: 100%;
-    height: 25vh;
-    background-color: rgba(0, 200, 197, 0.133);
-    overflow: hidden;
+    top: 0;
+    right: 0;
+    height: 2px;
+    position: relative;
+    cursor: row-resize;
+    background-color: rgba(220, 20, 60, 0.272);
 }
