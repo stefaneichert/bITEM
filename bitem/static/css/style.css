@@ -52,8 +52,8 @@ body {
 }
 
 .caseStudyText {
-    padding: 10px;
-    font-size: 1rem;
+    padding: 5px;
+    font-size: 0.8rem;
     text-align: justify;
 }
 
@@ -68,7 +68,8 @@ body {
 
 .card-img {
     opacity: 0.33;
-    filter: blur(0.9px);
+    filter: blur(0.2px);
+    filter: grayscale(100%);
 }
 
 .card-img-overlay {
@@ -381,80 +382,148 @@ body {
     text-decoration: none;
 }
 
-@media (max-width: 1201px) {
+@media (max-width: 1400px) {
 
     .caseStudyText{
-        font-size: 0.9rem;
+        font-size: 0.68rem;
         padding: 0px;
     }
 }
 
-@media (max-width: 994px) {
-    .caseStudyText{
-        font-size: 0.6rem;
+@media (max-width: 1200px) {
+
+    .col-md-3 {
+        width: 80%;
+    }
+
+    #caseStudyCards {
+        flex-direction: column;
+        align-items: center; 
+    }
+
+    .card {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .card-img-overlay {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+
+
+    .caseStudyText {
+        font-size: 2rem;
+        padding: 10px;
+        text-align: justify;
+    }
+
+    #card-title {
+        font-size: 2.3rem;
     }
 }
 
+@media (max-width: 992px) {
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .caseStudyText {
+        font-size: 1.5rem;
+        text-align: justify;
+    }
+
+    #card-title{
+        font-size: 1.8rem;
+    }
+}
 
 @media (max-width: 765px) {
-    .card {
+    #caseStudyCards {
         flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%;
         margin-bottom: 20px;
     }
 
-     #caseStudies {
-        padding-top: 20px;
-        margin-top: 0px;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-    }
-    #typetext-container {
-        font-size: 2rem;
+    .caseStudyText {
+        font-size: 1.1rem;
+        text-align: justify;
     }
 
-    .caseStudyText{
-        font-size: 1.4rem;
+    #card-title {
+        font-size: 1.2rem;
     }
 }
-
-
 
 @media (max-width: 501px) {
     .card {
-        flex-direction: column;
-        margin-bottom: 20px;
-    }
-    .card-img-top {
         width: 100%;
-        height: auto;
-    }
-     #caseStudies {
-        padding-top: 20px;
-        margin-top: 0px;
-        padding-bottom: 20px;
         margin-bottom: 20px;
     }
-    #typetext-container {
-        font-size: 2rem;
+
+    .caseStudyText {
+        font-size: 1rem;
+        text-align: justify;
     }
 
-    #introText {
-        font-size: 1.5rem;
-    }
-
-    .caseStudyText{
+    #card-title {
         font-size: 1rem;
     }
 }
 
-@media (max-width: 376px) {
-    .caseStudyText{
-        font-size: 0.95rem;
+@media (max-width: 473px) {
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .caseStudyText {
+        font-size: 0.8rem;
+        text-align: justify;
+    }
+
+    #card-title {
+        font-size: 0.8rem;
     }
 }
 
-@media (max-width: 334px) {
-    .caseStudyText{
+@media (max-width: 400px) {
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .caseStudyText {
+        font-size: 0.7rem;
+        text-align: justify;
+    }
+
+    #card-title {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .caseStudyText {
+        font-size: 0.6rem;
+        text-align: justify;
+    }
+
+    #card-title {
         font-size: 0.6rem;
     }
 }
