@@ -36,7 +36,7 @@ def index():
         return render_template("/index/index.html", message="No records found.")
     
     random_record = random.choice(result)
-    model = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + random_record.model
-    poster = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + random_record.poster
+    model = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + str(random_record.model)
+    poster = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + str(random_record.poster)
 
     return render_template("/index/index.html", model=model, poster=poster)
