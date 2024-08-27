@@ -318,19 +318,21 @@ function addMuuri(data) {
     if (modelthere) {
         images = false;
         let model = data.models[0]
+        console.log(model)
         modelname = model.name
         itemTemplate.dataset.media += "_model";
-
         for (const file of model.files) {
-            if (file.includes('glb')) currentmodel = file
-            if (file.includes('webp')) poster = file
+            if (typeof file.file !== 'undefined') {
+                if (file.file.includes('glb')) currentmodel = file
+                if (file.file.includes('webp')) poster = file
+            } else {modelthere = false}
         }
     }
 
     if (images) itemTemplate.dataset.media += "_image";
     if (images === false && modelthere === false) itemTemplate.dataset.media = "_nomedia";
     const buttons = ''
-    const oldbuttons    = `
+    const oldbuttons = `
     <div class="btn-panel text-end">
       ${images ? `<a href="/iiif/${data.image.id.split('.')[0]}" class="info-buttons line-fade"><img src="/static/icons/iiif.png"></a>` : ''}
       ${modelthere ? `<a onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + modelname + '\''})" class="info-buttons line-fade"><i class="bi bi-badge-3d"></i></a>` : ''}
