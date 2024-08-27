@@ -5,8 +5,7 @@
 
 #introText {
     padding-top: calc(56px + 2rem);
-    font-size: 2rem;
-    text-align: justify;
+    font-size: 1.5rem;
 }
 
 .case-study-title {
@@ -47,7 +46,6 @@
 .caseStudyText {
     padding: 5px;
     font-size: 0.83rem;
-    text-align: justify;
 }
 
 .card:hover {

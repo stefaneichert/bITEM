@@ -231,9 +231,11 @@ def makeItemTable():
     g.cursor.execute(sql)
 
     ids = g.cursor.fetchall()
-
+    i = 1
     for row in ids:
-        print(row.ids)
+        print(str(i) + ' of ' + str(len(ids)))
+        i += 1
+        print('ID: ' + str(row.ids))
         g.cursor.execute(f'SELECT images FROM bitem.allitems WHERE id = {row.ids}')
         images = g.cursor.fetchone()
         mainimage = None
@@ -241,9 +243,7 @@ def makeItemTable():
         if images.images:
             finalimages = []
             mainimage = iiiftools.setIIIFSize((data_mapper.getMainImage(row.ids, images.images)), 300, 500)
-            print('mainimage: ' + str(mainimage))
             for img in images.images:
-                print(img)
                 finalimages.append(iiiftools.setIIIFSize(img, 400, 700))
             imagearray = finalimages
 
@@ -268,7 +268,6 @@ def makeItemTable():
            )) AS data
         FROM bitem.allitems WHERE id = %(id)s AND (casestudies @> '[197087]' OR casestudies @> '[229739]' OR casestudies @> '[197085]' OR casestudies @> '[198233]')  AND NOT casestudies @> '[222268]')
         """
-        print(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
 
     sql_delete = """
