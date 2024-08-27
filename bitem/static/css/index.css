@@ -38,18 +38,18 @@
 }
 
 .card-title {
-    margin-top: 2vh;
-    margin-bottom: 4vh;
+    margin-bottom: 1.5vh;
     font-size: 1.5rem;
 }
 
 .caseStudyText {
     padding: 5px;
-    font-size: 0.83rem;
+    font-size: 0.85rem;
+    text-align: justify;
 }
 
 .card:hover {
-    background: rgba(38, 27, 5, 0.585);
+    background: rgba(14, 11, 5, 0.585);
     transition: background 1s, box-shadow 1s;
 }
 
@@ -106,13 +106,13 @@
 
 
     .caseStudyText {
-        font-size: 2rem;
+        font-size: 2.3rem;
         padding: 10px;
         text-align: justify;
     }
 
     .card-title {
-        font-size: 2.3rem;
+        font-size: 2.5rem;
     }
 }
 
@@ -128,7 +128,7 @@
     }
 
     .card-title{
-        font-size: 1.8rem;
+        font-size: 1.9rem;
     }
 }
 
@@ -149,7 +149,7 @@
     }
 
     .card-title {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 }
 
@@ -165,7 +165,7 @@
     }
 
     .card-title {
-        font-size: 1rem;
+        font-size: 1.3rem;
     }
 }
 
@@ -181,7 +181,7 @@
     }
 
     .card-title {
-        font-size: 0.8rem;
+        font-size: 1rem;
     }
 }
 
@@ -192,16 +192,16 @@
     }
 
     .caseStudyText {
-        font-size: 0.7rem;
+        font-size: 0.70rem;
         text-align: justify;
     }
 
     .card-title {
-        font-size: 0.7rem;
+        font-size: 0.9rem;
     }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 361px) {
     .card {
         width: 100%;
         margin-bottom: 20px;
@@ -213,6 +213,6 @@
     }
 
     .card-title {
-        font-size: 0.6rem;
+        font-size: 0.8rem;
     }
 }
