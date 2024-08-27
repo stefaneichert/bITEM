@@ -35,7 +35,7 @@ AS
 $$
 BEGIN
     RETURN QUERY
-        SELECT e.id
+        SELECT DISTINCT e.id
         FROM model.entity e
                  JOIN model.link l ON e.id = l.domain_id
         WHERE e.openatlas_class_name = ANY (classes)
