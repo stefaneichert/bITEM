@@ -323,8 +323,8 @@ function addMuuri(data) {
         itemTemplate.dataset.media += "_model";
         for (const file of model.files) {
             if (typeof file.file !== 'undefined') {
-                if (file.file.includes('glb')) currentmodel = file
-                if (file.file.includes('webp')) poster = file
+                if (file.file.includes('glb')) currentmodel = file.file
+                if (file.file.includes('webp')) poster = file.file
             } else {modelthere = false}
         }
     }
