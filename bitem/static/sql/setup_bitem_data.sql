@@ -524,6 +524,7 @@ $$;
 
 
 DROP FUNCTION IF EXISTS bitem.desc_translation CASCADE;
+
 CREATE OR REPLACE FUNCTION bitem.desc_translation(current_text text, languages INT[])
     RETURNS JSONB
     LANGUAGE plpgsql
@@ -537,31 +538,41 @@ DECLARE
     lan_string         TEXT;
 BEGIN
     CASE
-        WHEN current_text IS NULL THEN return NULL;
-        ELSE SELECT regexp_replace(current_text, E'[\n\r]+', ' ', 'g') INTO current_text;
-             SELECT replace(replace(replace(current_text, '', '\'), '"', '\"'), '{', '\{') INTO current_text;
-             SELECT '{ "description":"' || current_text
-             INTO final_translation;
-             FOREACH lan IN ARRAY languages
-                 LOOP
-                     SELECT null INTO lan_label;
-                     SELECT null INTO return_translation;
-                     SELECT LOWER(description) FROM model.entity WHERE id = lan INTO lan_label;
-                     SELECT '##' || lan_label || '_##(.*?)##_' || lan_label || '##'::text INTO lan_string;
-                     SELECT substring(current_text, lan_string) INTO return_translation;
-                     CASE
-                         WHEN return_translation IS NOT NULL
-                             THEN SELECT final_translation || '","' || lan_label || '":"' || TRIM(return_translation)
-                                  INTO final_translation;
-                         ELSE SELECT final_translation INTO final_translation;
-                         END CASE;
-                 END LOOP;
+        WHEN current_text IS NULL THEN
+            RETURN NULL;
+        ELSE
+            SELECT regexp_replace(current_text, E'[\n\r]+', ' ', 'g') INTO current_text;
+            SELECT replace(replace(replace(replace(current_text, E'\t', '\t'), '', '\'), '"', '\"'), '{', '\{')
+            INTO current_text;
+            SELECT '{ "description":"' || current_text INTO final_translation;
 
-             SELECT final_translation || '"}' INTO final_translation;
-        END CASE;
+            FOREACH lan IN ARRAY languages
+            LOOP
+                SELECT null INTO lan_label;
+                SELECT null INTO return_translation;
+
+                SELECT LOWER(description) FROM model.entity WHERE id = lan INTO lan_label;
+
+                SELECT '##' || lan_label || '_##(.*?)##_' || lan_label || '##'::text INTO lan_string;
+
+                SELECT substring(current_text, lan_string) INTO return_translation;
+
+                CASE
+                    WHEN return_translation IS NOT NULL THEN
+                        SELECT final_translation || '","' || lan_label || '":"' || TRIM(return_translation)
+                        INTO final_translation;
+                    ELSE
+                        SELECT final_translation INTO final_translation;
+                END CASE;
+            END LOOP;
+
+            SELECT final_translation || '"}' INTO final_translation;
+    END CASE;
+
     RETURN (SELECT final_translation)::JSONB;
 END;
 $$;
+
 
 
 -- get function name if directed property in OA7
