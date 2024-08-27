@@ -225,7 +225,7 @@ def makeItemTable():
                FROM bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
-                   ) ORDER BY ids DESC;
+                   ) WHERE ids <= 215198 ORDER BY ids DESC;
     """
 
     g.cursor.execute(sql)
