@@ -497,30 +497,31 @@ END;
 $$;
 
 DROP FUNCTION IF EXISTS bitem.get_three_d_models CASCADE;
-CREATE OR REPLACE FUNCTION bitem.get_three_d_models(current_id INT)
-    RETURNS JSONB
-    LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    return_models JSONB;
-BEGIN
-    SELECT JSONB_AGG(i.images) AS images
-    FROM (SELECT l.range_id,
-                 jsonb_build_object('id', l.range_id, 'name', e.name, 'files', JSONB_AGG(f.filename)) as images
+    CREATE OR REPLACE FUNCTION bitem.get_three_d_models(current_id INT)
+        RETURNS JSONB
+        LANGUAGE plpgsql
+    AS
+    $$
+    DECLARE
+        return_models JSONB;
+    BEGIN
+        SELECT JSONB_AGG(i.images) AS images
+        FROM (SELECT l.range_id,
+                 jsonb_build_object('id', l.range_id, 'name', e.name, 'files', JSONB_AGG(JSONB_BUILD_OBJECT('mime', f.mimetype, 'name', e2.name, 'file', f.filename))) as images
           FROM bitem.files f
                    JOIN model.link l ON f.id = l.domain_id
                    JOIN model.entity e ON e.id = l.range_id
+                   JOIN model.entity e2 ON e2.id = f.id
 
           WHERE l.property_code = 'P67'
 
-            AND l.range_id = current_id
-            AND f.mimetype IN ('3d', 'poster')
-          GROUP BY l.range_id, e.name) i
-    INTO return_models;
-    RETURN return_models;
-END ;
-$$;
+                AND l.range_id = current_id
+                AND f.mimetype IN ('3d', 'poster')
+              GROUP BY l.range_id, e.name) i
+        INTO return_models;
+        RETURN return_models;
+    END ;
+    $$;
 
 
 DROP FUNCTION IF EXISTS bitem.desc_translation CASCADE;

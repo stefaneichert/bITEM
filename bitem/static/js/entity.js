@@ -119,6 +119,7 @@ function toggleMouseWheelZoom() {
     map.scrollWheelZoom.enabled() ? map.scrollWheelZoom.disable() : map.scrollWheelZoom.enable();
 }
 
+console.log(data)
 createMuuriElems(data)
 
 function createMuuriElems(obj) {
@@ -185,8 +186,6 @@ function createMuuriElems(obj) {
     }
 
 
-
-
     let events = makeEnts(obj, ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'])
     if (events.length > 0) {
         grid.add(setEvents(events))
@@ -201,22 +200,22 @@ function makeStorymapBtn() {
     eventList.forEach(className => classCounts[className] = 0);
 
 // Iterate through connections array
-data.connections.forEach(connection => {
-    const className = connection.class;
-    if (eventList.includes(className)) {
-        classCounts[className] += connection.nodes.length;
-        totalCount += classCounts[className]
-    }
-});
+    data.connections.forEach(connection => {
+        const className = connection.class;
+        if (eventList.includes(className)) {
+            classCounts[className] += connection.nodes.length;
+            totalCount += classCounts[className]
+        }
+    });
 
 // Output the counts
-console.log(classCounts);
-console.log(totalCount);
-if (totalCount >= 2) {
-    const itemTemplate = document.createElement('div');
-    itemTemplate.className = 'item';
+    console.log(classCounts);
+    console.log(totalCount);
+    if (totalCount >= 2) {
+        const itemTemplate = document.createElement('div');
+        itemTemplate.className = 'item';
 
-    itemTemplate.innerHTML = `
+        itemTemplate.innerHTML = `
         <div class="item-content item-content-story item-content-main">
           <div class="card story-card">
             <div>
@@ -228,47 +227,57 @@ if (totalCount >= 2) {
           </div>
         </div>
       `;
-    grid.add(itemTemplate)
-}
+        grid.add(itemTemplate)
+    }
 
 }
 
 function make3d(models) {
-    for (const model of models) {
-        let poster = ''
-        let currentmodel = ''
-        for (const file of model.files) {
-            if (file.includes('glb')) currentmodel = file
-            if (file.includes('webp')) poster = file
+    const files = models[0].files
+    const groupedFiles = files.reduce((acc, file) => {
+        let group = acc.find(item => item.name === file.name);
+        if (!group) {
+            group = {name: file.name};
+            acc.push(group);
         }
+        if (file.mime === '3d') {
+            group.model = file.file;
+        } else if (file.mime === 'poster') {
+            group.poster = file.file;
+        }
+        return acc;
+    }, []);
+
+
+    for (const file of groupedFiles) {
         const itemTemplate = document.createElement('div');
-        itemTemplate.className = 'item';
-        itemTemplate.dataset.class = 'threed';
-        itemTemplate.innerHTML = `
+    itemTemplate.className = 'item';
+    itemTemplate.dataset.class = 'threed';
+    itemTemplate.innerHTML = `
     <div class="item-content item-3d">
       <div class="card">
       <div class="card-body">        
             <model-viewer
             class="model-3d hover-img"
-                alt="${model.name}"
-                src="${uploadPath}/${currentmodel}"
+                alt="${file.name}"
+                src="${uploadPath}/${file.model}"
                 shadow-intensity="1"
-                poster="${uploadPath}/${poster}"
+                poster="${uploadPath}/${file.poster}"
                 loading="lazy"
                 camera-controls
                 auto-rotate
                 auto-rotate-delay="0"
         ></model-viewer>
         <div class="btn-panel">
-            <span onclick="enlarge3d(${'\'' + currentmodel + '\''},${'\'' + poster + '\''},${'\'' + model.name + '\''})" class="img-btn"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
+            <span onclick="enlarge3d(${'\'' + file.model + '\''},${'\'' + file.poster + '\''},${'\'' + file.name + '\''})" class="img-btn"><i class="fullscreen-btn bi bi-arrows-fullscreen"></i></a>
         </div>              
       </div>
       </div>
 
     </div>
   `;
-        grid.add(itemTemplate)
-    }
+    grid.add(itemTemplate)
+}
 
 }
 
@@ -1242,7 +1251,7 @@ function setEnts(current_data, class_) {
                                 propstring += ' '
 
                                 if (spec.qualifier !== undefined) {
-                                    propstring += '(' +  languageTranslations._as + ' ' + getTypeTranslation(spec.qualifier) + ')'
+                                    propstring += '(' + languageTranslations._as + ' ' + getTypeTranslation(spec.qualifier) + ')'
                                 }
                                 propstring += '<br>'
                             }
