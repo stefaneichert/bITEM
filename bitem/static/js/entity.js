@@ -265,6 +265,7 @@ function make3d(models) {
                 poster="${uploadPath}/${file.poster}"
                 loading="lazy"
                 camera-controls
+                disable-zoom
                 auto-rotate
                 auto-rotate-delay="0"
         ></model-viewer>
