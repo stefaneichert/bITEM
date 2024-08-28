@@ -25,15 +25,28 @@ let mainImage = ''
 //set 3d Model as background if available
 let model = data.models
 if (model) {
-    model = model[0]
-    let poster = ''
-    let currentmodel = ''
-    for (const file of model.files) {
-        if (file.includes('glb')) currentmodel = file
-        if (file.includes('webp')) poster = file
-    }
-    const itemTemplate = document.createElement('div');
-    itemTemplate.innerHTML = `
+    console.log(model)
+    const groupedFiles = model[0].files.reduce((acc, file) => {
+        let group = acc.find(item => item.name === file.name);
+        if (!group) {
+            group = {name: file.name};
+            acc.push(group);
+        }
+        if (file.mime === '3d') {
+            group.model = file.file;
+        } else if (file.mime === 'poster') {
+            group.poster = file.file;
+        }
+        return acc;
+    }, []);
+
+    console.log(groupedFiles)
+    if (groupedFiles[0].model) {
+        let poster = groupedFiles[0].poster
+        let currentmodel = groupedFiles[0].model
+
+        const itemTemplate = document.createElement('div');
+        itemTemplate.innerHTML = `
     <div class="item-3d">
             <model-viewer
             class="title-object"
@@ -47,9 +60,12 @@ if (model) {
         ></model-viewer>
       </div>
 `
-    if (poster !== '') mainImage = uploadPath + '/' + poster;
+        if (poster !== '') mainImage = uploadPath + '/' + poster;
     startSlide.appendChild(itemTemplate);
+    }
 }
+
+
 
 //set image as background if no model
 let image = data.image
