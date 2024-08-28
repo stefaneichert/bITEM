@@ -1,28 +1,32 @@
 #map {
-    width: 100%;
-    top: 56px;
-    height: calc(75vh - 56px);
-    position: absolute;
-    overflow: hidden;
-}
-
-#timeline-container {
-  position: absolute;
-  bottom: 0!important;
   width: 100%;
-  height: 25vh;
-  background-image: url(../images/placeholder_img/leather.jpg);
+  top: 56px;
+  height: calc(100vh - 56px); 
+  position: absolute;
   overflow: hidden;
 }
 
+#timeline-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 25vh;
+  overflow: hidden;
+  background-color: rgba(61, 44, 29, 0.333);
+  z-index: 1000;
+}
 
 .vis-item {
-  font-size: 0.75em; /* Adjust font size to make items smaller */
-  line-height: 1em; /* Adjust line height */
+  font-size: 0.9em;
+  line-height: 1em;
+}
+
+.vis-item .vis-item-content {
+  background: rgba(255, 255, 255, 0.691);
 }
 
 .vis-label {
-  font-size: 0.75em; /* Adjust the font size of group labels */
+  font-size: 0.75em;
 }
 
 
@@ -32,25 +36,25 @@
   top: 100px;
   right: 20px;
   width: 300px;
-  max-height: 500px; /* Set a maximum height to prevent the container from growing too large */
-  background-color: #5c391b;
-  background-image: url(../images/placeholder_img/leather.jpg);
+  max-height: 500px;
+  font-size: 1rem;
+  color:black;
+  background-color: rgba(206, 156, 113, 0.728);
   border: 3px solid #5c391b;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 10px;
   z-index: 1000;
-  overflow-y: auto; /* Enable vertical scrolling if content exceeds container height */
-  overflow-x: hidden; /* Hide horizontal overflow to avoid horizontal scrolling */
-  word-wrap: break-word; /* Ensure long text breaks into a new line instead of overflowing */
-  text-overflow: ellipsis; /* Add ellipsis (...) for overflowing text */
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
 }
 
-/* Optional: Style images within the container */
 #detailsContainer img {
-  max-width: 100%; /* Ensure images do not exceed the container's width */
-  height: auto; /* Maintain the aspect ratio of images */
-  display: block; /* Ensures proper spacing around images */
-  margin: 10px 0; /* Add some space above and below images */
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px 0; 
 }
   
   #detailsContainer.hidden {
@@ -75,12 +79,49 @@
   }
   
 
-.resizer {
+  .resizer {
     width: 100%;
-    top: 0;
-    right: 0;
-    height: 2px;
-    position: relative;
+    height: 10px;
+    position: absolute;
+    top: -5px;
+    left: 0;
     cursor: row-resize;
-    background-color: rgba(220, 20, 60, 0.272);
+    background-color: rgb(99, 50, 25);
+    border-top: 2px solid #000;
+    z-index: 10;
+}
+
+
+@media (max-width: 500px) {
+  #map {
+    top: 0;
+    height: 100vh; /* Ensure the map takes the full height of the screen */
+  }
+
+  #timeline-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100vh; /* Make the timeline container span the entire map */
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent background */
+    display: none; /* Hide by default, will be shown with the toggle button */
+    z-index: 1000; /* Ensure it overlays the map */
+  }
+
+  .resizer {
+    display: none; /* Hide the resizer on mobile */
+  }
+
+  #toggleTimelineBtn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1100; /* Ensure it is above the timeline container */
+    padding: 10px;
+    background-color: crimson;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 }

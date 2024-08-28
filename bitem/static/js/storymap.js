@@ -139,11 +139,10 @@ const timelineData = cleanedGroupedArray
       return null;
     }
     const place = item.places;
-    // const placeDestination = typeof item.places[1] !== "undefined" ? item.places[1].spatialinfo.properties.id : null;
 
     return {
       oid: item.origin_id,
-      content: item.origin.name || "No Origin", // Not name give translation !
+      content: getTypeTranslation(item.origin),
       start: transformDate(item.begin),
       end: transformDate(item.end),
       place: place,
@@ -190,10 +189,10 @@ const options = {
   },
   orientation: "bottom",
   template: function (item, element, data) {
-    if (item.type === "point") {
-      return item.content;
+    if (item.type === "point" || item.type === "range") {
+      return "";
     }
-    return "";
+    return item.content;
   },
 };
 
@@ -204,6 +203,7 @@ var oldMarkers = [];
 
 const mapMarkers = {};
 const sortedTimeline = timelineData.reverse();
+console.log(sortedTimeline);
 
 function getEventsForPlace(placeId) {
   return sortedTimeline.filter((item) =>
@@ -423,20 +423,16 @@ function populateContainer(id) {
       if (data.start) {
         const startDate = makeLocalDate(data.start).localdate;
 
-
         if (data.end) {
           const endDate = makeLocalDate(data.end).localdate;
-
 
           if (startDate === endDate) {
             html += `<div><b>Date:</b> ${startDate}</div>`;
           } else {
-
             html += `<div><b>Start:</b> ${startDate}</div>`;
             html += `<div><b>End:</b> ${endDate}</div>`;
           }
         } else {
-
           html += `<div><b>Date:</b> ${startDate}</div>`;
         }
       }
@@ -519,8 +515,11 @@ function initResizerFn(resizer, timelineContainer) {
 
     if (newHeight >= 50 && newHeight <= window.innerHeight) {
       timelineContainer.style.height = `${newHeight}px`;
-      const mapHeight = window.innerHeight - newHeight;
-      document.getElementById("map").style.height = `${mapHeight}px`;
+      //document.getElementById("map").style.height = `calc(100vh - ${newHeight}px - 56px)`;
+      
+      // Adjust the timeline size to fit the new container height
+      timeline.setOptions({ height: `${newHeight}px` }); // Update timeline height
+      timeline.redraw();  // Redraw or refresh the timeline
     }
   }
 
@@ -532,4 +531,41 @@ function initResizerFn(resizer, timelineContainer) {
   resizer.addEventListener("mousedown", mouseDownHandler);
 }
 
-initResizerFn(resizer, timelineContainer);
+initResizerFn(document.querySelector(".resizer"), timelineContainer);
+
+document.getElementById("toggleTimelineBtn").addEventListener("click", function() {
+  const timelineContainer = document.getElementById("timeline-container");
+
+  if (timelineContainer.style.display === "none" || !timelineContainer.style.display) {
+    timelineContainer.style.display = "block";
+  } else {
+    timelineContainer.style.display = "none";
+  }
+
+  // If you want the timeline to redraw itself after being shown
+  if (timelineContainer.style.display === "block") {
+    timeline.redraw(); // Redraw the timeline to fit the full screen height
+  }
+});
+
+
+
+function mobileTimeline() {
+  const timelineContainer = document.getElementById("timeline-container");
+
+  if (window.innerWidth <= 500) {
+    // On mobile, make the timeline take up the full height
+    timelineContainer.style.height = '100vh';
+    timeline.setOptions({ height: '100vh' });
+  } else {
+    // Restore the timeline to its normal height
+    timelineContainer.style.height = '25vh';
+    timeline.setOptions({ height: '25vh' });
+  }
+
+  timeline.redraw(); // Redraw the timeline to fit the new dimensions
+}
+
+// Call resizeTimeline on page load and whenever the window is resized
+window.addEventListener('resize', mobileTimeline);
+mobileTimeline(); // Initial call on page load
