@@ -211,9 +211,19 @@ WHERE place_id IN (SELECT ids
     """
     g.cursor.execute(sql)
 
-def makeItemTable():
+def makeItemTable(id=None, prop=None):
     import json
     from bitem.util import data_mapper, iiiftools
+    if not id:
+        property_sql = ''
+    if id and not prop:
+        property_sql = f'WHERE ids = {str(id)}'
+    if id:
+        if prop == 'desc':
+            property_sql = f'WHERE ids <= {str(id)}'
+        if prop == 'asc':
+            property_sql = f'WHERE ids >= {str(id)}'
+
     sql = """
             DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
@@ -225,12 +235,13 @@ def makeItemTable():
                FROM bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
-                   ) ORDER BY ids DESC;
-    """
-
+                   ) """ + property_sql + """ ORDER BY ids DESC; """
+    print(sql)
     g.cursor.execute(sql)
 
     ids = g.cursor.fetchall()
+    print(ids)
+
     i = 1
     for row in ids:
         print(str(i) + ' of ' + str(len(ids)))
@@ -285,3 +296,4 @@ def makeItemTable():
     """
 
     g.cursor.execute(sql_delete)
+    print('done')
