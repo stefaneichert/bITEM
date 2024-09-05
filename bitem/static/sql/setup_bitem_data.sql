@@ -1029,3 +1029,19 @@ CREATE TRIGGER delete_catcher
     ON model.entity
     FOR EACH ROW
 EXECUTE PROCEDURE bitem.catch_deletes();
+
+DROP TABLE IF EXISTS bitem.stories;
+CREATE TABLE bitem.stories (
+    id serial PRIMARY KEY,
+    story_id INT,
+    story_name TEXT,
+    element_heading TEXT,
+    element_text TEXT,
+    element_background INT,
+    element_media1 INT,
+    element_media2 INT,
+    element_media3 INT,
+    goto1 INT,
+    goto2 INT,
+    goto3 INT
+)

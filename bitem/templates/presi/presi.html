@@ -1,0 +1,183 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=1024"/>
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>my presentation</title>
+
+    <link href="static/css/presi.css" rel="stylesheet"/>
+    <link href="static/vendor/impress.js-master/css/impress-common.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
+    <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
+
+</head>
+
+<script type="module" src="static/vendor/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified
+        version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress"
+     data-transition-duration="1000"
+
+     data-width="1024"
+     data-height="768"
+     data-max-scale="3"
+     data-min-scale="0"
+     data-perspective="1000">
+
+    <div id="overview" class="step" data-x="0" data-y="0" data-z="0" data-scale="{{positions|length}}"></div>
+
+
+    {% for slide in story.slides %}
+        {% set pos = positions[slide.order - 1] %}
+        <div id="slide{{slide.order}}" class="step" {% for key, value in pos.items() %}
+                {{ key }}="{{ value }}"
+            {% endfor %}>
+         {% set opacity = 1 %}
+        {% if slide.background %}
+
+            {% if slide.heading or slide.text or slide.media|length > 0 %}
+                {% set opacity = 0.7 %}
+            {% endif %}
+            {% if slide.background.mime == '3d' %}
+                {% set opacity = 0.8 %}
+            {% endif %}
+
+        <div style="position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: {{opacity}};
+
+        {% if slide.background.mime == 'img' %}
+        background-image: url('{{slide.background.file}}');
+        background-size: cover;
+        {% endif %}
+
+        z-index: -1; /* Background layer */">
+            {% if slide.background.mime == '3d' %}
+                <model-viewer
+                        class="model-3d hover-img"
+                        alt="3d model"
+                        src="{{slide.background.file}}"
+                        shadow-intensity="1"
+                        loading="lazy"
+                        disable-zoom
+                        auto-rotate
+                        auto-rotate-delay="0"
+                        style="height: 100%; width: 100%;"
+                ></model-viewer>
+            {% endif %}
+            {% if slide.background.mime == 'map' %}
+                <div id="map{{slide.order}}" style="width: 100%; height:100%; opacity: {{opacity}}"></div>
+                <script>
+                    let map{{slide.order}} = L.map('map{{slide.order}}', {zoomControl: false}).setView([51.505, -0.09], 13);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(map{{slide.order}});
+                    let geojson{{slide.order}} = L.geoJSON().addTo(map{{slide.order}});
+                    let geoms{{slide.order}} = {{slide.background.file|tojson}}
+                    console.log(geoms{{slide.order}})
+                    geoms{{slide.order}}.forEach((geom) => {
+                        console.log(geom)
+                        geojson{{slide.order}}.addData(geom)
+                    })
+                    let bounds{{slide.order}} = geojson{{slide.order}}.getBounds();
+                    map{{slide.order}}.fitBounds(bounds{{slide.order}});
+                    map{{slide.order}}.setZoom(map{{slide.order}}.getZoom() - 5)
+                    map{{slide.order}}.invalidateSize()
+                </script>
+            {% endif %}
+        </div>
+        {% endif %}
+
+            {% if slide.heading %} <h1 class="text">{{slide.heading}}</h1> {% endif %}
+            {% if slide.text %} <span class="desc-text">
+               {{slide.text}}
+            </span>
+            {% endif %}
+
+            {% if (slide.media)|length > 0 %}
+            <div class="media-content">
+                {% for medium in slide.media %}
+                {% if medium.mime == 'img'%}
+                <img src="{{medium.file}}" style="max-width: {{100/(slide.media|length)}}%; height: fit-content;">
+                {% endif %}
+                {% if medium.mime == '3d'%}
+            <model-viewer
+                        class="model-3d hover-img"
+                        alt="3d model"
+                        src="{{ medium.file}}"
+                        shadow-intensity="1"
+                        loading="lazy"
+                        disable-zoom
+                        auto-rotate
+                        auto-rotate-delay="0"
+                        style="min-width: {{100/(slide.media|length)}}%"
+
+                ></model-viewer>
+                {% endif %}
+                {% if medium.mime == 'map' %}
+                <div id="map{{slide.order}}{{loop.index}}" style="width: {{100/(slide.media|length)}}%; height: 15vh;"></div>
+                <script>
+                    let map{{slide.order}}{{loop.index}} = L.map('map{{slide.order}}{{loop.index}}', {zoomControl: false}).setView([51.505, -0.09], 13);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(map{{slide.order}}{{loop.index}});
+                    let geojson{{slide.order}}{{loop.index}} = L.geoJSON().addTo(map{{slide.order}}{{loop.index}});
+                    let geoms{{slide.order}}{{loop.index}} = {{medium.file|tojson}}
+                    console.log(geoms{{slide.order}}{{loop.index}})
+                    geoms{{slide.order}}{{loop.index}}.forEach((geom) => {
+                        console.log(geom)
+                        geojson{{slide.order}}{{loop.index}}.addData(geom)
+                    })
+                    let bounds{{slide.order}}{{loop.index}} = geojson{{slide.order}}{{loop.index}}.getBounds();
+                    map{{slide.order}}{{loop.index}}.fitBounds(bounds{{slide.order}}{{loop.index}});
+                    map{{slide.order}}{{loop.index}}.invalidateSize()
+                    map{{slide.order}}{{loop.index}}.fitBounds(bounds{{slide.order}}{{loop.index}});
+                    map{{slide.order}}{{loop.index}}.setZoom(map{{slide.order}}{{loop.index}}.getZoom() - 7)
+                    map{{slide.order}}{{loop.index}}.invalidateSize()
+                </script>
+            {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+
+
+
+</div>
+<div class="hint">
+    <div class="hint-content">
+        <h1>{{story.name}}</h1>
+        <p class="hinttext">Use a spacebar or arrow keys to start.</p>
+    </div>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) {
+    document.querySelector(".hinttext").innerHTML = "<p>Swipe left or right to start</p>";
+}
+</script>
+
+<script src="static/vendor/impress.js-master/js/impress.js"></script>
+<script>impress().init();</script>
+<script>story = {{story|tojson}}</script>
+
+</body>
+</html>
+
+
+
