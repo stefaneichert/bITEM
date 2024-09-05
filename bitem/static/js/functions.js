@@ -171,7 +171,7 @@ function enlarge3d(model, poster, name) {
     
             
         <div class="modal-header">
-            <h5 class="modal-title"><img class="me-4" src="/static/icons/logo.png" alt="bITEM" width="auto" height="24">${name}</h5>                    
+            <h5 class="modal-title"><a href="https://bitem.at/"><img class="me-4" src="/static/icons/logo.png" alt="bITEM" width="auto" height="24"></a>${name}</h5>                    
         </div>
         <div  class="modal-body">
             <model-viewer 
