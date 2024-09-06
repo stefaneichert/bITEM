@@ -13,20 +13,19 @@ def index():
     all_classes = str(list(all_classes))
 
     sql = """
-        SELECT * FROM (SELECT id,
-            MAX(CASE WHEN mimetype = '3d' THEN filename END) AS model,
-            MAX(CASE WHEN mimetype = 'poster' THEN filename END) AS poster
-                FROM (SELECT l.range_id AS id, f.filename, f.mimetype
-                    FROM bitem.files f
-                       JOIN model.link l ON f.id = l.domain_id
-                       JOIN model.entity e ON e.id = l.range_id
-                       WHERE l.property_code = 'P67'
-                       AND f.mimetype IN ('3d', 'poster', 'img')
-                       AND l.range_id IN (SELECT ids
-                               FROM bitem.get_entities(
-                           ARRAY """ + all_classes + """ , """ + root + """
-                       ))) a GROUP BY a.id) b WHERE poster IS NOT NULL
-    """
+            SELECT x.*, y.description AS description, z.description AS copyright FROM (SELECT * FROM (SELECT id,
+                MAX(CASE WHEN mimetype = '3d' THEN filename END) AS model,
+                MAX(CASE WHEN mimetype = 'poster' THEN filename END) AS poster
+                    FROM (SELECT l.range_id AS id, f.filename, f.mimetype
+                        FROM bitem.files f
+                           JOIN model.link l ON f.id = l.domain_id
+                           JOIN model.entity e ON e.id = l.range_id
+                           WHERE l.property_code = 'P67'
+                           AND f.mimetype IN ('3d', 'poster', 'img')
+                           AND l.range_id IN (SELECT ids
+                                   FROM bitem.get_entities(
+                               ARRAY """ + all_classes + """ , """ + root + """
+                           ))) a GROUP BY a.id) b WHERE poster IS NOT NULL) x JOIN model.entity y ON x.id::TEXT = y.id::TEXT JOIN model.entity z ON z.id::TEXT = replace(x.model, '.glb', '')"""
 
     g.cursor.execute(sql)
     result = g.cursor.fetchall()
@@ -34,9 +33,13 @@ def index():
     if not result:
         # Handle the case where no records are found
         return render_template("/index/index.html", message="No records found.")
-    
+
     random_record = random.choice(result)
     model = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + str(random_record.model)
     poster = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + str(random_record.poster)
+    description = str(random_record.description)
+    copyright = str(random_record.copyright)
 
-    return render_template("/index/index.html", model=model, poster=poster)
+    print(random_record)
+
+    return render_template("/index/index.html", model=model, poster=poster, description=description, copyright=copyright)

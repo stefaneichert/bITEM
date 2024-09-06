@@ -6,6 +6,24 @@
 <main>
     <div class="container text-center max-screen" id="modelcont">
 
+       <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+        <div class="col-md-12">
+            <div class="infobutton">
+                <i class="icon-info-sign"></i>
+
+                <span class="extra-info">
+                    {{description}}
+                    {{copyright}}
+                </span><br />
+                <p class="info-link">
+                    <a href="https://bitem.at/view/id" id="{{id}}">more</a>
+                </p>
+            </div><br />
+        </div>
+
+
         <model-viewer class="indexmodel" alt="Moa" alt="3d Model" src="{{model}}" shadow-intensity="1"
                       poster="{{poster}}" loading="lazy" camera-controls auto-rotate disable-zoom
                       auto-rotate-delay="0"></model-viewer>
