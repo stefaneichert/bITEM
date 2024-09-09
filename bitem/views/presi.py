@@ -3,8 +3,8 @@ from flask import render_template, g, request, session
 from bitem import app
 
 
-@app.route('/presi')
-def presi():
+@app.route('/presi/<int:id>/')
+def presi(id: int):
     lang = (session.get(
         'language',
         request.accept_languages.best_match(
@@ -56,7 +56,6 @@ def presi():
 
         return None
 
-    id = 1
 
     story = []
 
@@ -68,9 +67,10 @@ def presi():
     story['slides'] = []
 
     if result:
+        i = 1
         for row in result:
-            slide = {'order': row.id, 'heading': None, 'text': None, 'background': None, 'media': []}
-
+            slide = {'order': i, 'heading': None, 'text': None, 'background': None, 'media': [], 'goto':[]}
+            i += 1
             goto = []
 
             if row.element_heading and not row.element_heading.isdigit():
@@ -101,6 +101,23 @@ def presi():
                 media3 = get_media(row.element_media3)
                 if media3:
                     slide['media'].append(media3)
+                    
+            if row.goto1:
+                goto1 = row.goto1
+                if goto1:
+                    slide['goto'].append(goto1)
+
+            if row.goto2:
+                goto2 = row.goto2
+                if goto2:
+                    slide['goto'].append(goto2)
+
+            if row.goto3:
+                goto3 = row.goto3
+                if goto3:
+                    slide['goto'].append(goto3)
+                    
+                    
             story['slides'].append(slide)
     print(story)
 
@@ -116,7 +133,7 @@ def presi():
         :param angle_increment: Angle increment in degrees for each subsequent position.
         :return: A list of dictionaries with slide positions and attributes.
         """
-        positions = []
+        positions = [{'data-x': 0, 'data-y': 0, 'data-scale': 3}]
         current_angle = 0  # Starting angle in degrees
         current_distance = initial_distance  # Starting distance from the origin
 
@@ -148,21 +165,11 @@ def presi():
             positions.append(position)
 
             # Update the angle and distance for the next position to create a spiral
-            current_angle += angle_increment  # Increment angle for spiral effect
+            current_angle += random.randint(30, 70)  # Increment angle for spiral effect
             current_distance += initial_distance * 0.1  # Increment distance gradually to avoid overlaps
 
         return positions
 
-    # Example usage:
-    existing_positions = [
+    positions = generate_spiral_positions((len(story['slides'])-1))
 
-    ]
-
-    missing_positions = len(story['slides']) - len(existing_positions)
-
-
-    new_positions = generate_spiral_positions(missing_positions)
-    existing_positions.extend(new_positions)
-    print(existing_positions)
-
-    return render_template("/presi/presi.html", story=story, positions=existing_positions)
+    return render_template("/presi/presi.html", story=story, positions=positions)

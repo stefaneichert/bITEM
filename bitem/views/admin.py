@@ -1,6 +1,6 @@
 from bitem import app
 from bitem.util import iiiftools, data_mapper
-from flask import render_template
+from flask import render_template, g
 from flask_login import login_required
 from typing import Optional
 
@@ -8,6 +8,13 @@ from typing import Optional
 @app.route('/admin')
 @login_required
 def admin() -> str:
+
+    g.cursor.execute('SELECT DISTINCT story_id, story_name FROM bitem.stories')
+    stories = g.cursor.fetchall()
+    print(stories)
+
+
+
     return render_template("/admin/admin.html")
 
 @app.route('/admin/synchronise')
