@@ -141,11 +141,11 @@ i, em {
     -ms-box-sizing: border-box;
     -o-box-sizing: border-box;
     box-sizing: border-box;
-
     font-family: 'PT Serif', georgia, serif;
     font-size: 48px;
     line-height: 1.5;
     overflow: hidden;
+    word-break: break-word;
 }
 
 .impress-enabled .step {
@@ -193,16 +193,9 @@ h1 {
     z-index: 1;
 }
 
-.impress-enabled .step {
-    opacity: 0.1;
-}
-
-.impress-on-overview .step {
-    opacity: 0.5;
-}
-
 .hint-content {
-    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 100px 100px rgba(0, 0, 0, 0);
 }
 
 .text-container {
@@ -235,4 +228,22 @@ h1 {
     font-size: 2rem;
 }
 
+.sub-text {
+    left: 0;
+    width: 100%;
+    font-size: 32px;
+    position: absolute;
+    bottom: 0;
+    padding-bottom: 0.5rem;
+    padding-top: 1.5rem;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.85) 100%);
+}
+
+#map {
+    height: 100vh;
+    width: 100vw;
+    z-index: -3;
+    opacity: 0.6;
+}
 

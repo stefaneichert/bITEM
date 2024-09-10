@@ -18,7 +18,14 @@
 
 <body class="impress-not-supported">
 
-
+<div id="map" style="display: {{story.map}}"></div>
+<script>
+let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
+                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(map);
+</script>
 <div class="fallback-message">
     <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified
         version of this presentation.</p>
@@ -41,7 +48,7 @@
 
 
 
-    <div id="overview" class="step" data-x="0" data-y="0" data-z="0" data-scale="{{positions|length + 7 }}">
+    <div id="overview" class="step" data-x="0" data-y="0" data-z="13000" data-scale="{{positions|length + 7 }}">
         <div class="hint-content">
             <h1>{{story.name}}</h1>
             <p class="hinttext">Use a spacebar or arrow keys to start.</p>
@@ -70,9 +77,10 @@
          {% endfor %}>
         {% set opacity = 1 %}
         {% if slide.background %}
-
+        {% set gradient = 'radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%),'%}
         {% if slide.heading or slide.text or slide.media|length > 0 %}
         {% set opacity = 0.7 %}
+        {% set gradient = 'radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 1) 100%),'%}
         {% endif %}
         {% if slide.background.mime == '3d' %}
         {% set opacity = 0.8 %}
@@ -86,8 +94,7 @@
         opacity: {{opacity}};
 
         {% if slide.background.mime == 'img' %}
-        background-image: radial-gradient(
-                rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 1) 100%),
+        background-image: {{gradient}}
             url('{{slide.background.file}}');
         background-size: cover;
         {% endif %}
@@ -187,6 +194,9 @@
          <a class="storylink" style="width: {{90/(slide.goto|length)}}%;" href="#slide{{url}}">goto blalba</a>
         {% endfor %}
         </div>
+        {% endif %}
+        {% if slide.subtext %}
+        <div class="sub-text">{{slide.subtext}}</div>
         {% endif %}
     </div>
     {% endfor %}

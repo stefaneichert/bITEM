@@ -31,10 +31,17 @@ def presi(id: int):
         g.cursor.execute(
             f"SELECT data -> '_label' -> '{lang.upper()}' AS label, data -> '_label' -> 'name' AS name FROM bitem.tbl_allitems WHERE id = {id}")
         result = g.cursor.fetchone()
-        if result.label:
-            return result.label
+        if result:
+            if result.label:
+                return result.label
+            else:
+                return result.name
         else:
-            return result.name
+            g.cursor.execute(
+                f"SELECT description from model.entity WHERE id = {id}")
+            result = g.cursor.fetchone()
+            if result.description:
+                return result.description
 
     def get_media(id):
         g.cursor.execute(
@@ -65,6 +72,7 @@ def presi(id: int):
 
     story['name'] = translate_text(result[0].story_name, lang)
     story['slides'] = []
+    story['map'] = 'none' #result[0].map_background
 
     if result:
         i = 1
@@ -82,6 +90,10 @@ def presi(id: int):
                 slide['text'] = translate_text(row.element_text, lang)
             if row.element_text and row.element_text.isdigit():
                 slide['text'] = translate_ids(row.element_text, lang)
+            if row.element_subtext and not row.element_subtext.isdigit():
+                slide['subtext'] = translate_text(row.element_subtext, lang)
+            if row.element_subtext and row.element_subtext.isdigit():
+                slide['subtext'] = translate_ids(row.element_subtext, lang)
 
             if row.element_background:
                 file = get_media(row.element_background)

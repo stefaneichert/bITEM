@@ -1038,6 +1038,7 @@ CREATE TABLE bitem.stories (
     sortorder INT,
     element_heading TEXT,
     element_text TEXT, -- max 270 chars
+    element_subtext TEXT, -- max 270 chars
     element_background INT,
     element_media1 INT,
     element_media2 INT,
