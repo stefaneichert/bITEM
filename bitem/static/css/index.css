@@ -219,30 +219,18 @@
 
 .extra-info {
     display: none;
-    line-height: 20px;
-    width: 420px;
     font-size: 12px;
-    position: absolute;
-    top: 0;
-    left: 50px;
 }
 
 .info-link {
     display: none;
-    line-height: 20px;
-    width: 420px;
     font-size: 12px;
-    position: absolute;
-    left: 440px;
-    bottom: 5px;
-    padding: 5px;
+    float: right;
 }
 
 .infobutton:hover .extra-info {
     display: block;
     overflow: hidden;
-    padding-top: 10px;
-    padding-right: 10px;
     display: -webkit-box;
         -webkit-line-clamp: 5;
         -webkit-box-orient: vertical;
@@ -254,16 +242,16 @@
 
 .infobutton {
     font-size: 20px;
-    padding-left: 5px;
     width: 20px;
     border-radius: 15px;
 }
 
 .infobutton:hover {
-    background-color: white;
+    background-color: whitesmoke;
     opacity: 0.5;
     padding: 0 0 0 5px;
     width: 475px;
-    height: 125px;
     text-align: left;
+    display: flow-root;
+    padding: 1rem;
 }
