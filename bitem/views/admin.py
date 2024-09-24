@@ -15,7 +15,7 @@ def admin() -> str:
 
 
 
-    return render_template("/admin/admin.html")
+    return render_template("/admin/admin.html", stories=stories)
 
 @app.route('/admin/synchronise')
 @app.route('/admin/synchronise/<id>')

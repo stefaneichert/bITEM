@@ -1035,6 +1035,8 @@ CREATE TABLE bitem.stories (
     id serial PRIMARY KEY,
     story_id INT,
     story_name TEXT,
+    story_image INT,
+    case_study INT,
     sortorder INT,
     element_heading TEXT,
     element_text TEXT, -- max 270 chars
@@ -1045,5 +1047,8 @@ CREATE TABLE bitem.stories (
     element_media3 INT,
     goto1 INT,
     goto2 INT,
-    goto3 INT
+    goto3 INT,
+    map BOOLEAN,
+    map_origin INT,
+    jump_to INT
 )

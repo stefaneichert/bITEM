@@ -304,66 +304,71 @@ function extractImages(images) {
 }
 
 function setGallery(images, from, to) {
-    from
-    i = 0
+    let i = 0; // Initialize index
+    console.log(images)
+
     for (const img of images) {
-        if (i < to && i >= from) {
-            console.log(img)
+        // Load images between 'from' and 'to' range
+        if (i >= from && i < to) {
             const itemTemplate = document.createElement('div');
-            itemTemplate.dataset.class = 'imgs'
+            itemTemplate.dataset.class = 'imgs';
             let currentStyle = 'max-width: 350px; max-height: 350px';
 
             itemTemplate.className = 'gal-item';
-            let returnHtml = ''
-            returnHtml += `
-                <div className="gal-item-content">
+            let returnHtml = `
+                <div class="gal-item-content">
                     <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">
                     <div class="btn-panel">
-                        <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn"><img src="/static/icons/iiif.png"></a>
+                        <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn">
+                            <img src="/static/icons/iiif.png">
+                        </a>
                     </div>
                 </div>
-  `
-            itemTemplate.innerHTML = returnHtml
-            grid.add(itemTemplate, {index:3})
+            `;
+            itemTemplate.innerHTML = returnHtml;
+            grid.add(itemTemplate, {index: 3});
         }
-        if (i === to && to < images.length) {
-            console.log('i')
-            console.log(i)
-            console.log('to')
-            console.log(to)
-            console.log('from')
-            console.log(from)
-            const itemTemplate = document.createElement('div');
-            itemTemplate.dataset.class = 'imgs'
+
+        // Check if we should add the "load more" button
+        if (i === to - 1 && to < images.length) {
+            const loadMoreTemplate = document.createElement('div');
+            loadMoreTemplate.dataset.class = 'imgs';
             let currentStyle = 'max-width: 350px; max-height: 350px';
 
-            itemTemplate.className = 'gal-item';
-            let returnHtml = ''
-            returnHtml += `
-                    <div id="loadmore" className="gal-item-content" onclick="setGallery(data.images, ${to}, ${images.length})"><span class="loadmore-imgs bitem-text">Load ${images.length - 3} more images</span>
-                    <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">             
-                </div>                 
-  `
-            itemTemplate.innerHTML = returnHtml
-            grid.add(itemTemplate);
+            loadMoreTemplate.className = 'gal-item';
+            let returnHtml = `
+                <div id="loadmore" class="gal-item-content" onclick="setGallery(data.images, ${to}, ${images.length})">
+                    <span class="loadmore-imgs bitem-text">Load ${images.length - to} more images</span>
+                    <img class="img-fluid hover-img" style="${currentStyle}" src="${images[to].path}">
+                </div>
+            `;
+            loadMoreTemplate.innerHTML = returnHtml;
+            grid.add(loadMoreTemplate);
 
+            break; // Stop loop after adding the load more button
         }
 
-        i += 1
-        if (i === images.length && i === to && images.length !== to) {
+        i++; // Increment the index
+        setTimeout(() => {
+            grid.refreshItems().layout();
+        }, 700);
+    }
 
-            console.log('refresh');
-            document.getElementById('loadmore').remove()
-            setTimeout(() => {
-                grid.refreshItems().layout();
-            }, 400);
-
+    // If all images are loaded, remove the "load more" button
+    if (to >= images.length) {
+        const loadMoreBtn = document.getElementById('loadmore');
+        if (loadMoreBtn) {
+            loadMoreBtn.remove();
         }
 
+        setTimeout(() => {
+            grid.refreshItems().layout();
+        }, 700);
 
     }
 
 }
+
 
 function setmap() {
     const itemTemplate = document.createElement('div');

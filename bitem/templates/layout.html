@@ -40,58 +40,28 @@
 <body class="d-flex flex-column min-vh-100">
 
 <header>
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-black">
+        <nav class="navbar navbar-dark fixed-top bg-black">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url_for('index') }}"><img src="/static/icons/logo.png" alt="bITEM"
                                                                            width="auto" height="24"></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-controls=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <a class="nav-link line-fade" href="{{ url_for('items') }}">{{_('items')|uc_first}}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link line-fade" href="{{ url_for('persons') }}">{{_('persons')|uc_first}}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link line-fade" href="{{ url_for('groups') }}">{{_('groups')|uc_first}}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link line-fade" href="{{ url_for('events') }}">{{_('events')|uc_first}}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link line-fade" href="{{ url_for('places') }}">{{_('places')|uc_first}}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link line-fade" href="{{ url_for('about') }}">{{_('about')|uc_first}}</a>
-                        </li>
-
-                    </ul>
-                </div>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item ent-item">
-                    <a class="nav-link line-fade" data-bs-toggle="offcanvas" href="#filterBar" title="Filter"><i class="bi bi-funnel"></i></a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                           <i class="bi bi-globe me-2"></i><span id="language">{{CURRENT_LANGUAGE}}</span>
-                        </a>
-                        <ul class="dropdown-menu lang-nav" aria-labelledby="navbarDropdown">
-                        {% for lang in AVAILABLE_LANGUAGES.items() %}
-                            <li><a class="dropdown-item" href="{{ url_for('set_language', language=lang[0] )}}">{{lang[0]}}</a></li>
-                        {% endfor %}
-                        </ul>
+                <div class="min-content ms-auto d-flex align-items-baseline">
+                {% if entity %}
+                    <form role="search">
+                        <input id="searchFieldTop" type="search" class="border-input form-control bg-black bitem-text ms-1"
+                           placeholder="{{_('search term')}}..." aria-label="{{_('search term')}}...">
+                    </form>
+                {% endif %}
+                <ul class="navbar-nav ms-3 me-2 ms-lg-5 me-lg-4">
+                    <li class="nav-item">
+                    <a id="menu" class="nav-link line-fade bitem-text" data-bs-toggle="offcanvas" href="#filterBar" title="{{_('menu')}}">{{_('menu')|upper}}</a>
                     </li>
                 </ul>
-            </div>
+                </div>
         </div>
     </nav>
 </header>
+
+{% include 'menu.html' %}
 
 <button type="button" class="btn btn-secondary btn-floating btn-lg btn-back-to-top" id="btn-back-to-top">
     <i class="bi bi-arrow-up"></i>

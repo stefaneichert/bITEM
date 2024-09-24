@@ -5,7 +5,7 @@ for (var i = 0; i < elements.length; i++) {
 }
 
 //initiate Grid
-let grid = new Muuri('.grid', {
+let grid = new Muuri('#tiles', {
     dragEnabled: false,
     dragPlaceholder: {
         enabled: true
@@ -42,6 +42,7 @@ let grid = new Muuri('.grid', {
 const countField = document.getElementById("item-count");
 const itemTotalField = document.getElementById("item-total");
 const searchField = document.getElementById("searchField");
+const searchFieldTop = document.getElementById("searchFieldTop");
 const switchList = document.getElementById("list-switch");
 const resetBtn = document.getElementById("resetBtn");
 
@@ -71,16 +72,32 @@ checkboxes.forEach(checkbox => {
     });
 });
 
+let searchValue = ''
 //Add map interaction to buttons
 searchField.addEventListener('search', function () {
+    searchValue = searchField.value.toLowerCase()
     applycheckFilters(checkedValues, andOr)
 });
+
 searchField.addEventListener('keyup', function () {
+    searchValue = searchField.value.toLowerCase()
+    applycheckFilters(checkedValues, andOr)
+});
+
+searchFieldTop.addEventListener('search', function () {
+    searchValue = searchFieldTop.value.toLowerCase()
+    applycheckFilters(checkedValues, andOr)
+});
+
+searchFieldTop.addEventListener('keyup', function () {
+    searchValue = searchFieldTop.value.toLowerCase()
     applycheckFilters(checkedValues, andOr)
 });
 
 resetBtn.addEventListener('click', function () {
+    searchValue = ''
     searchField.value = '';
+    searchFieldTop.value = '';
     checkboxes.forEach(function (checkbox) {
         checkbox.checked = false;
     });
@@ -93,48 +110,53 @@ resetBtn.addEventListener('click', function () {
 
 
 searchField.value = '';
+searchFieldTop.value = '';
 itemTotalField.innerText = data.length;
 
 switchList.addEventListener('click', listSwitch);
 
 function applycheckFilters(selectedValues, andOr) {
     let items = grid.getItems();
+
+    // If `timethere` is true, use getDateArray instead
     if (timethere) {
-        items = getDateArray()
+        items = getDateArray();
     }
-    searchValue = searchField.value.toLowerCase();
 
     // Filter items based on selected values
     let filteredItems = items.filter((item) => {
-        const dataMedia = item.getElement().getAttribute('data-media');
-        const dataTypeId = item.getElement().getAttribute('data-typeid');
-        const dataCaseStudies = item.getElement().getAttribute('data-casestudies');
-        const searchMatch = item.getElement().getAttribute('data-all');
+        const element = item.getElement();
+        const dataMedia = element.getAttribute('data-media');
+        const dataTypeId = element.getAttribute('data-typeid');
+        const dataCaseStudies = element.getAttribute('data-casestudies');
+        const searchMatch = element.getAttribute('data-all');
+
+        // Always include the fixed item, regardless of filters
+        if (element.classList.contains('fixed-item')) {
+            return true;
+        }
 
         // Check if dataMedia, dataTypeId, and dataCaseStudies match any selected value
         if (andOr === "and") {
             return selectedValues.every((value) => {
-
                 if (value === '_model') {
                     return dataMedia.includes('_model');
                 } else if (value === '_image') {
-                    return dataMedia.includes('_image')
+                    return dataMedia.includes('_image');
                 } else if (value === '_nomedia') {
-                    return dataMedia === '_nomedia'
+                    return dataMedia === '_nomedia';
                 } else if (value.startsWith('_cs_')) {
-                    let there = false
+                    let there = false;
                     // Check if dataCaseStudies contains the selected value
-                    const csValue = dataCaseStudies.split(',');
-                    csValue.forEach(element => {
+                    const csValue = dataCaseStudies ? dataCaseStudies.split(',') : [];
+                    csValue.forEach((element) => {
                         if (value === "_cs_" + element) {
-                            there = true
+                            there = true;
                         }
-                    })
-                    return (there)
-
+                    });
+                    return there;
                 } else if (value.startsWith('_tp_')) {
                     return dataTypeId === value;
-
                 }
 
                 return false;
@@ -142,62 +164,116 @@ function applycheckFilters(selectedValues, andOr) {
         } else if (andOr === "or") {
             return selectedValues.some((value) => {
                 if (dataMedia.includes(value) || value === dataTypeId) {
-
                     return true;
                 } else if (value.startsWith('_cs_')) {
-                    let there = false
+                    let there = false;
                     // Check if dataCaseStudies contains the selected value
-                    const csValue = dataCaseStudies.split(',');
-                    csValue.forEach(element => {
+                    const csValue = dataCaseStudies ? dataCaseStudies.split(',') : [];
+                    csValue.forEach((element) => {
                         if (value === "_cs_" + element) {
-                            there = true
+                            there = true;
                         }
-                    })
-                    return (there)
-
+                    });
+                    return there;
                 }
 
                 return false;
             });
-
         }
-    })
+    });
 
+    // If no matches found for "or" condition, show all items
     if (filteredItems.length === 0 && andOr === "or") {
-        filteredItems = items
+        filteredItems = items;
     }
 
-    if (filteredItems.length === 0 && checkedValues.length === 0) {
-        filteredItems = items
+    // If no values are selected, show all items
+    if (filteredItems.length === 0 && selectedValues.length === 0) {
+        filteredItems = items;
     }
 
-    grid.filter(item => filteredItems.includes(item))
+    // Apply the filter to the grid and ensure the fixed-item is included
+    grid.filter((item) => {
+        const element = item.getElement();
 
+        // Always show the fixed-item
+        if (element.classList.contains('fixed-item')) {
+            return true;
+        }
+
+        // Filter other items based on the selected values
+        return filteredItems.includes(item);
+    });
+
+    // Ensure the fixed-item remains in the first position after filtering
+    const fixedItem = document.querySelector('.fixed-item');
+    if (fixedItem) {
+        fixedItem.parentNode.prepend(fixedItem);  // Ensure it's the first in the DOM
+    }
+
+    // If there is a search value, apply it as an additional filter
     if (searchValue !== '') {
-        applyFilters()
+        applyFilters();
     } else {
-
-        updateCount(filteredItems)
-        if (mapThere) setMarkers()
+        updateCount(filteredItems);
+        if (mapThere) {
+            setMarkers();
+        }
     }
+    moveFixedItemsToBeginning()
 }
 
+function moveFixedItemsToBeginning() {
+    // Get all the items in the grid
+    const items = grid.getItems();
+
+    // Filter the items to find those with the class 'fixed-item'
+    const fixedItems = items.filter(item => item.getElement().classList.contains('fixed-item'));
+
+    // Sort the fixed items based on their 'data-order' attribute
+    fixedItems.sort((a, b) => {
+        const orderA = parseInt(a.getElement().getAttribute('data-order'), 10) || 0;
+        const orderB = parseInt(b.getElement().getAttribute('data-order'), 10) || 0;
+        return orderA - orderB;  // Ascending order
+    });
+
+    // Move each fixed item to the beginning of the grid, in order
+    fixedItems.forEach((fixedItem, index) => {
+        grid.move(fixedItem, index);
+    });
+}
 
 function applyFilters() {
     //const searchValue = searchField.value.toLowerCase();
     const activeItems = grid.getItems().filter(item => item.isActive())
     const filteredItems = activeItems.filter(item => {
         const element = item.getElement();
+        if (element.classList.contains('fixed-item')) {
+            return true;
+        }
         const isSearchMatch = !searchValue ? true : (element.getAttribute('data-all') || '').toLowerCase().indexOf(searchValue) > -1;
         return isSearchMatch;
     });
-    grid.filter(item => filteredItems.includes(item));
+
+    grid.filter(item => {
+        const element = item.getElement();
+
+
+        if (element.classList.contains('fixed-item')) {
+            return true;
+        }
+
+        return filteredItems.includes(item);
+    });
+
+
     updateCount(filteredItems);
     if (mapThere) setMarkers()
+    moveFixedItemsToBeginning()
 }
 
 function updateCount(filteredItems) {
-    items = grid.getItems()
+    let items = grid.getItems()
     const activeItemsCount = items.filter(item => item.isActive()).length;
     countField.innerText = activeItemsCount;
 }
@@ -233,6 +309,7 @@ function sortGrid(key, order = 'asc') {
         (eval('sortorder.' + key + ' = "asc"'))
     }
     grid.sort(key + ':' + order);
+    moveFixedItemsToBeginning()
 }
 
 function createMuuriElems(json) {
@@ -436,3 +513,5 @@ myFilterBar.addEventListener('shown.bs.offcanvas', function () {
     this.classList.remove('offcanvas-opacity');
     searchField.focus();
 })
+
+moveFixedItemsToBeginning()

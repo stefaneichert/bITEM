@@ -3,6 +3,11 @@
 <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
 
 <script>data={{_data|tojson}}</script>
+<script>case_study_there={{case_study_there|lower}}</script>
+        <script>cs_description='{{cs_description}}'</script>
+        <script>cs_image='{{cs_image}}'</script>
+        <script>stories={{stories|tojson}}</script>
+
 <script>selection='{{selection}}'</script>
 
 <script src="/static/vendor/node_modules/muuri/dist/muuri.min.js"></script>
@@ -23,8 +28,47 @@
 
         <div id="sidebar">
             <div class="sidebar-bg">
+                <div id="tiles" class="grid fade-me">
+                    {%if case_study_there %}
+                    <div class="item muuri-item fixed-item" data-order="0" data-type="null" data-typeid="null" data-id="caseStudy" data-begin="null" data-sortbegin="null" data-end="null" data-sortend="null" data-media="null" data-name="null" data-casestudies="null" data-all="null">
+                        <div class="item-content item-full">
+                          <div class="card">
+                            <div class="card-body">
+                              <div class="list-col-8">
+                                <h5 class="card-title">{{title|uc_first}}</h5>
+                                  <p class="card-title">{{_('Case Study')|uc_first}}</p>
+                                {% if cs_image %}<div><img src="https://iiif.bitem.at/iiif/3/{{cs_image}}/full/max/0/default.jpg" loading="eager" class="image-content"></div>{% endif %}
+                                            {% if cs_description %}<p class="   mt-2">{{ cs_description}}</p>{% endif %}
 
-                <div id="tiles" class="grid fade-me"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                    {% if stories %}
+                    {% set i=1 %}
+                    {% for story in stories %}
+                    <div class="item muuri-item fixed-item" data-order="{{i}}" data-type="null" data-typeid="null" data-id="story" data-begin="null" data-sortbegin="null" data-end="null" data-sortend="null" data-media="null" data-name="null" data-casestudies="null" data-all="null">
+                        <a class="tile-link" href="/presi/{{story.id}}">
+                        <div class="item-content item-full">
+                          <div class="card">
+                            <div class="card-body">
+                              <div class="list-col-8">
+                                <h5 class="card-title">{{story.name}}</h5>
+                                  <p class="card-title">{{_('Story')|uc_first}}</p>
+                                {% if story.image %}<div><img src="https://iiif.bitem.at/iiif/3/{{story.image}}/full/max/0/default.jpg" loading="eager" class="image-content"></div>{% endif %}
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </a>
+                      </div>
+                    {% set i= i + 1 %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
 
                 <div class="footer-container">
                     {% include 'footer.html' %}
@@ -46,4 +90,5 @@
 <script src="/static/js/mapfunctions.js"></script>
 <script src="/static/js/entities.js"></script>
 <script src="/static/js/map.js"></script>
+<script src="/static/js/slider.js"></script>
 {% endblock %}

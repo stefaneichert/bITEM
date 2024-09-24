@@ -44,42 +44,45 @@ def presi(id: int):
                 return result.description
 
     def get_media(id):
-        g.cursor.execute(
-            f"SELECT mimetype, filename FROM bitem.files WHERE id = {id}")
-        result = g.cursor.fetchone()
-        file = None
-        if result:
-            if result.mimetype == 'img':
-                file = iiifUrl + result.filename + '/full/max/0/default.jpg'
-            if result.mimetype == '3d' and result.filename.endswith('.glb'):
-                file = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + result.filename
-            return {'mime': result.mimetype, 'file': file}
-        else:
+        if id:
             g.cursor.execute(
-                f"SELECT data -> 'geometry' AS geometry FROM bitem.tbl_allitems WHERE id = {id} AND openatlas_class_name = 'place'")
+                f"SELECT mimetype, filename FROM bitem.files WHERE id = {id}")
             result = g.cursor.fetchone()
+            file = None
             if result:
-                return {'mime': 'map', 'file': result.geometry}
+                if result.mimetype == 'img':
+                    file = iiifUrl + result.filename + '/full/max/0/default.jpg'
+                if result.mimetype == '3d' and result.filename.endswith('.glb'):
+                    file = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + result.filename
+                return {'mime': result.mimetype, 'file': file}
+            else:
+                g.cursor.execute(
+                    f"SELECT data -> 'geometry' AS geometry FROM bitem.tbl_allitems WHERE id = {id} AND openatlas_class_name = 'place'")
+                result = g.cursor.fetchone()
+                if result:
+                    return {'mime': 'map', 'file': result.geometry}
 
         return None
 
 
     story = []
 
-    g.cursor.execute(f'SELECT * FROM bitem.stories WHERE story_id = {id} ORDER BY id')
+    g.cursor.execute(f'SELECT * FROM bitem.stories WHERE story_id = {id} ORDER BY sortorder')
     result = g.cursor.fetchall()
+    print(result)
     story = {}
 
     story['name'] = translate_text(result[0].story_name, lang)
     story['slides'] = []
-    story['map'] = 'none' #result[0].map_background
+    story['map'] = result[0].map
+    story['map_origin'] = get_media(result[0].map_origin)
 
     if result:
         i = 1
         for row in result:
-            slide = {'order': i, 'heading': None, 'text': None, 'background': None, 'media': [], 'goto':[]}
+            print(row.sortorder)
+            slide = {'order': i, 'heading': None, 'text': None, 'subtext': None, 'background': None, 'media': [], 'goto':[], 'jump_to': None}
             i += 1
-            goto = []
 
             if row.element_heading and not row.element_heading.isdigit():
                 slide['heading'] = translate_text(row.element_heading, lang)
@@ -128,7 +131,9 @@ def presi(id: int):
                 goto3 = row.goto3
                 if goto3:
                     slide['goto'].append(goto3)
-                    
+
+            if row.jump_to:
+                slide['jump_to'] = get_media(row.jump_to)['file']
                     
             story['slides'].append(slide)
     print(story)
@@ -145,7 +150,7 @@ def presi(id: int):
         :param angle_increment: Angle increment in degrees for each subsequent position.
         :return: A list of dictionaries with slide positions and attributes.
         """
-        positions = [{'data-x': 0, 'data-y': 0, 'data-scale': 3}]
+        positions = [{'data-x': 0, 'data-y': 0, 'data-z': 1000, 'data-scale': 3}]
         current_angle = 0  # Starting angle in degrees
         current_distance = initial_distance  # Starting distance from the origin
 
@@ -170,8 +175,10 @@ def presi(id: int):
                 position['data-rotate'] = str(rotate)
             if rotate_x is not None:
                 position['data-rotate-x'] = str(rotate_x)
+                position['data-z'] = str(700)
             if rotate_y is not None:
                 position['data-rotate-y'] = str(rotate_y)
+                position['data-z'] = str(700)
 
             # Add the generated position to the list
             positions.append(position)

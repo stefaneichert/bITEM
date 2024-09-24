@@ -182,7 +182,7 @@ h1 {
 }
 
 .impress-on-overview .step {
-    opacity: 0.8;
+    opacity: 0.7;
     cursor: pointer;
     z-index: -2;
 }
@@ -193,10 +193,6 @@ h1 {
     z-index: 1;
 }
 
-.hint-content {
-    background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 100px 100px rgba(0, 0, 0, 0);
-}
 
 .text-container {
     max-height: 350px;
@@ -237,6 +233,9 @@ h1 {
     padding-bottom: 0.5rem;
     padding-top: 1.5rem;
     text-align: center;
+}
+
+.subtext-bg {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.85) 100%);
 }
 

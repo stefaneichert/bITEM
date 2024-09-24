@@ -15,17 +15,30 @@
 </head>
 
 <script type="module" src="/static/vendor/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
+ <script>story = {{ story | tojson }}</script>
 
 <body class="impress-not-supported">
 
-<div id="map" style="display: {{story.map}}"></div>
+{% if story.map %}
+<div id="map"></div>
 <script>
-let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
+let map = L.map('map', {zoomControl: false, maxZoom: 12});
                     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 19,
+                        maxZoom: 12,
                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     }).addTo(map);
+let geojson = L.geoJSON();
+                    let geoms = {{story.map_origin.file|tojson}}
+                    geoms.forEach((geom) => {
+                        geojson.addData(geom)
+                    })
+                    let bounds = geojson.getBounds();
+                    map.fitBounds(bounds, {maxZoom: 7});
+                    map.invalidateSize()
+
+
 </script>
+{% endif %}
 <div class="fallback-message">
     <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified
         version of this presentation.</p>
@@ -48,7 +61,7 @@ let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
 
 
 
-    <div id="overview" class="step" data-x="0" data-y="0" data-z="13000" data-scale="{{positions|length + 7 }}">
+    <div id="overview" class="step" data-x="0" data-y="0" data-z="1000" data-order="0" data-scale="{{positions|length + 7 }}">
         <div class="hint-content">
             <h1>{{story.name}}</h1>
             <p class="hinttext">Use a spacebar or arrow keys to start.</p>
@@ -72,19 +85,24 @@ let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
 
     {% for slide in story.slides %}
     {% set pos = positions[slide.order - 1] %}
-    <div id="slide{{slide.order}}" class="step" {% for key, value in pos.items() %}
+    <div id="slide{{slide.order}}" data-order="{{slide.order}}" class="step" {% for key, value in pos.items() %}
          {{ key }}="{{ value }}"
          {% endfor %}>
+        {% set subtext_bg = ' subtext-bg' %}
         {% set opacity = 1 %}
         {% if slide.background %}
         {% set gradient = 'radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%),'%}
+
         {% if slide.heading or slide.text or slide.media|length > 0 %}
         {% set opacity = 0.7 %}
         {% set gradient = 'radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 1) 100%),'%}
         {% endif %}
-        {% if slide.background.mime == '3d' %}
-        {% set opacity = 0.8 %}
+         {% if slide.background.mime == '3d' %}
+        {% set opacity = 1 %}
+        {% set subtext_bg = '' %}
         {% endif %}
+
+
 
         <div style="position: absolute;
         top: 0;
@@ -196,15 +214,15 @@ let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
         </div>
         {% endif %}
         {% if slide.subtext %}
-        <div class="sub-text">{{slide.subtext}}</div>
+        <div class="sub-text{{subtext_bg}}">{{slide.subtext}}</div>
         {% endif %}
     </div>
     {% endfor %}
 
 
     <script src="/static/vendor/impress.js-master/js/impress.js"></script>
-    <script>impress().init();</script>
-    <script>
+    <script>impress().init();
+        const alreadyScrolled = []
         if ("ontouchstart" in document.documentElement && window.matchMedia("(orientation: portrait)").matches) {
 
             const svgIcon = document.getElementById("svg-container");
@@ -217,10 +235,40 @@ let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
             }
         }
         const rootElement = document.getElementById( "impress" );
-        rootElement.addEventListener( "impress:stepenter", function(event) {
-        var currentStep = event.target;
+        rootElement.addEventListener( "impress:stepleave", function(event) {
+        let currentStep = event.target;
+        let nextStep = event.detail.next;
 
-        const targetElement = document.querySelector(`#${currentStep.id} .text-container`);
+        let order = (nextStep.getAttribute('data-order'))
+        if  (order !== '0') {
+        let geoms = (story.slides.find(item => item.order === parseInt(order))).jump_to;
+        if (geoms) {
+        if (geoms.length > 0) {
+            let geojson = L.geoJSON();
+            geoms.forEach((geom) => {
+                geojson.addData(geom)
+            })
+            let bounds = geojson.getBounds();
+            map.flyToBounds(bounds, {padding: [50,50], maxZoom: 12, duration: 3});
+            map.invalidateSize()
+        }
+        }
+        }
+        if  (order === '0') {
+            let geojson = L.geoJSON();
+            let geoms = story.map_origin.file
+            geoms.forEach((geom) => {
+                geojson.addData(geom)
+            })
+            let bounds = geojson.getBounds();
+            map.flyToBounds(bounds, {padding: [50,50], maxZoom: 7, duration: 3});
+            map.invalidateSize()
+        }
+
+
+
+
+        const targetElement = document.querySelector(`#${nextStep.id} .text-container`);
 
             if (targetElement) {
                 const scrollContainer = targetElement;
@@ -230,19 +278,21 @@ let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
   let scrollTimer; // Declare the scroll timer variable
 
   function startScrolling() {
-    // Check if the scroll amount has reached the end of the content
-    if (scrollAmount <= scrollContainer.scrollHeight - scrollContainer.clientHeight) {
-      scrollContainer.scrollTop = scrollAmount; // Scroll the content
-      scrollAmount += scrollSpeed; // Increment the scroll amount
-    } else {
-      clearInterval(scrollTimer); // Stop scrolling when end is reached
-    }
-  }
+      setTimeout(() => {
+                // Check if the scroll amount has reached the end of the content
+                if (scrollAmount <= scrollContainer.scrollHeight - scrollContainer.clientHeight) {
+                  scrollContainer.scrollTop = scrollAmount; // Scroll the content
+                  scrollAmount += scrollSpeed; // Increment the scroll amount
+                } else {
+                  clearInterval(scrollTimer); // Stop scrolling when end is reached
+                }
+            }, 3000);
+      }
 
-  // Start auto-scrolling
-  scrollTimer = setInterval(startScrolling, scrollInterval);
 
-  // Function to stop auto-scrolling
+  if (!alreadyScrolled.includes(nextStep.id)) {scrollTimer = setInterval(startScrolling, scrollInterval); alreadyScrolled.push(nextStep.id)}
+
+
   function stopAutoScrolling() {
     if (scrollTimer) {
       clearInterval(scrollTimer); // Clear the interval
@@ -250,13 +300,12 @@ let map = L.map('map', {zoomControl: false}).setView([51.505, -0.09], 13);
     }
   }
 
-  // Add event listeners to stop scrolling on user interaction
   scrollContainer.addEventListener("wheel", stopAutoScrolling);
   scrollContainer.addEventListener("touchstart", stopAutoScrolling);
               }
 });
     </script>
-    <script>story = {{ story | tojson }}</script>
+
 
 </body>
 </html>

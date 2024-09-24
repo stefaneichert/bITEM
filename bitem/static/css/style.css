@@ -31,7 +31,7 @@ body {
 }
 
 #modelcont, #learnmore {
-   opacity: 0;
+    opacity: 0;
 }
 
 .bitem-btn:hover {
@@ -92,6 +92,13 @@ body {
     color: whitesmoke;
     text-decoration: none;
     font-size: 1.6rem;
+    padding-bottom: 0.3rem;
+}
+
+.line-fade-menu {
+    color: whitesmoke;
+    text-decoration: none;
+    font-size: 1.2rem;
     padding-bottom: 0.3rem;
 }
 
@@ -279,21 +286,21 @@ body {
     bottom: 1rem;
 }
 
-#filterAccordion * {
+#mainAccordion *, #filterAccordion * {
     color: #fff !important;
     background-color: RGBA(33, 37, 41, var(--bs-bg-opacity, 1)) !important;
     --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='whitesmoke'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
     --bs-accordion-btn-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='whitesmoke' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-    border: none!important;
+    border: none;
 }
 
-#filterAccordion input {
-    border: 1px #bbbbbb solid!important;
+.border-input {
+    border: 1px #bbbbbb solid !important;
 }
 
-#filterAccordion .accordion-button {
-    border-bottom: 1px solid!important;
-    box-shadow: none!important;
+#mainAccordion .accordion-button, #filterAccordion .accordion-button {
+    border-bottom: 1px solid !important;
+    box-shadow: none !important;
 }
 
 .filter-input {
@@ -306,4 +313,21 @@ body {
 
 .tile-link {
     text-decoration: none;
+}
+
+#mainAccordion > .accordion-item > .accordion-header > .accordion-button {
+    border: none!important;
+}
+
+#menu {
+    font-size: 1.3rem;
+}
+
+#searchFieldTop {
+    min-width: 130px;
+    width: 25vw;
+}
+
+.min-content {
+    max-width: min-content;
 }
