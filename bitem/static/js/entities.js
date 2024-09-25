@@ -1,3 +1,30 @@
+const classFilterOptions = {
+    'place': {
+        'classes': ['place'],
+        'icon': '<i class="bi  bi-map"></i>',
+        'title': languageTranslations._place_sg,
+        'title_pl': languageTranslations._places,
+    },
+    'actor': {
+        'classes': ['person', 'group'],
+        'icon': '<i class="bi  bi-people"></i>',
+        'title': languageTranslations._actor_sg,
+        'title_pl': languageTranslations._actors,
+    },
+    'item': {
+        'classes': ['feature', 'stratigraphic_unit', 'artifact'],
+        'icon': '<i class="bi  bi-box-seam"></i>',
+        'title': languageTranslations._item_sg,
+        'title_pl': languageTranslations._items,
+    },
+    'event': {
+        'classes': ['acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+        'icon': '<i class="bi  bi-calendar4-week"></i>',
+        'title': languageTranslations._event_sg,
+        'title_pl': languageTranslations._events,
+    }
+}
+
 let mapThere = false;
 var elements = document.querySelectorAll('.ent-item');
 for (var i = 0; i < elements.length; i++) {
@@ -323,6 +350,7 @@ function addMuuri(data) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.type = null;
+    itemTemplate.dataset.class = data._class;
     itemTemplate.dataset.typeid = null;
     itemTemplate.dataset.id = data.id;
     itemTemplate.dataset.begin = null;
@@ -334,6 +362,10 @@ function addMuuri(data) {
     itemTemplate.dataset.casestudies = data.casestudies;
 
     let dataAll = getLabelTranslation(data) + ' ';
+
+    let classInfo = getClassInfo(data._class, true);
+    let classIcon = classInfo.icon;
+    let className = classInfo.title;
 
     if (data.content) {
         dataAll += getLanguage(data.content) + ' ';
@@ -423,6 +455,7 @@ function addMuuri(data) {
       <div class="card">
         <div class="card-body">
           ${images ? '<div class="list-col-8">' : ''}
+            <p class="card-title">${classIcon} <span class="ms-2">${className}</span></p>
             <h5 class="card-title">${getLabelTranslation(data)}</h5>
             ${data.type ? `<p class="card-title">${getTypeTranslation(data.type)}</p>` : ''}
             ${both ? `<p class="card-title">${makeLocalDate(data.start).localdate} - ${makeLocalDate(data.end).localdate}</p>` : ''}
@@ -513,5 +546,55 @@ myFilterBar.addEventListener('shown.bs.offcanvas', function () {
     this.classList.remove('offcanvas-opacity');
     searchField.focus();
 })
+
+const filterClasses = document.getElementById('filterClasses')
+
+
+
+function getClassInfo(className, usePlural = false) {
+    // Loop through each key in classFilterOptions
+    for (let key in classFilterOptions) {
+        const option = classFilterOptions[key];
+
+        // Check if the className exists in the 'classes' array
+        if (option.classes.includes(className)) {
+            // Return the icon and title (or title_pl if usePlural is true)
+            return {
+                icon: option.icon,
+                title: usePlural ? option.title_pl : option.title
+            };
+        }
+    }
+
+    // Return null if no matching class is found
+    return null;
+}
+
+
+function addFilter(class_, count = 0) {
+    // Look up class options based on the provided class_
+    const classOptions = classFilterOptions[class_];
+    if (count > 0) {
+        count = ': ' + count
+    } else {
+        count = ''
+    }
+    if (classOptions) {
+        const {icon, title} = classOptions;
+
+        let elementHtml = `
+            <div title="${title}" class="pb-1">
+                <input type="checkbox" class="btn-check mt-2" autocomplete="off" id="classSwitch${class_}" checked>
+                <label id="switchLabel${class_}" class="btn filter-label" for="classSwitch${class_}">${icon}<span class="ms-2 filter-title">${title} ${count}</span></label>
+                               
+            </div>
+        `;
+
+        // Assuming filterClasses is a reference to the container where you want to add the HTML
+        filterClasses.innerHTML += elementHtml;
+    }
+}
+
+
 
 moveFixedItemsToBeginning()

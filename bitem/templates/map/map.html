@@ -37,8 +37,9 @@
                               <div class="list-col-8">
                                 <h5 class="card-title">{{title|uc_first}}</h5>
                                   <p class="card-title">{{_('Case Study')|uc_first}}</p>
+
                                 {% if cs_image %}<div><img src="https://iiif.bitem.at/iiif/3/{{cs_image}}/full/max/0/default.jpg" loading="eager" class="image-content"></div>{% endif %}
-                                            {% if cs_description %}<p class="   mt-2">{{ cs_description}}</p>{% endif %}
+                                      {% if cs_description %}<div><p class="m-2">{{ cs_description}}</p></div>{% endif %}
 
                               </div>
                             </div>
@@ -55,8 +56,8 @@
                           <div class="card">
                             <div class="card-body">
                               <div class="list-col-8">
-                                <h5 class="card-title">{{story.name}}</h5>
-                                  <p class="card-title">{{_('Story')|uc_first}}</p>
+                                <h5 class="card-title">{{_('Story')|uc_first}}</h5>
+                                  <p class="card-title">{{story.name}}</p>
                                 {% if story.image %}<div><img src="https://iiif.bitem.at/iiif/3/{{story.image}}/full/max/0/default.jpg" loading="eager" class="image-content"></div>{% endif %}
 
                               </div>

@@ -331,3 +331,8 @@ body {
 .min-content {
     max-width: min-content;
 }
+
+.main-content {
+    height: auto;
+    max-height: 400px;
+}
