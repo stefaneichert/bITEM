@@ -25,6 +25,8 @@ bitem/static/vendor/node_modules
 !bitem/static/vendor/*.json
 !bitem/static/vendor/timeline-master/*
 !bitem/static/vendor/timeline-master
+!bitem/static/vendor/impress.js-master/*
+!bitem/static/vendor/impress.js-master
 **/node_modules
 
 #files
