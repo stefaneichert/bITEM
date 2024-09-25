@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-09-25 10:22+0200\n"
+"POT-Creation-Date: 2024-09-25 13:18+0200\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -36,7 +36,7 @@ msgstr "zurücksetzen"
 
 #: bitem/templates/filter.html:27 bitem/templates/filter.html:31
 #: bitem/templates/filter.html:34 bitem/templates/filter.html:37
-#: bitem/templates/filter.html:40
+#: bitem/templates/filter.html:40 bitem/templates/filter.html:43
 msgid "sort by"
 msgstr "sortieren nach"
 
@@ -44,59 +44,67 @@ msgstr "sortieren nach"
 msgid "name"
 msgstr "Name"
 
-#: bitem/templates/filter.html:34
+#: bitem/templates/filter.html:34 bitem/templates/filter.html:140
+msgid "class"
+msgstr "Klasse"
+
+#: bitem/templates/filter.html:37
 msgid "type"
 msgstr "Typus"
 
-#: bitem/templates/filter.html:37
+#: bitem/templates/filter.html:40
 msgid "begin"
 msgstr "Beginn"
 
-#: bitem/templates/filter.html:40
+#: bitem/templates/filter.html:43
 msgid "end"
 msgstr "Ende"
 
-#: bitem/templates/filter.html:43
+#: bitem/templates/filter.html:46
 msgid "switch view"
 msgstr "Ansicht wechseln"
 
-#: bitem/templates/filter.html:47
+#: bitem/templates/filter.html:50
 msgid "filter by"
 msgstr "filtern nach"
 
-#: bitem/templates/filter.html:49
+#: bitem/templates/filter.html:52
 msgid "and"
 msgstr "und"
 
-#: bitem/templates/filter.html:55
+#: bitem/templates/filter.html:58
 msgid "or"
 msgstr "oder"
 
-#: bitem/templates/filter.html:69
+#: bitem/templates/filter.html:72
 msgid "media"
 msgstr "Medien"
 
-#: bitem/templates/filter.html:80 bitem/templates/layout.html:112
+#: bitem/templates/filter.html:83 bitem/templates/layout.html:112
 msgid "3D models"
 msgstr "3D Modelle"
 
-#: bitem/templates/filter.html:90 bitem/templates/layout.html:103
+#: bitem/templates/filter.html:93 bitem/templates/layout.html:103
 msgid "images"
 msgstr "Bilder"
 
-#: bitem/templates/filter.html:100
+#: bitem/templates/filter.html:103
 msgid "no media"
 msgstr "keine Medien"
 
-#: bitem/templates/filter.html:137
+#: bitem/templates/filter.html:114 bitem/templates/menu.html:29
+msgid "case studies"
+msgstr "Fallstudien"
+
+#: bitem/templates/filter.html:161
 msgid "types"
 msgstr "Typus"
 
-#: bitem/templates/filter.html:168
+#: bitem/templates/filter.html:192
 msgid "Timespan"
 msgstr "Zeitspanne"
 
-#: bitem/templates/filter.html:172
+#: bitem/templates/filter.html:196
 msgid "include entries without date"
 msgstr "inklusive Einträge ohne Datum"
 
@@ -112,7 +120,7 @@ msgstr "bis"
 msgid "as"
 msgstr "als"
 
-#: bitem/templates/layout.html:89
+#: bitem/templates/layout.html:89 bitem/templates/menu.html:87
 msgid "actors"
 msgstr "Akteure"
 
@@ -128,7 +136,7 @@ msgstr "Akteur"
 msgid "place"
 msgstr "Ort"
 
-#: bitem/templates/layout.html:93 bitem/templates/menu.html:96
+#: bitem/templates/layout.html:93 bitem/templates/menu.html:93
 msgid "places"
 msgstr "Orte"
 
@@ -140,7 +148,7 @@ msgstr "Ort(e)"
 msgid "open image in viewer"
 msgstr "Bild in Viewer öffnen"
 
-#: bitem/templates/layout.html:96 bitem/templates/menu.html:93
+#: bitem/templates/layout.html:96 bitem/templates/menu.html:90
 msgid "events"
 msgstr "Ereignisse"
 
@@ -212,10 +220,6 @@ msgstr "Startseite"
 msgid "swipe or use arrow keys to navigate"
 msgstr "wischen oder mit Pfeiltasten navigieren"
 
-#: bitem/templates/menu.html:29
-msgid "case studies"
-msgstr "Fallstudie"
-
 #: bitem/templates/menu.html:39
 msgid "Venus of Willendorf"
 msgstr "Venus von Willendorf"
@@ -244,15 +248,7 @@ msgstr "Inhalte"
 msgid "all"
 msgstr "alles"
 
-#: bitem/templates/menu.html:87
-msgid "persons"
-msgstr "Personen"
-
-#: bitem/templates/menu.html:90
-msgid "groups"
-msgstr "Gruppen"
-
-#: bitem/templates/menu.html:99
+#: bitem/templates/menu.html:96
 msgid "about"
 msgstr "Über"
 
@@ -321,9 +317,4 @@ msgstr "Geschichte"
 
 #~ msgid "swipe left/right or use arrow keys to navigate"
 #~ msgstr "nach links/rechts wischen oder mit Pfeiltasten navigieren"
-
-#~ msgid ""
-#~ "Venus of\n"
-#~ "                                    Willendorf"
-#~ msgstr ""
 

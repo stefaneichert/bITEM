@@ -12,6 +12,15 @@ def get_data(selection: str, case_study=None) -> str:
             openAtlasClass = viewclasses[key]
     casestudies = data_mapper.get_cases(app.config['CASE_STUDY'])
     _data = getlist(openAtlasClass, 0, case_study)
+
+    exclude_case_ids = app.config['HIDDEN_ONES']
+    exclude_case_ids = exclude_case_ids + (app.config['CASE_STUDY'],)
+    case_ids_used = []
+    for row in _data:
+        if row['casestudies']:
+            for id in row['casestudies']:
+                if id not in exclude_case_ids and id not in case_ids_used:
+                    case_ids_used.append(id)
     csNames = data_mapper.get_case_study_names(casestudies, openAtlasClass)
 
     media = ['No media']
@@ -34,7 +43,6 @@ def get_data(selection: str, case_study=None) -> str:
 
     if case_study:
         def translate_text(text, lang):
-            print(lang)
             start_marker = f"##{lang}_##"
             end_marker = f"##_{lang}##"
 
@@ -98,7 +106,6 @@ def get_data(selection: str, case_study=None) -> str:
 
         for row in csNames:
             if row.id == case_study:
-                print(CURRENT_LANGUAGE[0])
                 selection = row.name
                 if CURRENT_LANGUAGE[0] == 'de' and row.de:
                     selection = row.de
@@ -117,6 +124,7 @@ def get_data(selection: str, case_study=None) -> str:
         types=types,
         media=media,
         csNames=csNames,
+        case_ids_used=case_ids_used,
         selection=selection,
         case_study_there=case_study_there,
         cs_description=cs_description,

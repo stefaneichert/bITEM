@@ -11,9 +11,6 @@ def admin() -> str:
 
     g.cursor.execute('SELECT DISTINCT story_id, story_name FROM bitem.stories')
     stories = g.cursor.fetchall()
-    print(stories)
-
-
 
     return render_template("/admin/admin.html", stories=stories)
 

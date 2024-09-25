@@ -69,7 +69,6 @@ def presi(id: int):
 
     g.cursor.execute(f'SELECT * FROM bitem.stories WHERE story_id = {id} ORDER BY sortorder')
     result = g.cursor.fetchall()
-    print(result)
     story = {}
 
     story['name'] = translate_text(result[0].story_name, lang)
@@ -80,7 +79,6 @@ def presi(id: int):
     if result:
         i = 1
         for row in result:
-            print(row.sortorder)
             slide = {'order': i, 'heading': None, 'text': None, 'subtext': None, 'background': None, 'media': [], 'goto':[], 'jump_to': None}
             i += 1
 
@@ -136,8 +134,6 @@ def presi(id: int):
                 slide['jump_to'] = get_media(row.jump_to)['file']
                     
             story['slides'].append(slide)
-    print(story)
-
     import random
     import math
 

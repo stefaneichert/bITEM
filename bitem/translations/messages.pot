@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-09-25 10:22+0200\n"
+"POT-Creation-Date: 2024-09-25 13:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,7 +35,7 @@ msgstr ""
 
 #: bitem/templates/filter.html:27 bitem/templates/filter.html:31
 #: bitem/templates/filter.html:34 bitem/templates/filter.html:37
-#: bitem/templates/filter.html:40
+#: bitem/templates/filter.html:40 bitem/templates/filter.html:43
 msgid "sort by"
 msgstr ""
 
@@ -43,59 +43,67 @@ msgstr ""
 msgid "name"
 msgstr ""
 
-#: bitem/templates/filter.html:34
-msgid "type"
+#: bitem/templates/filter.html:34 bitem/templates/filter.html:140
+msgid "class"
 msgstr ""
 
 #: bitem/templates/filter.html:37
-msgid "begin"
+msgid "type"
 msgstr ""
 
 #: bitem/templates/filter.html:40
-msgid "end"
+msgid "begin"
 msgstr ""
 
 #: bitem/templates/filter.html:43
+msgid "end"
+msgstr ""
+
+#: bitem/templates/filter.html:46
 msgid "switch view"
 msgstr ""
 
-#: bitem/templates/filter.html:47
+#: bitem/templates/filter.html:50
 msgid "filter by"
 msgstr ""
 
-#: bitem/templates/filter.html:49
+#: bitem/templates/filter.html:52
 msgid "and"
 msgstr ""
 
-#: bitem/templates/filter.html:55
+#: bitem/templates/filter.html:58
 msgid "or"
 msgstr ""
 
-#: bitem/templates/filter.html:69
+#: bitem/templates/filter.html:72
 msgid "media"
 msgstr ""
 
-#: bitem/templates/filter.html:80 bitem/templates/layout.html:112
+#: bitem/templates/filter.html:83 bitem/templates/layout.html:112
 msgid "3D models"
 msgstr ""
 
-#: bitem/templates/filter.html:90 bitem/templates/layout.html:103
+#: bitem/templates/filter.html:93 bitem/templates/layout.html:103
 msgid "images"
 msgstr ""
 
-#: bitem/templates/filter.html:100
+#: bitem/templates/filter.html:103
 msgid "no media"
 msgstr ""
 
-#: bitem/templates/filter.html:137
+#: bitem/templates/filter.html:114 bitem/templates/menu.html:29
+msgid "case studies"
+msgstr ""
+
+#: bitem/templates/filter.html:161
 msgid "types"
 msgstr ""
 
-#: bitem/templates/filter.html:168
+#: bitem/templates/filter.html:192
 msgid "Timespan"
 msgstr ""
 
-#: bitem/templates/filter.html:172
+#: bitem/templates/filter.html:196
 msgid "include entries without date"
 msgstr ""
 
@@ -111,7 +119,7 @@ msgstr ""
 msgid "as"
 msgstr ""
 
-#: bitem/templates/layout.html:89
+#: bitem/templates/layout.html:89 bitem/templates/menu.html:87
 msgid "actors"
 msgstr ""
 
@@ -127,7 +135,7 @@ msgstr ""
 msgid "place"
 msgstr ""
 
-#: bitem/templates/layout.html:93 bitem/templates/menu.html:96
+#: bitem/templates/layout.html:93 bitem/templates/menu.html:93
 msgid "places"
 msgstr ""
 
@@ -139,7 +147,7 @@ msgstr ""
 msgid "open image in viewer"
 msgstr ""
 
-#: bitem/templates/layout.html:96 bitem/templates/menu.html:93
+#: bitem/templates/layout.html:96 bitem/templates/menu.html:90
 msgid "events"
 msgstr ""
 
@@ -211,10 +219,6 @@ msgstr ""
 msgid "swipe or use arrow keys to navigate"
 msgstr ""
 
-#: bitem/templates/menu.html:29
-msgid "case studies"
-msgstr ""
-
 #: bitem/templates/menu.html:39
 msgid "Venus of Willendorf"
 msgstr ""
@@ -243,15 +247,7 @@ msgstr ""
 msgid "all"
 msgstr ""
 
-#: bitem/templates/menu.html:87
-msgid "persons"
-msgstr ""
-
-#: bitem/templates/menu.html:90
-msgid "groups"
-msgstr ""
-
-#: bitem/templates/menu.html:99
+#: bitem/templates/menu.html:96
 msgid "about"
 msgstr ""
 

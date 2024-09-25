@@ -44,8 +44,6 @@ def places() -> str:
 @app.route('/entities/<int:entity_id>')
 def entities(entity_id: int=None) -> str:
     if entity_id:
-        print('entity_id1')
-        print(entity_id)
         template = map_entities.get_data( (inspect.stack()[0][3]), entity_id)
         return template
 

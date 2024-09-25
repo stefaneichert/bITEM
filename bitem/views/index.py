@@ -29,7 +29,6 @@ def index():
                            ARRAY """ + all_classes + """ , """ + root + """
                        ))) a GROUP BY a.id) b WHERE poster IS NOT NULL
     """
-    print(sql)
     g.cursor.execute(sql)
     result = g.cursor.fetchall()
 

@@ -30,10 +30,10 @@
                               <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')"
                                  title="{{_('sort by')}} {{_('name')}}">{{_('name')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('mainclass')"
+                              <a class="nav-link line-fade ms-3{% if not classesthere %} d-none{% endif %}" href="#" onclick="sortGrid('mainclass')"
                                  title="{{_('sort by')}} {{_('class')}}">{{_('class')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('types')"
+                              <a class="nav-link line-fade ms-3{% if types|length == 0 %} d-none {% endif %}" href="#" onclick="sortGrid('types')"
                                  title="{{_('sort by')}} {{_('type')}}">{{_('type')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
                               <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('begin')"
@@ -108,13 +108,13 @@
                         </div>
                     </div>
                     <div class="accordion-item">
-                        <h2 class="accordion-header">
+                        <h2 class="accordion-header{% if case_study_there or case_ids_used|length == 0 %} d-none{% endif %}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                     data-bs-target="#caseStudies" aria-expanded="false" aria-controls="caseStudies">
-                                Case Studies
+                                {{_('case studies')|uc_first}}
                             </button>
                         </h2>
-                        <div id="caseStudies" class="accordion-collapse collapse">
+                        <div id="caseStudies" class="accordion-collapse collapse{% if case_study_there %} d-none{% endif %}">
                             <div class="accordion-body">
                                 {% for row in csNames %}
                                 {% set langKey = 'name' %}
@@ -123,6 +123,7 @@
                                 {% elif CURRENT_LANGUAGE == 'en' and row.en %}
                                 {% set langKey = 'en' %}
                                 {% endif %}
+                                {% if row.id in case_ids_used %}
                                 <div class="form-check">
                                     <input class="form-check-input border-input filter-input" id="check-{{row.id}}"
                                            type="checkbox"
@@ -131,6 +132,7 @@
                                         {{ row[langKey] }}
                                     </label>
                                 </div>
+                                {% endif %}
                                 {% endfor %}
                             </div>
                         </div>

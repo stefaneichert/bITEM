@@ -236,12 +236,10 @@ def makeItemTable(id=None, prop=None):
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
                    ) """ + property_sql + """ ORDER BY ids DESC; """
-    print(sql)
     g.cursor.execute(sql)
 
     ids = g.cursor.fetchall()
-    print(ids)
-
+    
     i = 1
     for row in ids:
         print(str(i) + ' of ' + str(len(ids)))

@@ -1,7 +1,7 @@
 const classFilterOptions = {
     'place': {
         'classes': ['place'],
-        'icon': '<i class="bi  bi-map"></i>',
+        'icon': '<i class="bi bi-geo-alt"></i>',
         'title': languageTranslations._place_sg,
         'title_pl': languageTranslations._places,
     },
@@ -197,7 +197,7 @@ function applycheckFilters(selectedValues, andOr) {
             });
         } else if (andOr === "or") {
             return selectedValues.some((value) => {
-                if (dataMedia.includes(value) || value === dataTypeId) {
+                if (dataMedia.includes(value) || value === dataTypeId || value === '_cl_' + dataMainClass) {
                     return true;
                 } else if (value.startsWith('_cs_')) {
                     let there = false;
