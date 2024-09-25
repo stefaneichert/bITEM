@@ -228,7 +228,7 @@ def makeItemTable(id=None, prop=None):
             DELETE FROM bitem.tbl_allitems WHERE id not in (SELECT id FROM bitem.tbl_allitems WHERE id IN (SELECT bitem.get_entities(
                        ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                        196063
-                   )) AND (data-> 'casestudies' @> '[197087]' OR data-> 'casestudies' @> '[229739]' OR data-> 'casestudies' @> '[197085]' OR data-> 'casestudies' @> '[198233]') AND NOT data-> 'casestudies' @> '[222268]');
+                   )) AND NOT data-> 'casestudies' @> '[222268]');
    
             
             SELECT ids
@@ -277,7 +277,7 @@ def makeItemTable(id=None, prop=None):
                'geometry', geometry,
                'connections', connections
            )) AS data
-        FROM bitem.allitems WHERE id = %(id)s AND (casestudies @> '[197087]' OR casestudies @> '[229739]' OR casestudies @> '[197085]' OR casestudies @> '[198233]')  AND NOT casestudies @> '[222268]')
+        FROM bitem.allitems WHERE id = %(id)s AND NOT casestudies @> '[222268]')
         """
         g.cursor.execute(sql_insert, {'id': row.ids, 'mainimage': json.dumps(mainimage), 'imagearray': json.dumps(imagearray)})
 
@@ -290,8 +290,6 @@ def makeItemTable(id=None, prop=None):
                                                      ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                                                      196063
                                              ))
-                           AND (data -> 'casestudies' @> '[197087]' OR data -> 'casestudies' @> '[229739]' OR
-                                data -> 'casestudies' @> '[197085]' OR data -> 'casestudies' @> '[198233]')
                            AND NOT data -> 'casestudies' @> '[222268]');
     """
 

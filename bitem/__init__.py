@@ -16,7 +16,7 @@ csrf.init_app(app)
 app.config.from_object('config.default')
 app.config.from_pyfile('production.py')
 
-from bitem.views import index, about, login, entities, entity, iiif, admin, story, storymap
+from bitem.views import index, about, login, entities, entity, iiif, admin, story, storymap, presi
 from bitem.util.util import uc_first
 
 

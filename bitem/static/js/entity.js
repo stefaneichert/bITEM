@@ -251,9 +251,9 @@ function make3d(models) {
 
     for (const file of groupedFiles) {
         const itemTemplate = document.createElement('div');
-    itemTemplate.className = 'item';
-    itemTemplate.dataset.class = 'threed';
-    itemTemplate.innerHTML = `
+        itemTemplate.className = 'item';
+        itemTemplate.dataset.class = 'threed';
+        itemTemplate.innerHTML = `
     <div class="item-content item-3d">
       <div class="card">
       <div class="card-body">        
@@ -277,8 +277,8 @@ function make3d(models) {
 
     </div>
   `;
-    grid.add(itemTemplate)
-}
+        grid.add(itemTemplate)
+    }
 
 }
 
@@ -300,31 +300,75 @@ function extractImages(images) {
     </div>
   `;
     //grid.add(itemTemplate)
-    setGallery(images)
+    setGallery(images, 0, 3)
 }
 
-function setGallery(images) {
+function setGallery(images, from, to) {
+    let i = 0; // Initialize index
+    console.log(images)
 
     for (const img of images) {
-        const itemTemplate = document.createElement('div');
-        itemTemplate.dataset.class = 'imgs'
-        let currentStyle = 'max-width: 350px; max-height: 350px';
+        // Load images between 'from' and 'to' range
+        if (i >= from && i < to) {
+            const itemTemplate = document.createElement('div');
+            itemTemplate.dataset.class = 'imgs';
+            let currentStyle = 'max-width: 350px; max-height: 350px';
 
-        itemTemplate.className = 'gal-item';
-        let returnHtml = ''
-        returnHtml += `
-    <div className="gal-item-content">
-        <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">
-        <div class="btn-panel">
-            <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn"><img src="/static/icons/iiif.png"></a>
-        </div>
-    </div>
-  `
-        itemTemplate.innerHTML = returnHtml
-        grid.add(itemTemplate);
+            itemTemplate.className = 'gal-item';
+            let returnHtml = `
+                <div class="gal-item-content">
+                    <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">
+                    <div class="btn-panel">
+                        <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn">
+                            <img src="/static/icons/iiif.png">
+                        </a>
+                    </div>
+                </div>
+            `;
+            itemTemplate.innerHTML = returnHtml;
+            grid.add(itemTemplate, {index: 3});
+        }
+
+        // Check if we should add the "load more" button
+        if (i === to - 1 && to < images.length) {
+            const loadMoreTemplate = document.createElement('div');
+            loadMoreTemplate.dataset.class = 'imgs';
+            let currentStyle = 'max-width: 350px; max-height: 350px';
+
+            loadMoreTemplate.className = 'gal-item';
+            let returnHtml = `
+                <div id="loadmore" class="gal-item-content" onclick="setGallery(data.images, ${to}, ${images.length})">
+                    <span class="loadmore-imgs bitem-text">Load ${images.length - to} more images</span>
+                    <img class="img-fluid hover-img" style="${currentStyle}" src="${images[to].path}">
+                </div>
+            `;
+            loadMoreTemplate.innerHTML = returnHtml;
+            grid.add(loadMoreTemplate);
+
+            break; // Stop loop after adding the load more button
+        }
+
+        i++; // Increment the index
+        setTimeout(() => {
+            grid.refreshItems().layout();
+        }, 700);
+    }
+
+    // If all images are loaded, remove the "load more" button
+    if (to >= images.length) {
+        const loadMoreBtn = document.getElementById('loadmore');
+        if (loadMoreBtn) {
+            loadMoreBtn.remove();
+        }
+
+        setTimeout(() => {
+            grid.refreshItems().layout();
+        }, 700);
+
     }
 
 }
+
 
 function setmap() {
     const itemTemplate = document.createElement('div');

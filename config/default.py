@@ -35,7 +35,8 @@ VIEW_CLASSES = {
     'groups': ('group',),
     'events': ('acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'),
     'places': ('place',),
-    'actors': ('person', 'group')
+    'actors': ('person', 'group'),
+    'entities': ('artifact', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification', 'person', 'group', 'place')
 }
 
 MEDIA_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg', '.glb', '.webp']

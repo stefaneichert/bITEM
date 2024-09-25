@@ -13,6 +13,8 @@ def index():
     all_classes = str(list(all_classes))
 
     sql = """
+    
+        
         SELECT * FROM (SELECT id,
             MAX(CASE WHEN mimetype = '3d' THEN filename END) AS model,
             MAX(CASE WHEN mimetype = 'poster' THEN filename END) AS poster
@@ -27,7 +29,7 @@ def index():
                            ARRAY """ + all_classes + """ , """ + root + """
                        ))) a GROUP BY a.id) b WHERE poster IS NOT NULL
     """
-
+    print(sql)
     g.cursor.execute(sql)
     result = g.cursor.fetchall()
 

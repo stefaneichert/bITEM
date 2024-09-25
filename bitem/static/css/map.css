@@ -249,8 +249,18 @@
     .item-content > * {
         width: calc(22vw - 25px);
     }
+
+    .item-full > * {
+        width: calc(50vw - 4rem)!important;
+    }
 }
 
+@media screen and (max-width: 769px) {
+
+    .item-full > * {
+        width: calc(100vw - 4rem);
+    }
+}
 
 @media screen and (min-width: 1190px) {
     .item-content > * {
@@ -353,7 +363,7 @@
 }
 
 .offcanvas-opacity {
-    opacity: 0.85!important;
+    opacity: 0.85 !important;
 }
 
 #map-btn-back-to-top {
@@ -378,4 +388,3 @@
     border-color: rgba(245, 245, 245, 0) !important;
     box-shadow: 0 0 6px 6px rgb(245 245 245) !important;
 }
-

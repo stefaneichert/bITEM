@@ -491,3 +491,28 @@ body {
 .story-btn-img:hover + .story-btn-text {
     opacity: 1
 }
+
+.loadmore-imgs {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #00000085;
+    box-shadow: none;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    font-size: 32px;
+    text-align: center;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.loadmore-imgs:hover {
+    background-color: rgba(0, 0, 0, 0.22);
+    color: white;
+}
