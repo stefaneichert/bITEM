@@ -239,7 +239,7 @@ def makeItemTable(id=None, prop=None):
     g.cursor.execute(sql)
 
     ids = g.cursor.fetchall()
-    
+
     i = 1
     for row in ids:
         print(str(i) + ' of ' + str(len(ids)))
