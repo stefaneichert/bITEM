@@ -44,6 +44,9 @@ let grid = new Muuri('#tiles', {
         id: function (item, element) {
             return element.getAttribute('data-id');
         },
+        mainclass: function (item, element) {
+            return element.getAttribute('data-mainclass').toUpperCase();
+        },
         types: function (item, element) {
             return element.getAttribute('data-type').toUpperCase();
         },
@@ -156,6 +159,7 @@ function applycheckFilters(selectedValues, andOr) {
         const dataMedia = element.getAttribute('data-media');
         const dataTypeId = element.getAttribute('data-typeid');
         const dataCaseStudies = element.getAttribute('data-casestudies');
+        const dataMainClass = element.getAttribute('data-mainclassraw');
         const searchMatch = element.getAttribute('data-all');
 
         // Always include the fixed item, regardless of filters
@@ -184,6 +188,9 @@ function applycheckFilters(selectedValues, andOr) {
                     return there;
                 } else if (value.startsWith('_tp_')) {
                     return dataTypeId === value;
+                } else if (value.startsWith('_cl_')) {
+                    console.log ('_cl_' + dataMainClass === value)
+                    return '_cl_' + dataMainClass === value
                 }
 
                 return false;
@@ -321,6 +328,7 @@ createMuuriElems(data)
 
 //define variables for sort order
 sortorder = {
+    'mainclass': 'asc',
     'begin': 'desc',
     'end': 'desc',
     'names': 'asc',
@@ -351,6 +359,7 @@ function addMuuri(data) {
     itemTemplate.className = 'item';
     itemTemplate.dataset.type = null;
     itemTemplate.dataset.class = data._class;
+
     itemTemplate.dataset.typeid = null;
     itemTemplate.dataset.id = data.id;
     itemTemplate.dataset.begin = null;
@@ -363,9 +372,13 @@ function addMuuri(data) {
 
     let dataAll = getLabelTranslation(data) + ' ';
 
-    let classInfo = getClassInfo(data._class, true);
+    let classInfo = getClassInfo(data._class);
     let classIcon = classInfo.icon;
     let className = classInfo.title;
+    let classNameRaw = classInfo.titleRaw;
+
+    itemTemplate.dataset.mainclass = className;
+    itemTemplate.dataset.mainclassraw = classNameRaw;
 
     if (data.content) {
         dataAll += getLanguage(data.content) + ' ';
@@ -561,7 +574,8 @@ function getClassInfo(className, usePlural = false) {
             // Return the icon and title (or title_pl if usePlural is true)
             return {
                 icon: option.icon,
-                title: usePlural ? option.title_pl : option.title
+                title: usePlural ? option.title_pl : option.title,
+                titleRaw: key,
             };
         }
     }

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-18 12:09+0100\n"
+"POT-Creation-Date: 2024-09-25 10:22+0200\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -18,200 +18,264 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.8.0\n"
 
-#: bitem/templates/layout.html:52 bitem/templates/layout.html:121
-msgid "items"
-msgstr "Objekte"
+#: bitem/templates/filter.html:9
+msgid "filter"
+msgstr "filtern"
 
-#: bitem/templates/layout.html:55
-msgid "persons"
-msgstr "Personen"
+#: bitem/templates/filter.html:9
+msgid "sort"
+msgstr "sortieren"
 
-#: bitem/templates/layout.html:58
-msgid "groups"
-msgstr "Gruppen"
+#: bitem/templates/filter.html:22 bitem/templates/layout.html:51
+msgid "search term"
+msgstr "Suchbegriff"
 
-#: bitem/templates/layout.html:61 bitem/templates/layout.html:119
-msgid "events"
-msgstr "Ereignisse"
+#: bitem/templates/filter.html:24
+msgid "reset"
+msgstr "zurücksetzen"
 
-#: bitem/templates/layout.html:64
-msgid "places"
-msgstr "Orte"
+#: bitem/templates/filter.html:27 bitem/templates/filter.html:31
+#: bitem/templates/filter.html:34 bitem/templates/filter.html:37
+#: bitem/templates/filter.html:40
+msgid "sort by"
+msgstr "sortieren nach"
 
-#: bitem/templates/layout.html:67
-msgid "about"
-msgstr "Über"
+#: bitem/templates/filter.html:31
+msgid "name"
+msgstr "Name"
 
-#: bitem/templates/layout.html:114
-msgid "until"
-msgstr "bis"
+#: bitem/templates/filter.html:34
+msgid "type"
+msgstr "Typus"
 
-#: bitem/templates/layout.html:115
-msgid "as"
-msgstr "als"
+#: bitem/templates/filter.html:37
+msgid "begin"
+msgstr "Beginn"
 
-#: bitem/templates/layout.html:116
-msgid "actors"
-msgstr "Akteure"
+#: bitem/templates/filter.html:40
+msgid "end"
+msgstr "Ende"
 
-#: bitem/templates/layout.html:117
-msgid "actor(s)"
-msgstr "Akteur(e)"
+#: bitem/templates/filter.html:43
+msgid "switch view"
+msgstr "Ansicht wechseln"
 
-#: bitem/templates/layout.html:118
-msgid "open image in viewer"
-msgstr "Bild in Viewer öffnen"
+#: bitem/templates/filter.html:47
+msgid "filter by"
+msgstr "filtern nach"
 
-#: bitem/templates/layout.html:120
-msgid "event(s)"
-msgstr "Ereignis(se)"
+#: bitem/templates/filter.html:49
+msgid "and"
+msgstr "und"
 
-#: bitem/templates/layout.html:122
-msgid "item(s)"
-msgstr "Objekt(e)"
+#: bitem/templates/filter.html:55
+msgid "or"
+msgstr "oder"
 
-#: bitem/templates/layout.html:123
-msgid "map"
-msgstr "Karte"
+#: bitem/templates/filter.html:69
+msgid "media"
+msgstr "Medien"
 
-#: bitem/templates/layout.html:124 bitem/templates/submenu.html:87
-msgid "images"
-msgstr "Bilder"
-
-#: bitem/templates/layout.html:125
-msgid "current"
-msgstr "aktuelles"
-
-#: bitem/templates/layout.html:126 bitem/views/iiif.py:99
-msgid "source(s)"
-msgstr "Quelle(n)"
-
-#: bitem/templates/layout.html:127
-msgid "sources"
-msgstr "Quellen"
-
-#: bitem/templates/layout.html:128
-msgid "indirect connection(s)"
-msgstr "indirekte Verbindung(en)"
-
-#: bitem/templates/layout.html:129
-msgid "Location of"
-msgstr "Standort von"
-
-#: bitem/templates/layout.html:130
-msgid "center of"
-msgstr "Mittelpunkt von"
-
-#: bitem/templates/layout.html:131
-msgid "contains"
-msgstr "beinhaltet"
-
-#: bitem/templates/layout.html:132
-msgid "area of"
-msgstr "Fläche von"
-
-#: bitem/templates/layout.html:133 bitem/templates/submenu.html:78
+#: bitem/templates/filter.html:80 bitem/templates/layout.html:112
 msgid "3D models"
 msgstr "3D Modelle"
 
-#: bitem/templates/layout.html:134
+#: bitem/templates/filter.html:90 bitem/templates/layout.html:103
+msgid "images"
+msgstr "Bilder"
+
+#: bitem/templates/filter.html:100
+msgid "no media"
+msgstr "keine Medien"
+
+#: bitem/templates/filter.html:137
+msgid "types"
+msgstr "Typus"
+
+#: bitem/templates/filter.html:168
+msgid "Timespan"
+msgstr "Zeitspanne"
+
+#: bitem/templates/filter.html:172
+msgid "include entries without date"
+msgstr "inklusive Einträge ohne Datum"
+
+#: bitem/templates/layout.html:56
+msgid "menu"
+msgstr "Menü"
+
+#: bitem/templates/layout.html:87
+msgid "until"
+msgstr "bis"
+
+#: bitem/templates/layout.html:88
+msgid "as"
+msgstr "als"
+
+#: bitem/templates/layout.html:89
+msgid "actors"
+msgstr "Akteure"
+
+#: bitem/templates/layout.html:90
+msgid "actor(s)"
+msgstr "Akteur(e)"
+
+#: bitem/templates/layout.html:91
+msgid "actor"
+msgstr "Akteur"
+
+#: bitem/templates/layout.html:92
+msgid "place"
+msgstr "Ort"
+
+#: bitem/templates/layout.html:93 bitem/templates/menu.html:96
+msgid "places"
+msgstr "Orte"
+
+#: bitem/templates/layout.html:94
+msgid "places(s)"
+msgstr "Ort(e)"
+
+#: bitem/templates/layout.html:95
+msgid "open image in viewer"
+msgstr "Bild in Viewer öffnen"
+
+#: bitem/templates/layout.html:96 bitem/templates/menu.html:93
+msgid "events"
+msgstr "Ereignisse"
+
+#: bitem/templates/layout.html:97
+msgid "event(s)"
+msgstr "Ereignis(se)"
+
+#: bitem/templates/layout.html:98
+msgid "event"
+msgstr "Ereignis"
+
+#: bitem/templates/layout.html:99 bitem/templates/menu.html:83
+msgid "items"
+msgstr "Objekte"
+
+#: bitem/templates/layout.html:100
+msgid "item(s)"
+msgstr "Objekt(e)"
+
+#: bitem/templates/layout.html:101
+msgid "item"
+msgstr "Gegenstand"
+
+#: bitem/templates/layout.html:102
+msgid "map"
+msgstr "Karte"
+
+#: bitem/templates/layout.html:104
+msgid "current"
+msgstr "aktuelles"
+
+#: bitem/templates/layout.html:105 bitem/views/iiif.py:99
+msgid "source(s)"
+msgstr "Quelle(n)"
+
+#: bitem/templates/layout.html:106
+msgid "sources"
+msgstr "Quellen"
+
+#: bitem/templates/layout.html:107
+msgid "indirect connection(s)"
+msgstr "indirekte Verbindung(en)"
+
+#: bitem/templates/layout.html:108
+msgid "Location of"
+msgstr "Standort von"
+
+#: bitem/templates/layout.html:109
+msgid "center of"
+msgstr "Mittelpunkt von"
+
+#: bitem/templates/layout.html:110
+msgid "contains"
+msgstr "beinhaltet"
+
+#: bitem/templates/layout.html:111
+msgid "area of"
+msgstr "Fläche von"
+
+#: bitem/templates/layout.html:113
 msgid "network"
 msgstr "Netzwerk"
 
-#: bitem/templates/layout.html:135 bitem/templates/story/story.html:19
+#: bitem/templates/layout.html:114 bitem/templates/story/story.html:25
 msgid "mainpage"
 msgstr "Startseite"
 
-#: bitem/templates/layout.html:136
+#: bitem/templates/layout.html:115
 msgid "swipe or use arrow keys to navigate"
 msgstr "wischen oder mit Pfeiltasten navigieren"
+
+#: bitem/templates/menu.html:29
+msgid "case studies"
+msgstr "Fallstudie"
+
+#: bitem/templates/menu.html:39
+msgid "Venus of Willendorf"
+msgstr "Venus von Willendorf"
+
+#: bitem/templates/menu.html:44
+msgid "Novara"
+msgstr ""
+
+#: bitem/templates/menu.html:49
+msgid "Hauskirchen"
+msgstr ""
+
+#: bitem/templates/menu.html:54
+msgid "Mitterhof"
+msgstr ""
+
+#: bitem/templates/menu.html:59
+msgid "Dodo"
+msgstr ""
+
+#: bitem/templates/menu.html:71
+msgid "content"
+msgstr "Inhalte"
+
+#: bitem/templates/menu.html:80
+msgid "all"
+msgstr "alles"
+
+#: bitem/templates/menu.html:87
+msgid "persons"
+msgstr "Personen"
+
+#: bitem/templates/menu.html:90
+msgid "groups"
+msgstr "Gruppen"
+
+#: bitem/templates/menu.html:99
+msgid "about"
+msgstr "Über"
 
 #: bitem/templates/submenu.html:3
 msgid "of"
 msgstr "von"
 
-#: bitem/templates/submenu.html:13
-msgid "filter"
-msgstr "filtern"
-
-#: bitem/templates/submenu.html:13
-msgid "sort"
-msgstr "sortieren"
-
-#: bitem/templates/submenu.html:16
-msgid "reset"
-msgstr "zurücksetzen"
-
-#: bitem/templates/submenu.html:26
-msgid "search term"
-msgstr "Suchbegriff"
-
-#: bitem/templates/submenu.html:28 bitem/templates/submenu.html:32
-#: bitem/templates/submenu.html:35 bitem/templates/submenu.html:38
-#: bitem/templates/submenu.html:41
-msgid "sort by"
-msgstr "sortieren nach"
-
-#: bitem/templates/submenu.html:32
-msgid "name"
-msgstr "Name"
-
-#: bitem/templates/submenu.html:35
-msgid "type"
-msgstr "Typus"
-
-#: bitem/templates/submenu.html:38
-msgid "begin"
-msgstr "Beginn"
-
-#: bitem/templates/submenu.html:41
-msgid "end"
-msgstr "Ende"
-
-#: bitem/templates/submenu.html:44
-msgid "switch view"
-msgstr "Ansicht wechseln"
-
-#: bitem/templates/submenu.html:48
-msgid "filter by"
-msgstr "filtern nach"
-
-#: bitem/templates/submenu.html:50
-msgid "and"
-msgstr "und"
-
-#: bitem/templates/submenu.html:55
-msgid "or"
-msgstr "oder"
-
-#: bitem/templates/submenu.html:68
-msgid "media"
-msgstr "Medien"
-
-#: bitem/templates/submenu.html:96
-msgid "no media"
-msgstr "keine Medien"
-
-#: bitem/templates/submenu.html:132
-msgid "types"
-msgstr "Typus"
-
-#: bitem/templates/submenu.html:162
-msgid "Timespan"
-msgstr "Zeitspanne"
-
-#: bitem/templates/submenu.html:166
-msgid "include entries without date"
-msgstr "inklusive Einträge ohne Datum"
-
 #: bitem/templates/entity/entity.html:21 bitem/templates/iiif/iiif.html:7
-#: bitem/templates/submenu.html:177
+#: bitem/templates/submenu.html:17
 msgid "loading"
 msgstr "lade"
 
-#: bitem/templates/index/index.html:22
+#: bitem/templates/index/index.html:16
 msgid "learn more"
 msgstr "mehr"
+
+#: bitem/templates/map/map.html:39
+msgid "Case Study"
+msgstr "Fallstudie"
+
+#: bitem/templates/map/map.html:59
+msgid "Story"
+msgstr "Geschichte"
 
 #~ msgid "items"
 #~ msgstr "Objekte"
@@ -257,4 +321,9 @@ msgstr "mehr"
 
 #~ msgid "swipe left/right or use arrow keys to navigate"
 #~ msgstr "nach links/rechts wischen oder mit Pfeiltasten navigieren"
+
+#~ msgid ""
+#~ "Venus of\n"
+#~ "                                    Willendorf"
+#~ msgstr ""
 

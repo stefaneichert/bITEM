@@ -16,6 +16,12 @@ def groups() -> str:
     #data_mapper.mark_access(0)
     return template
 
+@app.route('/actors')
+def actors() -> str:
+    template = map_entities.get_data(inspect.stack()[0][3])
+    #data_mapper.mark_access(0)
+    return template
+
 @app.route('/events')
 def events() -> str:
     template = map_entities.get_data(inspect.stack()[0][3])

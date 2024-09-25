@@ -30,7 +30,7 @@
             <div class="sidebar-bg">
                 <div id="tiles" class="grid fade-me">
                     {%if case_study_there %}
-                    <div class="item muuri-item fixed-item" data-order="0" data-type="null" data-typeid="null" data-id="caseStudy" data-begin="null" data-sortbegin="null" data-end="null" data-sortend="null" data-media="null" data-name="null" data-casestudies="null" data-all="null">
+                    <div class="item muuri-item fixed-item" data-order="0" data-mainclassraw="null" data-class="null" data-mainclass="null" data-type="null" data-typeid="null" data-id="caseStudy" data-begin="null" data-sortbegin="null" data-end="null" data-sortend="null" data-media="null" data-name="null" data-casestudies="null" data-all="null">
                         <div class="item-content item-full">
                           <div class="card">
                             <div class="card-body">
@@ -50,7 +50,7 @@
                     {% if stories %}
                     {% set i=1 %}
                     {% for story in stories %}
-                    <div class="item muuri-item fixed-item" data-order="{{i}}" data-type="null" data-typeid="null" data-id="story" data-begin="null" data-sortbegin="null" data-end="null" data-sortend="null" data-media="null" data-name="null" data-casestudies="null" data-all="null">
+                    <div class="item muuri-item fixed-item" data-class="null" data-mainclass="null" data-mainclassraw="null" data-order="{{i}}" data-type="null" data-typeid="null" data-id="story" data-begin="null" data-sortbegin="null" data-end="null" data-sortend="null" data-media="null" data-name="null" data-casestudies="null" data-all="null">
                         <a class="tile-link" href="/presi/{{story.id}}">
                         <div class="item-content item-full">
                           <div class="card">

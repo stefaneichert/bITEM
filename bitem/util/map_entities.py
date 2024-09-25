@@ -104,15 +104,15 @@ def get_data(selection: str, case_study=None) -> str:
                     selection = row.de
                 if CURRENT_LANGUAGE[0] == 'en' and row.en:
                     selection = row.en
-
-
-
-
+    classesthere = False
+    if case_study_there or selection == 'entities':
+          classesthere = True
 
     return render_template(
         "/map/map.html",
         _data=_data,
         entity=True,
+        classesthere=classesthere,
         title=_(selection),
         types=types,
         media=media,
