@@ -27,22 +27,25 @@
                 <h5 class="mt-5">{{_('sort by')|uc_first}}:</h5>
                 <div class="bitem-text">
                       <span class="sortbuttons">
-                              <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('names')"
+                              <a class="nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2" href="#" onclick="sortGrid('favorites')"
+                                 title="{{_('sort by')}} {{_('favorites')}}">{{_('favorites')|uc_first}}<i
+                                      class="ms-1 bi bi-arrow-down-up"></i></a>
+                              <a class="nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2" href="#" onclick="sortGrid('names')"
                                  title="{{_('sort by')}} {{_('name')}}">{{_('name')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a class="nav-link line-fade ms-3{% if not classesthere %} d-none{% endif %}" href="#" onclick="sortGrid('mainclass')"
+                              <a class="nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2{% if not classesthere %} d-none{% endif %}" href="#" onclick="sortGrid('mainclass')"
                                  title="{{_('sort by')}} {{_('class')}}">{{_('class')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a class="nav-link line-fade ms-3{% if types|length == 0 %} d-none {% endif %}" href="#" onclick="sortGrid('types')"
+                              <a class="nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2{% if types|length == 0 %} d-none {% endif %}" href="#" onclick="sortGrid('types')"
                                  title="{{_('sort by')}} {{_('type')}}">{{_('type')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('begin')"
+                              <a class="nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2" href="#" onclick="sortGrid('begin')"
                                  title="{{_('sort by')}} {{_('begin')}}">{{_('begin')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a class="nav-link line-fade ms-3" href="#" onclick="sortGrid('end')"
+                              <a class="nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2" href="#" onclick="sortGrid('end')"
                                  title="{{_('sort by')}} {{_('end')}}">{{_('end')|uc_first}}<i
                                       class="ms-1 bi bi-arrow-down-up"></i></a>
-                              <a id="list-switch" class="d-none nav-link line-fade ms-3" href="#"
+                              <a id="list-switch" class="d-none nav-link line-fade line-fade-m line-fade-menu ms-3 mb-2" href="#"
                                  title="{{_('switch view')}}">
                                                 <h4><i id="viewbutton" class="ms-1 bi bi-list-ul"></i></h4></a>
                       </span>

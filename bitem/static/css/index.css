@@ -3,6 +3,12 @@
     margin-top: 56px;
 }
 
+.min-max-screen {
+    min-height: calc(100vh);
+    align-content: space-around;
+
+}
+
 #introText {
     padding-top: calc(56px + 2rem);
     font-size: 1.5rem;
@@ -27,13 +33,13 @@
 
     background: rgb(0, 0, 0);
     color: rgb(255, 255, 255);
-    --bs-card-border-width: none;    
+    --bs-card-border-width: none;
     width: 100%;
     min-height: auto;
     transition: background 1s, box-shadow 1s;
     border-radius: 0;
-    display:inline-block;
-    margin-bottom:10px;
+    display: inline-block;
+    margin-bottom: 10px;
 
 }
 
@@ -69,11 +75,9 @@
 }
 
 
-
-
 @media (max-width: 1400px) {
 
-    .caseStudyText{
+    .caseStudyText {
         font-size: 0.68rem;
         padding: 0px;
     }
@@ -87,7 +91,7 @@
 
     #caseStudyCards {
         flex-direction: column;
-        align-items: center; 
+        align-items: center;
     }
 
     .card {
@@ -102,7 +106,6 @@
         flex-direction: column;
         justify-content: center;
     }
-
 
 
     .caseStudyText {
@@ -127,7 +130,7 @@
         text-align: justify;
     }
 
-    .card-title{
+    .card-title {
         font-size: 1.9rem;
     }
 }
@@ -216,3 +219,54 @@
         font-size: 0.8rem;
     }
 }
+
+.cs-card {
+    height: calc(50vh - 28px);
+    color: whitesmoke;
+    font-size: 5vw;
+    text-align: center;
+    align-content: center;
+    text-decoration: none;
+    display: block;
+}
+
+.lastcard {
+    background: black;
+}
+
+.foreground {
+    align-content: center;
+    background: rgba(0, 0, 0, 0.63);
+    transition: background 0.5s ease;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.background:hover {
+    color: whitesmoke;
+    transform:scale(1.1)
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    height: 100%;
+    align-content: center;
+    transition: 1s ease;
+}
+
+.cs-name {
+    background: #0000005e;
+    height: 100%;
+    align-content: center;
+    transition: background 0.5s ease;
+}
+
+.cs-name:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+

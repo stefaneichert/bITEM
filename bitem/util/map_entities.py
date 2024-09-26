@@ -76,10 +76,6 @@ def get_data(selection: str, case_study=None) -> str:
         if cs_description:
             cs_description = translate_text(cs_description, lang)
 
-
-
-
-        g.cursor.execute(f'SELECT id, name FROM model.entity WHERE id = {case_study}')
         g.cursor.execute(f"""
             SELECT f.filename
             FROM model.entity e

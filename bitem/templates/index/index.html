@@ -16,8 +16,8 @@
             <span>{{_('learn more')}}</span>
         </a>
     </div>
-    <div class="container">
-        <div class="bitem-text" id="introText">
+    <div class="container min-max-screen" id="introText">
+        <div class="bitem-text">
             <h2 class="en mb-5">Welcome to bITEM,</h2>
             <span class="en">
                     <p>
@@ -70,14 +70,19 @@
                         miteinander verbunden sind.
                     </p>
                 </span>
-
+            <div class="text-center mt-5">
+                <a id="explore" class="line-fade line-fade-m fadeabout text-center" href="#cs-cards">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                    <span>{{_('explore')}}</span>
+                </a>
+            </div>
         </div>
 
 
     </div>
 
 
-    <div class="container mt-5">
+    <div class="container mt-5 d-none">
         <div class="bitem-text" id="caseStudies">
             <h2 class="case-study-title"> Case Studies </h2>
             <div class="row" id="caseStudyCards">
@@ -215,7 +220,28 @@
             </div>
         </div>
     </div>
+    <div id="cs-cards"  style="padding-top: 56px">
+        {% for casestudy in casestudies %}
+        {% if loop.index is odd %} <div class="row g-0"> {% endif %}
+        <div class="col-xl-6">
+            <a href="/entities/{{casestudy.id}}" class="cs-card heading-card">
+               <div class="foreground">
+               <div class="background" style="background-image: url('{{casestudy.image}}');"><div class="cs-name">{{casestudy.name}}</div></div>
+               </div>
+            </a>
 
+        </div>
+        {% if (loop.index) is not odd %}
+            </div>
+        {% endif %}
+        {% endfor %}
+        {% if casestudies|length is odd %}
+        <div class="col-xl-6">
+            <div class="cs-card heading-card lastcard"></div>
+        </div>
+        {% endif %}
+
+    </div>
 
 </main>
 

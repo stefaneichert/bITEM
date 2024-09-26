@@ -65,6 +65,9 @@ let grid = new Muuri('#tiles', {
         },
         casestudies: function (item, element) {
             return element.getAttribute('data-casestudies').toUpperCase();
+        },
+        favorites: function (item, element) {
+            return element.getAttribute('data-favorite');
         }
     }
 });
@@ -329,6 +332,7 @@ createMuuriElems(data)
 //define variables for sort order
 sortorder = {
     'mainclass': 'asc',
+    'favorites': 'desc',
     'begin': 'desc',
     'end': 'desc',
     'names': 'asc',
@@ -355,7 +359,12 @@ function createMuuriElems(json) {
 }
 
 function addMuuri(data) {
+    let favorite = false;
+
+
     const itemTemplate = document.createElement('div');
+    itemTemplate.dataset.favorite = "false";
+    if (isIdPresent(data, 237297)) {itemTemplate.dataset.favorite = "true"; favorite = true;}
     itemTemplate.className = 'item';
     itemTemplate.dataset.type = null;
     itemTemplate.dataset.class = data._class;
@@ -468,7 +477,7 @@ function addMuuri(data) {
       <div class="card">
         <div class="card-body">
           ${images ? '<div class="list-col-8">' : ''}
-            <p class="card-title">${classIcon} <span class="ms-2">${className}</span></p>
+            <p class="card-title d-flex justify-content-between"><span>${classIcon} <span class="ms-2">${className}</span></span>${favorite ? `<span><i class="bi bi-star-fill"></i></span>` : ''}</p>
             <h5 class="card-title">${getLabelTranslation(data)}</h5>
             ${data.type ? `<p class="card-title">${getTypeTranslation(data.type)}</p>` : ''}
             ${both ? `<p class="card-title">${makeLocalDate(data.start).localdate} - ${makeLocalDate(data.end).localdate}</p>` : ''}
@@ -536,7 +545,9 @@ function exchangeListClass() {
     button.classList.toggle("bi-layout-wtf");
 }
 
-sortGrid('names')
+
+sortGrid('mainclass')
+sortGrid('favorites')
 
 
 //toggle opacity on filterBar
@@ -609,6 +620,26 @@ function addFilter(class_, count = 0) {
     }
 }
 
-
+function isIdPresent(data, targetId) {
+    if (Array.isArray(data)) {
+        for (let item of data) {
+            if (isIdPresent(item, targetId)) {
+                return true;
+            }
+        }
+    } else if (typeof data === "object" && data !== null) {
+        if (data.id && data.id === targetId) {
+            return true;
+        }
+        for (let key in data) {
+            if (data.hasOwnProperty(key)) {
+                if (isIdPresent(data[key], targetId)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 moveFixedItemsToBeginning()
