@@ -119,7 +119,6 @@ function toggleMouseWheelZoom() {
     map.scrollWheelZoom.enabled() ? map.scrollWheelZoom.disable() : map.scrollWheelZoom.enable();
 }
 
-console.log(data)
 createMuuriElems(data)
 
 function createMuuriElems(obj) {
@@ -209,8 +208,6 @@ function makeStorymapBtn() {
     });
 
 // Output the counts
-    console.log(classCounts);
-    console.log(totalCount);
     if (totalCount >= 2) {
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
@@ -305,8 +302,6 @@ function extractImages(images) {
 
 function setGallery(images, from, to) {
     let i = 0; // Initialize index
-    console.log(images)
-
     for (const img of images) {
         // Load images between 'from' and 'to' range
         if (i >= from && i < to) {

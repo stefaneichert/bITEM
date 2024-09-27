@@ -67,6 +67,6 @@ META_ORG_WD = 'https://www.wikidata.org/wiki/Q688704'
 META_LICENSE = 'https://creativecommons.org/licenses/by/4.0/'
 
 CASE_STUDY = 196063
-CASE_STUDIES = (234465, 198233, 229739, 197085, 197087)
+CASE_STUDIES = (197087, 198233, 197085, 229739, 234465)
 HIDDEN_ONES = (222268,) #ids of case studies not to be shown, eg. for a "hidden" tag
 STORY_THRESHOLD = 2 #minimum count of child or succeeding events necessary to show a story map

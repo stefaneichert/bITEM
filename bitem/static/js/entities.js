@@ -449,7 +449,6 @@ function addMuuri(data) {
     if (modelthere) {
         images = false;
         let model = data.models[0]
-        console.log(model)
         modelname = model.name
         itemTemplate.dataset.media += "_model";
         for (const file of model.files) {
@@ -546,6 +545,9 @@ function exchangeListClass() {
 }
 
 
+
+sortGrid('begin')
+sortGrid('end')
 sortGrid('mainclass')
 sortGrid('favorites')
 

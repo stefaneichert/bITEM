@@ -101,7 +101,7 @@
 .swiper-button-touch-container {
     position: absolute;
     bottom: 0;
-    justify-content: space-around;
+    justify-content: end;
     display: flex;
     max-width: 100%;
     width: 100%;

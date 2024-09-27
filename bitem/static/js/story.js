@@ -8,10 +8,8 @@ let noTouchDevice
 
 if (isTouchDevice()) {
     noTouchDevice = false
-    console.log('This is a touch device.');
 } else {
     noTouchDevice = true
-    console.log('This is not a touch device.');
 }
 
 noTouchDevice = false
@@ -25,7 +23,6 @@ let mainImage = ''
 //set 3d Model as background if available
 let model = data.models
 if (model) {
-    console.log(model)
     const groupedFiles = model[0].files.reduce((acc, file) => {
         let group = acc.find(item => item.name === file.name);
         if (!group) {
@@ -40,7 +37,6 @@ if (model) {
         return acc;
     }, []);
 
-    console.log(groupedFiles)
     if (groupedFiles[0].model) {
         let poster = groupedFiles[0].poster
         let currentmodel = groupedFiles[0].model
@@ -142,7 +138,7 @@ if (!noTouchDevice) {
         <div class="x-swipe-msg"></div>
         `
     startSlide.appendChild(slideIndicator)
-    setTouchNavButton(0, languageTranslations._startPage)
+    //setTouchNavButton(0, languageTranslations._startPage)
     document.getElementById('touchBackbutton').classList.remove('d-none')
     document.getElementById('backbutton').classList.add('d-none')
 
@@ -431,6 +427,6 @@ function makeStoryMap() {
     itemTemplate.id = "storyMap"
     itemTemplate.innerHTML = `<div id="map"></div>`
     mainWrapper.appendChild(itemTemplate)
-    setTouchNavButton(nextslide, "Storymap")
+    //setTouchNavButton(nextslide, "Storymap")
     nextslide += 1
 }

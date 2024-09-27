@@ -316,7 +316,7 @@ body {
 }
 
 #mainAccordion > .accordion-item > .accordion-header > .accordion-button {
-    border: none!important;
+    border: none !important;
 }
 
 #menu {
@@ -335,4 +335,10 @@ body {
 .main-content {
     height: auto;
     max-height: 400px;
+}
+
+.offset-link {
+    font-size: 1.25rem;
+    padding-left: 2.2rem;
+    padding-top: 2.5rem;
 }
