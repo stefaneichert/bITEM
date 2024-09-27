@@ -73,6 +73,7 @@ def presi(id: int):
 
     story['name'] = translate_text(result[0].story_name, lang)
     story['slides'] = []
+    story['casestudy'] = result[0].case_study
     story['map'] = result[0].map
     story['map_origin'] = get_media(result[0].map_origin)
 

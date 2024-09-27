@@ -5,7 +5,26 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=1024"/>
     <meta name="mobile-web-app-capable" content="yes">
-    <title>my presentation</title>
+    <title>{{story.name}}</title>
+    <title></title>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/icons/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/static/icons/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/icons/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/icons/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/icons/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/icons/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/icons/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/icons/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/icons/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/static/icons/favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 
     <link href="/static/css/presi.css" rel="stylesheet"/>
     <link href="/static/vendor/impress.js-master/css/impress-common.css" rel="stylesheet"/>
@@ -44,6 +63,9 @@ let geojson = L.geoJSON();
         version of this presentation.</p>
     <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
 </div>
+<a class="nav-btn nav-btn-close storylink" href="/entities/{{story.casestudy}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+</svg></a>
 <a class="nav-btn nav-btn-next storylink" onclick="impress().next()"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
 </svg></a>
@@ -209,7 +231,7 @@ let geojson = L.geoJSON();
         {% if (slide.goto)|length > 0 %}
         <div class="goto-content">
         {% for url in slide.goto %}
-         <a class="storylink" style="width: {{90/(slide.goto|length)}}%;" href="#slide{{url}}">goto blalba</a>
+         <a class="storylink nav-btn goto-link" title="{{_('continue at')}}" href="#slide{{url}}">{{url}}</a>
         {% endfor %}
         </div>
         {% endif %}

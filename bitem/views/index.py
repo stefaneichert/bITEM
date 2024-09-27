@@ -99,6 +99,5 @@ def index():
         if lang in cs_tranlations:
             casestudy['name'] = cs_tranlations[lang]
         casestudies.append(casestudy)
-    print(casestudies)
 
     return render_template("/index/index.html", model=model, poster=poster, casestudies=casestudies)

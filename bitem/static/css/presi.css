@@ -224,6 +224,15 @@ h1 {
     font-size: 2rem;
 }
 
+.goto-link {
+    position: unset !important;
+}
+
+.nav-btn-close {
+    top: 1rem;
+    right: 1rem;
+}
+
 .sub-text {
     left: 0;
     width: 100%;
