@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-09-25 13:18+0200\n"
+"POT-Creation-Date: 2024-09-27 13:34+0200\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -37,74 +37,79 @@ msgstr "zurücksetzen"
 #: bitem/templates/filter.html:27 bitem/templates/filter.html:31
 #: bitem/templates/filter.html:34 bitem/templates/filter.html:37
 #: bitem/templates/filter.html:40 bitem/templates/filter.html:43
+#: bitem/templates/filter.html:46
 msgid "sort by"
 msgstr "sortieren nach"
 
 #: bitem/templates/filter.html:31
+msgid "highlights"
+msgstr "Highlights"
+
+#: bitem/templates/filter.html:34
 msgid "name"
 msgstr "Name"
 
-#: bitem/templates/filter.html:34 bitem/templates/filter.html:140
+#: bitem/templates/filter.html:37 bitem/templates/filter.html:145
 msgid "class"
 msgstr "Klasse"
 
-#: bitem/templates/filter.html:37
+#: bitem/templates/filter.html:40
 msgid "type"
 msgstr "Typus"
 
-#: bitem/templates/filter.html:40
+#: bitem/templates/filter.html:43
 msgid "begin"
 msgstr "Beginn"
 
-#: bitem/templates/filter.html:43
+#: bitem/templates/filter.html:46
 msgid "end"
 msgstr "Ende"
 
-#: bitem/templates/filter.html:46
+#: bitem/templates/filter.html:49
 msgid "switch view"
 msgstr "Ansicht wechseln"
 
-#: bitem/templates/filter.html:50
+#: bitem/templates/filter.html:53
 msgid "filter by"
 msgstr "filtern nach"
 
-#: bitem/templates/filter.html:52
+#: bitem/templates/filter.html:55
 msgid "and"
 msgstr "und"
 
-#: bitem/templates/filter.html:58
+#: bitem/templates/filter.html:61
 msgid "or"
 msgstr "oder"
 
-#: bitem/templates/filter.html:72
+#: bitem/templates/filter.html:75
 msgid "media"
 msgstr "Medien"
 
-#: bitem/templates/filter.html:83 bitem/templates/layout.html:112
+#: bitem/templates/filter.html:86 bitem/templates/layout.html:112
 msgid "3D models"
 msgstr "3D Modelle"
 
-#: bitem/templates/filter.html:93 bitem/templates/layout.html:103
+#: bitem/templates/filter.html:96 bitem/templates/layout.html:103
 msgid "images"
 msgstr "Bilder"
 
-#: bitem/templates/filter.html:103
+#: bitem/templates/filter.html:106
 msgid "no media"
 msgstr "keine Medien"
 
-#: bitem/templates/filter.html:114 bitem/templates/menu.html:29
+#: bitem/templates/filter.html:117 bitem/templates/menu.html:29
 msgid "case studies"
 msgstr "Fallstudien"
 
-#: bitem/templates/filter.html:161
+#: bitem/templates/filter.html:166
 msgid "types"
 msgstr "Typus"
 
-#: bitem/templates/filter.html:192
+#: bitem/templates/filter.html:197
 msgid "Timespan"
 msgstr "Zeitspanne"
 
-#: bitem/templates/filter.html:196
+#: bitem/templates/filter.html:201
 msgid "include entries without date"
 msgstr "inklusive Einträge ohne Datum"
 
@@ -248,7 +253,7 @@ msgstr "Inhalte"
 msgid "all"
 msgstr "alles"
 
-#: bitem/templates/menu.html:96
+#: bitem/templates/menu.html:102
 msgid "about"
 msgstr "Über"
 
@@ -265,6 +270,10 @@ msgstr "lade"
 msgid "learn more"
 msgstr "mehr"
 
+#: bitem/templates/index/index.html:76
+msgid "explore"
+msgstr "erkunden"
+
 #: bitem/templates/map/map.html:39
 msgid "Case Study"
 msgstr "Fallstudie"
@@ -272,6 +281,10 @@ msgstr "Fallstudie"
 #: bitem/templates/map/map.html:59
 msgid "Story"
 msgstr "Geschichte"
+
+#: bitem/templates/presi/presi.html:234
+msgid "continue at"
+msgstr "weiter bei"
 
 #~ msgid "items"
 #~ msgstr "Objekte"
