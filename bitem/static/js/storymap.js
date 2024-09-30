@@ -128,6 +128,25 @@ function transformDate(dateString) {
 
 console.log(cleanedGroupedArray);
 
+// get min and max date for timeline boundaries
+//Function to add a few month before and after the first event
+
+function addmonths(date, months) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+const dates = cleanedGroupedArray.flatMap((item) => [new Date(item.begin), new Date(item.end)]);
+
+const minDate = new Date(Math.min(...dates));
+const maxDate = new Date(Math.max(...dates));
+
+const adjustedMinDate = addmonths(minDate, -3);
+const adjustedMaxDate = addmonths(maxDate, 3);
+const startDate = addmonths(minDate, -1);
+const endDate = addmonths(minDate, 12);
+
 const timelineData = cleanedGroupedArray
   .map((item) => {
     if (!item.begin || !item.end) {
@@ -178,10 +197,10 @@ const options = {
   showCurrentTime: true,
   horizontalScroll: true,
   zoomKey: "ctrlKey",
-  min: new Date(1857, 0, 1),
-  max: new Date(1862, 11, 31),
-  start: new Date(1857, 3, 10),
-  end: new Date(1858, 1, 31),
+  min: adjustedMinDate,
+  max: adjustedMaxDate,
+  start: startDate,
+  end: endDate,
   width: "100%",
   margin: {
     item: 20,
@@ -195,10 +214,14 @@ const options = {
     return item.content;
   },
 };
-
 // Function to add markers to the map
 const timelineElement = document.getElementById("timeline");
 const timeline = new vis.Timeline(timelineElement, items, options);
+
+window.addEventListener('load', () => {
+  timeline.redraw();
+});
+
 var oldMarkers = [];
 
 const mapMarkers = {};
@@ -269,21 +292,44 @@ function highlightMarker(placeId) {
 
     // If two markers are highlighted, draw a polyline between them
     if (highlightedMarkers.length === 2) {
-      drawPolylineBetweenMarkers();
+      drawCurvedLineBetweenMarkers();
     }
   } else {
     console.error("Marker not found for placeId:", placeId);
   }
 }
 
-// Function to draw a polyline between two highlighted markers
-function drawPolylineBetweenMarkers() {
+// Function to draw a curved line between two highlighted markers
+function drawCurvedLineBetweenMarkers() {
   if (polyline) {
     map.removeLayer(polyline); // Remove the existing polyline, if any
   }
 
-  // Draw the polyline using the highlighted markers' coordinates
-  polyline = L.polyline(highlightedMarkers, {
+  const latlng1 = highlightedMarkers[0];
+  const latlng2 = highlightedMarkers[1];
+
+  // Calculate the midpoint between the two markers
+  const midLat = (latlng1.lat + latlng2.lat) / 2;
+  const midLng = (latlng1.lng + latlng2.lng) / 2;
+
+  // Offset the midpoint to create a control point for the Bezier curve
+  const offsetLat = (latlng2.lng - latlng1.lng) * 0.1; // Adjust this value to change the curvature
+  const offsetLng = (latlng1.lat - latlng2.lat) * 0.1; // Adjust this value to change the curvature
+  const controlLat = midLat + offsetLat;
+  const controlLng = midLng + offsetLng;
+
+  // Generate points along the Bezier curve
+  const points = [];
+  const numPoints = 100; // Number of points to approximate the curve
+  for (let i = 0; i <= numPoints; i++) {
+    const t = i / numPoints;
+    const lat = (1 - t) * (1 - t) * latlng1.lat + 2 * (1 - t) * t * controlLat + t * t * latlng2.lat;
+    const lng = (1 - t) * (1 - t) * latlng1.lng + 2 * (1 - t) * t * controlLng + t * t * latlng2.lng;
+    points.push([lat, lng]);
+  }
+
+  // Draw the curved line using a polyline
+  polyline = L.polyline(points, {
     color: "red",
     weight: 2,
     dashArray: "8, 8",
@@ -347,8 +393,8 @@ mapData[0].nodes.forEach(function (place) {
 const detailsContainer = document.getElementById("detailsContainer");
 const detailsContent = document.getElementById("detailsContent");
 const closeBtn = document.getElementById("closeBtn");
+const spinner = document.getElementById("spinner");
 
-// Function to make the container draggable
 function makeDraggable(element) {
   let pos1 = 0,
     pos2 = 0,
@@ -414,6 +460,11 @@ makeDraggable(detailsContainer);
 function populateContainer(id) {
   const url = "/view/" + id + "/JSON";
   console.log(url);
+
+  // Show spinner and hide content
+  spinner.classList.remove("hidden");
+  detailsContent.classList.add("hidden");
+
   fetch(url)
     .then((response) => response.json())
     .then((data) => {
@@ -444,6 +495,17 @@ function populateContainer(id) {
       }
 
       detailsContent.innerHTML = html;
+
+      // Hide spinner and show content
+      spinner.classList.add("hidden");
+      detailsContent.classList.remove("hidden");
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      // Hide spinner even if there's an error
+      spinner.classList.add("hidden");
+      detailsContent.classList.remove("hidden");
+      detailsContent.innerHTML = "<div>Error loading data</div>";
     });
 }
 
