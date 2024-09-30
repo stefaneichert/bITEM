@@ -231,8 +231,9 @@
 }
 
 .lastcard {
-    background: black;
+    height: unset
 }
+
 
 .foreground {
     align-content: center;
@@ -269,4 +270,6 @@
     background: rgba(0, 0, 0, 0.2);
 }
 
-
+body {
+    overflow-x: hidden;
+}

@@ -237,7 +237,7 @@
         {% endfor %}
         {% if casestudies|length is odd %}
         <div class="col-xl-6">
-            <div class="cs-card heading-card lastcard"></div>
+            <div class="cs-card heading-card lastcard"><div class="background">{% include 'footer.html' %}</div></div>
         </div>
         {% endif %}
 
@@ -251,6 +251,6 @@
 <script src="/static/js/index.js"></script>
 
 
-{% include 'footer.html' %}
+
 
 {% endblock %}
