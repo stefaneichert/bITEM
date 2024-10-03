@@ -1,3 +1,11 @@
+window.addEventListener('resize', function() {
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(function () {
+        setMarkers();
+        grid.refreshItems().layout();
+    }, 800);
+});
+
 //set initial layout based on viewport
 window.onload = function () {
     let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -116,8 +124,8 @@ setTimeout(() => {
     sidebar.show();
     setTimeout(() => {
         grid.refreshItems().layout();
-    }, 500);
-}, 500);
+    }, 800);
+}, 800);
 
 //initiate sidebar/map to 50/50
 shave('.card-text', 200)
@@ -254,7 +262,7 @@ function toggleSidebar(direction) {
     setTimeout(function () {
         setMarkers()
         grid.refreshItems().layout();
-    }, 500);
+    }, 800);
 
 }
 

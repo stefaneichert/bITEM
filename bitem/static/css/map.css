@@ -196,8 +196,6 @@
 
 .item {
     position: absolute;
-    margin-left: 2rem;
-    margin-top: 2rem;
     z-index: 1;
 }
 
@@ -225,6 +223,7 @@
     --bs-card-border-width: none;
     box-shadow: 0 0 5px 5px rgb(245 245 245 / 15%);
     transition: background 1s, box-shadow 1s;
+    width: calc(100vw - 32px);
 }
 
 .item-content:hover > * {
@@ -237,6 +236,10 @@
     height: calc(100vh - 56px - 2rem - 16px - 24px);
 }
 
+.item-content {
+    border: 10px solid whitesmoke;
+}
+
 @media screen and (max-width: 400px) {
     .sortbuttons {
         display: inline !important;
@@ -244,27 +247,75 @@
 }
 
 
-@media screen and (min-width: 769px) {
 
+
+
+.item-content {
+    border: 10px solid transparent;
+}
+
+@media screen and (min-width: 600px) {
     .item-content > * {
-        width: calc(22vw - 25px);
+        width: calc((100vw - 12px) / 2 - 22px);
     }
-
     .item-full > * {
-        width: calc(50vw - 4rem)!important;
+        width: calc((100vw - 12px) - 22px);
     }
 }
 
-@media screen and (max-width: 769px) {
-
+@media screen and (min-width: 800px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 3 - 22px);
+    }
     .item-full > * {
-        width: calc(100vw - 4rem);
+        width: calc((100vw - 12px) / 1.5 - 22px);
     }
 }
 
-@media screen and (min-width: 1190px) {
+@media screen and (min-width: 1200px) {
     .item-content > * {
-        width: calc(13vw);
+        width: calc((100vw - 12px) / 4 - 22px);
+    }
+    .item-full > * {
+        width: calc((100vw - 12px) / 2 - 22px);
+    }
+}
+
+
+@media screen and (min-width: 1400px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 5 - 22px);
+    }
+    .item-full > * {
+        width: calc((100vw - 12px) / 2.5 - 22px);
+    }
+}
+
+
+@media screen and (min-width: 1600px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 6 - 22px);
+    }
+    .item-full > * {
+        width: calc((100vw - 12px) / 3 - 22px);
+    }
+}
+
+@media screen and (min-width: 1800px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 7 - 22px);
+    }
+    .item-full > * {
+        width: calc((100vw - 12px) / 3.5 - 22px);
+    }
+}
+
+@media screen and (min-width: 2000px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 8 - 22px);
+    }
+    .item-full > * {
+        width: calc((100vw - 12px) / 4 - 22px);
     }
 }
 
