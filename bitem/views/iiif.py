@@ -50,6 +50,12 @@ def getManifest(img_id):
 
     g.cursor.execute(sql, {'id': img_id})
     result = g.cursor.fetchall()
+    g.cursor.execute(
+        f'SELECT * FROM model.file_info WHERE entity_id = {img_id}')
+    license_info = g.cursor.fetchone()
+    if license_info:
+        creator = license_info.creator
+        rightsholder = license_info.license_holder
 
     g.cursor.execute(f'SELECT description FROM model.entity WHERE id = {img_id}')
     filedescription = g.cursor.fetchone()
@@ -60,12 +66,20 @@ def getManifest(img_id):
         source = ''
         sourceThere = False
         for row in result:
-            if row.property == 'is referred to by':
+            nourl = True
+            if row.property == 'is referred to by' or row.name.startswith(("http://", "https://")):
                 sourceThere = True
-                source += row.name
-                if row.info:
+                name = row.name
+                if row.name.startswith(("http://", "https://")):
+                    nourl = False
+                    linktext = row.name
+                    if row.info:
+                        linktext = row.info
+                    name = f'<a href="{row.name}" target="_blank">{linktext}</a>'
+                source += name
+                if row.info and nourl :
                     source += ': ' + row.info
-                if row.spec:
+                if row.spec and nourl:
                     source += ' ' + row.spec
                 source += '<br>'
             if row.name == license and row.property_code == 'P2':
@@ -95,6 +109,10 @@ def getManifest(img_id):
                         attribution += ': ' + row.info
                     if row.spec:
                         attribution += ' ' + row.spec
+        if creator:
+            attribution += str('<br><br><p>'+ _('creator(s)').capitalize() +  ': ' + creator + '</p><br>')
+        if rightsholder:
+            attribution += str('<br><p>'+ _('rightsholder(s)').capitalize() +  ': ' + rightsholder + '</p><br>')
         if sourceThere:
             source = '<br>' + _('source(s)').capitalize() + ':<br>' + source
         attribution += str('<p>' + source + '</p>')

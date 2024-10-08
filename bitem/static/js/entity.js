@@ -54,7 +54,9 @@ window.onload = function () {
     if (typeof (grid2) != 'undefined') grid2.refreshItems().layout();
     grid.refreshItems().layout();
     setTimeout(() => {
+        sortItemsByOrder()
         grid.refreshItems().layout();
+        sortItemsByOrder()
     }, 100);
     document.body.classList.add('images-loaded');
     const accordions = document.querySelectorAll('.accordion-button');
@@ -89,6 +91,12 @@ const grid = new Muuri('.grid', {
     layout: {
         fillGaps: true,
     },
+
+    sortData: {
+        order: function (item, element) {
+            return element.getAttribute('data-order');
+        },
+    }
 });
 
 function moveToFirst(itemId) {
@@ -133,24 +141,10 @@ function createMuuriElems(obj) {
         addFilter('threed', models.length)
     }
 
-    let images = (obj.images)
-    if (images) {
-        extractImages(images);
-        addFilter('imgs', images.length)
-    }
-
-
-    let sourceConnections = data.connections.filter(
-        (connection) => ['external_reference', 'bibliography'].includes(connection.class)
-    );
-    if (sourceConnections.length > 0) {
-        grid.add(getSources(sourceConnections));
-        addFilter('source', sourceConnections.length)
-    }
 
     let actors = makeEnts(obj, ['group', 'person'])
     if (actors.length > 0) {
-        grid.add(setEnts(actors, '_actor'))
+        grid.add(setEnts(actors, '_actor', '3'))
         addFilter('actors', actors.length)
     }
 
@@ -180,8 +174,23 @@ function createMuuriElems(obj) {
 
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
-        grid.add(setEnts(items, '_item'))
+        grid.add(setEnts(items, '_item', '6'))
         addFilter('items', items.length)
+    }
+
+    let sourceConnections = data.connections.filter(
+        (connection) => ['external_reference', 'bibliography'].includes(connection.class)
+    );
+
+    let images = (obj.images)
+    if (images) {
+        extractImages(images);
+        addFilter('imgs', images.length)
+    }
+
+    if (sourceConnections.length > 0) {
+        grid.add(getSources(sourceConnections));
+        addFilter('source', sourceConnections.length)
     }
 
 
@@ -211,6 +220,7 @@ function makeStorymapBtn() {
     if (totalCount >= 2) {
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
+        itemTemplate.dataset.order = "2";
 
         itemTemplate.innerHTML = `
         <div class="item-content item-content-story item-content-main">
@@ -250,6 +260,7 @@ function make3d(models) {
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
         itemTemplate.dataset.class = 'threed';
+        itemTemplate.dataset.order = "3";
         itemTemplate.innerHTML = `
     <div class="item-content item-3d">
       <div class="card">
@@ -307,12 +318,11 @@ function setGallery(images, from, to) {
         if (i >= from && i < to) {
             const itemTemplate = document.createElement('div');
             itemTemplate.dataset.class = 'imgs';
-            let currentStyle = 'max-width: 350px; max-height: 350px';
-
+            itemTemplate.dataset.order = "7";
             itemTemplate.className = 'gal-item';
             let returnHtml = `
-                <div class="gal-item-content">
-                    <img class="img-fluid hover-img" style="${currentStyle}" src="${img.path}">
+                <div class="item-content gal-item-content">
+                    <img class="img-fluid hover-img" src="${img.path}">
                     <div class="btn-panel">
                         <a href="/iiif/${img.id.split('.')[0]}" title="${languageTranslations._openInViewer}" class="img-btn">
                             <img src="/static/icons/iiif.png">
@@ -328,13 +338,12 @@ function setGallery(images, from, to) {
         if (i === to - 1 && to < images.length) {
             const loadMoreTemplate = document.createElement('div');
             loadMoreTemplate.dataset.class = 'imgs';
-            let currentStyle = 'max-width: 350px; max-height: 350px';
-
             loadMoreTemplate.className = 'gal-item';
+            loadMoreTemplate.dataset.order = "7";
             let returnHtml = `
                 <div id="loadmore" class="gal-item-content" onclick="setGallery(data.images, ${to}, ${images.length})">
                     <span class="loadmore-imgs bitem-text">Load ${images.length - to} more images</span>
-                    <img class="img-fluid hover-img" style="${currentStyle}" src="${images[to].path}">
+                    <img class="img-fluid hover-img" src="${images[to].path}">
                 </div>
             `;
             loadMoreTemplate.innerHTML = returnHtml;
@@ -369,6 +378,7 @@ function setmap() {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.id = 'map'
+    itemTemplate.dataset.order = "5";
     itemTemplate.dataset.class = 'map'
     itemTemplate.innerHTML = `
     <div class="item-content">
@@ -541,6 +551,7 @@ function addMuuri(data) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.class = 'main'
+    itemTemplate.dataset.order = "1";
 
     let first = false;
     let last = false;
@@ -598,9 +609,10 @@ function makeNetwork() {
     itemTemplate.className = 'item';
     itemTemplate.dataset.class = 'network'
     itemTemplate.dataset.id = 'network'
+    itemTemplate.dataset.order = "4";
     itemTemplate.innerHTML = `
     <div class="item-content item-content-network" id="network-cont">
-    <div id="network" ></div>
+    <div id="network" class="nopointerevents"></div>
     <a href="#"  id="ntw-large" class="img-btn"><i class="bi bi-arrows-fullscreen"></i></a>
     <span class="bitem-text" id="loadingspinner">
         <div class="spinner-border" role="status"></div>
@@ -659,10 +671,13 @@ function makeNetwork() {
 
     const enlargeNtBtn = document.getElementById('ntw-large')
     const currentNtCont = document.getElementById('network-cont')
+    const currentNt = document.getElementById('network')
     enlargeNtBtn.addEventListener('click', event => {
         setTimeout(() => {
             currentNtCont.classList.toggle('large-map')
             currentNtCont.classList.toggle('item-content-network')
+            currentNt.classList.toggle('fullwidthnw')
+            currentNt.classList.toggle('nopointerevents')
             moveToFirst('network')
             grid.refreshItems().layout();
         }, 400);
@@ -963,10 +978,15 @@ function getSources(sourceConnections) {
                 entry.type = ''
             }
 
-            if (node.involvement && node.involvement[0] && node.involvement[0].info) {
-                entry.pages = node.involvement[0].info;
-            } else {
-                entry.pages = ''
+            entry.pages = ''
+            if (node.involvement.length > 0) {
+                let spacer = ''
+                node.involvement.forEach((invo) => {
+                    if (invo.specification) {
+                        entry.pages += spacer + invo.specification[0].info
+                        spacer = '; '
+                    }
+                })
             }
 
             if (node.content && node.content.description) {
@@ -987,6 +1007,7 @@ function getSources(sourceConnections) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.class = 'source'
+    itemTemplate.dataset.order = "9";
 
     let returnHtml = `
     <div class="item-content bib-cont">
@@ -996,7 +1017,6 @@ function getSources(sourceConnections) {
         `
 
     result.forEach(source => {
-
         if (source.class === 'bibliography') {
             returnHtml += `
         <p class="card-text"><i class="me-3 bi bi-book"></i>${source.citation} ${source.pages}</p>
@@ -1087,6 +1107,7 @@ function setEvents(current_data) {
 
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    itemTemplate.dataset.order = "8";
     itemTemplate.dataset.class = 'events'
 
     eventdates = []
@@ -1215,9 +1236,10 @@ function makeEnts(data, array) {
 }
 
 
-function setEnts(current_data, class_) {
+function setEnts(current_data, class_, order) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
+    itemTemplate.dataset.order = order;
     if (class_ === '_actor') itemTemplate.dataset.class = 'actors'
     if (class_ === '_item') itemTemplate.dataset.class = 'items'
 
@@ -1437,3 +1459,19 @@ window.addEventListener("mousemove", function (event) {
         document.querySelector('.nav-second').style.top = '56px';
     }
 });
+
+function sortItemsByOrder() {
+    // Get all the items in the grid
+    const items = grid.getItems();
+
+    items.sort((a, b) => {
+        const orderA = parseInt(a.getElement().getAttribute('data-order'), 10) || 0;
+        const orderB = parseInt(b.getElement().getAttribute('data-order'), 10) || 0;
+        return orderA - orderB;  // Ascending order
+    });
+
+    // Move each fixed item to the beginning of the grid, in order
+    items.forEach((fixedItem, index) => {
+        grid.move(fixedItem, index);
+    });
+}

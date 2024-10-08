@@ -41,6 +41,8 @@ VIEW_CLASSES = {
 
 MEDIA_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg', '.glb', '.webp']
 IMAGE_EXTENSION = ['.png', '.bmp', '.jpg', '.jpeg']
+THREED_EXTENSION = ['.glb']
+VIDEO_EXTENSION = ['.mp4']
 
 # Paths
 JPG_FOLDER_PATH = '/static/images/jpgs'

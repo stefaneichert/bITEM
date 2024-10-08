@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-09-27 13:34+0200\n"
+"POT-Creation-Date: 2024-10-08 14:45+0200\n"
 "PO-Revision-Date: 2023-02-16 16:44+0100\n"
 "Last-Translator: \n"
 "Language: de\n"
@@ -185,7 +185,7 @@ msgstr "Karte"
 msgid "current"
 msgstr "aktuelles"
 
-#: bitem/templates/layout.html:105 bitem/views/iiif.py:99
+#: bitem/templates/layout.html:105 bitem/views/iiif.py:120
 msgid "source(s)"
 msgstr "Quelle(n)"
 
@@ -285,6 +285,14 @@ msgstr "Geschichte"
 #: bitem/templates/presi/presi.html:234
 msgid "continue at"
 msgstr "weiter bei"
+
+#: bitem/views/iiif.py:116
+msgid "creator(s)"
+msgstr "Urheber"
+
+#: bitem/views/iiif.py:118
+msgid "rightsholder(s)"
+msgstr "Rechteinhaber"
 
 #~ msgid "items"
 #~ msgstr "Objekte"

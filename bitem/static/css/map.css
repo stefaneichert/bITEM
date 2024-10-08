@@ -236,9 +236,6 @@
     height: calc(100vh - 56px - 2rem - 16px - 24px);
 }
 
-.item-content {
-    border: 10px solid whitesmoke;
-}
 
 @media screen and (max-width: 400px) {
     .sortbuttons {

@@ -1,5 +1,5 @@
 body {
-    padding-top: 10.5rem;
+    padding-top: 12.5rem;
 }
 
 .grid {
@@ -10,8 +10,6 @@ body {
 
 .item {
     position: absolute;
-    margin-left: 2rem;
-    margin-top: 2rem;
     z-index: 1;
 }
 
@@ -30,6 +28,7 @@ body {
 .item-content {
     position: relative;
     cursor: pointer;
+    border: 10px solid transparent;
 }
 
 .hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i {
@@ -124,17 +123,17 @@ body {
         display: none;
     }
 
-    .item-content > * {
-        width: calc(100vw - (4rem + 15px));
-    }
-
     #map {
         height: 40vh;
     }
 
-    .large-map, .item-content-network {
+    .large-map {
         height: calc(97vh - 15.5rem) !important;
-        width: calc(100vw - (4rem + 15px)) !important;
+        width: calc(100vw - 12px - 22px) !important;
+    }
+
+    .item-content-network {
+        height: calc(97vh - 15.5rem) !important;
     }
 
     .img-btn {
@@ -149,21 +148,17 @@ body {
 
 .large-map {
     height: calc(90vh - 56px);
-    width: calc(100vw - (3rem + 15px));
+    width: calc(100vw - 12px - 22px) !important;
 }
 
 @media screen and (min-width: 769px) {
 
     body {
-        padding-top: 12.5rem;
+        padding-top: 15.5rem;
     }
 
     .filter-title {
         display: inline-flex;
-    }
-
-    .item-content > * {
-        width: calc(50vw - (3rem + 10px));
     }
 
     #map {
@@ -175,17 +170,8 @@ body {
         width: calc(100vw - (4rem + 15px)) !important;
     }
 
-    .tl-cont > * {
-        width: calc(100vw - (4rem + 15px));
-    }
-
-    .bib-cont > * {
-        width: calc(100vw - (4rem + 15px));
-    }
-
     .item-content-network {
         height: calc(80vh - 12.5rem) !important;
-        width: calc(100vw - (4rem + 15px)) !important;
     }
 }
 
@@ -196,30 +182,17 @@ body {
         padding-top: 10.5rem;
     }
 
-    .item-content > * {
-        width: calc(33vw - (2rem + 3px));
-    }
-
     #map {
         height: 40vh;
     }
 
     .large-map {
         height: calc(97vh - 11.5rem) !important;
-        width: calc(100vw - (3rem + 15px)) !important;
+        width: calc(100vw - 12px - 22px) !important;
     }
 
     .item-content-network {
         height: calc(60vh - 11.5rem) !important;
-        width: calc(40vw - (2rem + 3px)) !important;
-    }
-
-    .tl-cont > * {
-        width: calc(100vw - (3rem + 15px)) !important;
-    }
-
-    .bib-cont > * {
-        width: calc(66vw - (2rem + 3px));
     }
 }
 
@@ -241,8 +214,6 @@ body {
     position: absolute;
     width: auto;
     height: auto;
-    margin-left: 2rem;
-    margin-top: 2rem;
     z-index: 1;
 }
 
@@ -262,6 +233,7 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
+    border: 10px solid transparent;
 }
 
 .loading {
@@ -390,9 +362,10 @@ body {
     color: #ffffff;
 }
 
-.ent-content {
+.ent-content > .card {
     max-height: 42.5vh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .map-body {
@@ -451,8 +424,11 @@ body {
 }
 
 #network {
-    width: 100%;
     height: 100%;
+}
+
+.fullwidthnw {
+    width: 100%!important;
 }
 
 #loadingspinner {
@@ -475,7 +451,7 @@ body {
 
 .story-btn-text {
     opacity: 0;
-    position:absolute;
+    position: absolute;
     left: 35%;
     top: 37%;
     padding-left: 1rem;
@@ -516,3 +492,56 @@ body {
     background-color: rgba(0, 0, 0, 0.22);
     color: white;
 }
+
+@media screen and (min-width: 400px) {
+    .item-content > * {
+        width: calc((100vw - 12px) - 22px);
+    }
+
+    .gal-item-content > * {
+        width: calc((100vw - 12px) / 2 - 22px);
+    }
+}
+
+
+@media screen and (min-width: 1000px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 2 - 22px);
+    }
+
+    .gal-item-content > * {
+        width: calc((100vw - 12px) / 4 - 22px);
+    }
+
+}
+
+
+@media screen and (min-width: 1400px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 3 - 22px);
+    }
+
+    .gal-item-content > * {
+        width: calc((100vw - 12px) / 6 - 22px);
+    }
+}
+
+
+@media screen and (min-width: 1600px) {
+    .item-content > * {
+        width: calc((100vw - 12px) / 4 - 22px);
+    }
+
+    .gal-item-content > * {
+        width: calc((100vw - 12px) / 8 - 22px);
+    }
+}
+
+.tl-cont > *, .bib-cont > * {
+    width: calc(100vw - 12px - 22px);
+}
+
+.nopointerevents > .vis-network {
+    pointer-events: none;
+}
+

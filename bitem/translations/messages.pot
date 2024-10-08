@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-09-27 13:34+0200\n"
+"POT-Creation-Date: 2024-10-08 14:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,7 +184,7 @@ msgstr ""
 msgid "current"
 msgstr ""
 
-#: bitem/templates/layout.html:105 bitem/views/iiif.py:99
+#: bitem/templates/layout.html:105 bitem/views/iiif.py:120
 msgid "source(s)"
 msgstr ""
 
@@ -283,5 +283,13 @@ msgstr ""
 
 #: bitem/templates/presi/presi.html:234
 msgid "continue at"
+msgstr ""
+
+#: bitem/views/iiif.py:116
+msgid "creator(s)"
+msgstr ""
+
+#: bitem/views/iiif.py:118
+msgid "rightsholder(s)"
 msgstr ""
 

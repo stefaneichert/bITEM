@@ -66,6 +66,8 @@ def makeFileList():
                     mimetype = 'poster'
                 if extension == '.pdf':
                     mimetype = 'pdf'
+                if extension == '.mp4':
+                    mimetype = 'video'
                 sql = """
                         INSERT INTO bitem.files (id, extension, filename, mimetype) VALUES (%(file_id)s, %(extension)s, %(filename)s, %(mimetype)s)
                 """
