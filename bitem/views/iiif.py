@@ -109,15 +109,18 @@ def getManifest(img_id):
                         attribution += ': ' + row.info
                     if row.spec:
                         attribution += ' ' + row.spec
-        if creator:
-            attribution += str('<br><br><p>'+ _('creator(s)').capitalize() +  ': ' + creator + '</p><br>')
+
+                attribution += '<br><br>'
         if rightsholder:
-            attribution += str('<br><p>'+ _('rightsholder(s)').capitalize() +  ': ' + rightsholder + '</p><br>')
+            attribution = '<p>'+ _('rightsholder(s)').capitalize() +  ': ' + rightsholder + '</p>' + attribution
+        if creator:
+            attribution = '<p>' + _('creator(s)').capitalize() + ': ' + creator + '<p>' + attribution
+        if filedescription.description:
+            attribution = '<p>' + _('info').capitalize() +  ': ' + filedescription.description + '</p>' + attribution
         if sourceThere:
             source = '<br>' + _('source(s)').capitalize() + ':<br>' + source
         attribution += str('<p>' + source + '</p>')
-        if filedescription.description:
-            attribution += str('<p>' + filedescription.description + '</p>')
+
 
     manifest = Manifest(
         id=request.base_url,

@@ -496,6 +496,28 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS bitem.get_vids CASCADE;
+CREATE OR REPLACE FUNCTION bitem.get_vids(current_id INT)
+    RETURNS JSONB
+    LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    return_vids JSONB;
+BEGIN
+    SELECT JSONB_AGG(f.filename) as vids
+    FROM bitem.files f
+             JOIN model.link l ON f.id = l.domain_id
+
+    WHERE l.property_code = 'P67'
+
+      AND l.range_id = current_id
+      AND f.mimetype = 'video'
+    INTO return_vids;
+    RETURN return_vids;
+END;
+$$;
+
 DROP FUNCTION IF EXISTS bitem.get_three_d_models CASCADE;
     CREATE OR REPLACE FUNCTION bitem.get_three_d_models(current_id INT)
         RETURNS JSONB
@@ -948,6 +970,7 @@ SELECT e.id,
        e.description,
        bitem.get_imgs(e.id)                                  AS images,
        bitem.get_three_d_models(e.id)                        AS models,
+       bitem.get_vids(e.id)                                  AS videos,
         bitem.getdates(e.begin_from, e.begin_to, e.begin_comment)         AS begin,
         bitem.getdates(e.end_from, e.end_to, e.end_comment)          AS end,
        (SELECT jsonb_agg(jsonb_build_object('class',

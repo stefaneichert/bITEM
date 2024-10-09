@@ -272,6 +272,7 @@ def makeItemTable(id=None, prop=None):
                'image', (NULLIF(%(mainimage)s, 'Null'))::JSONB, 
                'images', (NULLIF(%(imagearray)s, 'Null'))::JSONB,
                'models', models,
+               'videos', videos,
                'geometry', geometry,
                'connections', connections
            )) AS data

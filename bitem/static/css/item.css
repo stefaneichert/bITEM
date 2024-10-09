@@ -545,3 +545,6 @@ body {
     pointer-events: none;
 }
 
+#videoInfoContent {
+    transition: height 3s ease-in-out;
+}

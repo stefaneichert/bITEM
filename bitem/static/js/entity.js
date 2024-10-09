@@ -168,9 +168,15 @@ function createMuuriElems(obj) {
             }, 400);
         })
         addFilter('map')
-
     }
 
+
+    let videos = obj.videos
+    if (videos) {
+        for (const video of videos) {
+            setvideo(video)
+        }
+    }
 
     let items = makeEnts(obj, ['artifact'])
     if (items.length > 0) {
@@ -396,6 +402,72 @@ function setmap() {
     return itemTemplate
 }
 
+function setvideo(videoFile) {
+    let newid = videoFile.replace('.mp4', 'id')
+    console.log(newid)
+    const itemTemplate = document.createElement('div');
+    itemTemplate.className = 'item';
+    itemTemplate.dataset.order = "4";
+    itemTemplate.dataset.class = 'video'
+    itemTemplate.innerHTML = `
+    <div class="item-content">
+      <div class="card" id="videoid="${newid}">
+            <video id="my-video${newid}" class="video-js" data-setup='{"controls": "true", "autoplay": "muted", "preload": "auto", "fluid":"true", "loop":"true"}'>
+              <source src="${uploadPath}/${videoFile}" type="video/mp4"></source>
+              <p class="vjs-no-js">
+               Your browser doesn't support HTML video. Here is a
+                <a href="${uploadPath}/${videoFile}" download="${uploadPath}/${videoFile}">link to the video</a> instead.
+              </p>
+            </video>                      
+        </div>
+      </div>
+    </div>
+  `;
+    grid.add(itemTemplate)
+
+    let Button = videojs.getComponent('Button');
+
+    // Create a new class for the custom button
+    class InfoButton extends Button {
+        constructor(player, options) {
+            super(player, options);
+            // Set the button's control text and inner HTML
+            this.controlText("Info");
+            this.el().innerHTML = '<i class="bi bi-info-circle"></i>'; // Customize icon if needed
+            this.el().setAttribute('data-bs-toggle', 'modal');
+            this.el().setAttribute('data-bs-target', '#videoInfoModal');
+        }
+
+        handleClick() {
+            showVideoInfo(newid);
+        }
+    }
+
+    videojs.registerComponent('InfoButton', InfoButton);
+
+    const player = videojs(`my-video${newid}`);
+
+    player.getChild('controlBar').addChild('InfoButton', {}, 0); // Adds button to the beginning of the control bar
+}
+
+function showVideoInfo(id) {
+    let idtoquery = id.replace('id', '')
+    let attrContainer = document.getElementById('videoInfoContent')
+    attrContainer.innerHTML = `<div class="d-flex justify-content-center">
+                                    <div class="spinner-grow text-light" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                               </div>`
+    getImageExt(idtoquery)
+        .then(data => {
+            attrContainer.innerHTML = data.requiredStatement.value[language][0]
+            console.log(data)
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    console.log(idtoquery)
+}
 
 function extractPlaceInfo(data) {
     const connections = data.connections;

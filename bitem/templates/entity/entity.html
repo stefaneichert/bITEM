@@ -16,6 +16,9 @@
 <link href="/static/vendor/timeline-master/dist/css/timeline.min.css" rel="stylesheet"/>
 <script src="/static/vendor/node_modules/vis-network/dist/vis-network.min.js"></script>
 
+<link href="//vjs.zencdn.net/8.18.1/video-js.min.css" rel="stylesheet">
+<script src="//vjs.zencdn.net/8.18.1/video.min.js"></script>
+
 <div class="loading">
     <div class="spinner-grow text-light" role="status">
         <span class="visually-hidden">{{_('loading')|uc_first}}...</span>
@@ -31,6 +34,21 @@
     <div id="tiles" class="grid fade-me"></div>
 
 </main>
+
+
+<div class="modal fade" id="videoInfoModal" tabindex="-1" aria-labelledby="videoInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="bg-dark modal-content bitem-text">
+            <div class="modal-body" id="videoInfoContent">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">{{_('close')|uc_first}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="/static/js/entity.js"></script>
 
 
