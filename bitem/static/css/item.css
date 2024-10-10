@@ -139,9 +139,19 @@ body {
         height: calc(97vh - 15.5rem) !important;
     }
 
-    .img-btn {
+    .img-btn  {
         opacity: 1;
     }
+
+    .img-btn i, .story-btn-text {
+        color: whitesmoke;
+        opacity: 1!important;
+    }
+
+    .story-btn-img {
+        opacity: 0.5;
+    }
+
 
 }
 
