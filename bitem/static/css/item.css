@@ -25,10 +25,13 @@ body {
     z-index: 3;
 }
 
-.item-content {
+.item-content, .gal-item-content {
     position: relative;
     cursor: pointer;
-    border: 10px solid transparent;
+    border: none;
+    width: 100%;
+    height: 100%;
+    border-top: 10px solid transparent;
 }
 
 .hover-img:hover + .btn-panel > .img-btn, .hover-img:hover + .btn-panel > .img-btn > i {
@@ -229,13 +232,6 @@ body {
     z-index: 0;
 }
 
-.gal-item-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border: 10px solid transparent;
-}
-
 .loading {
     display: flex;
     justify-content: center;
@@ -428,7 +424,7 @@ body {
 }
 
 .fullwidthnw {
-    width: 100%!important;
+    width: 100% !important;
 }
 
 #loadingspinner {
@@ -493,7 +489,21 @@ body {
     color: white;
 }
 
-@media screen and (min-width: 400px) {
+@media screen and (max-width: 499px) {
+    .ent-content > .card {
+        max-height: unset;
+    }
+}
+
+@media screen and (min-width: 0px) {
+    .item-content > *, .gal-item-content > *, tl-cont > *, .bib-cont > * {
+        width: calc((100vw - 12px));
+        border-left: 0px;
+        border-right: 0px;
+    }
+}
+
+@media screen and (min-width: 500px) {
     .item-content > * {
         width: calc((100vw - 12px) - 22px);
     }
@@ -501,10 +511,18 @@ body {
     .gal-item-content > * {
         width: calc((100vw - 12px) / 2 - 22px);
     }
+
+    .item-content, .gal-item-content {
+        border: 10px solid transparent;
+    }
+
+    .tl-cont > *, .bib-cont > * {
+        width: calc(100vw - 12px - 22px) !important;
+    }
 }
 
 
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 801px) {
     .item-content > * {
         width: calc((100vw - 12px) / 2 - 22px);
     }
@@ -513,6 +531,11 @@ body {
         width: calc((100vw - 12px) / 4 - 22px);
     }
 
+}
+
+#headlineBox {
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 
@@ -535,10 +558,6 @@ body {
     .gal-item-content > * {
         width: calc((100vw - 12px) / 8 - 22px);
     }
-}
-
-.tl-cont > *, .bib-cont > * {
-    width: calc(100vw - 12px - 22px);
 }
 
 .nopointerevents > .vis-network {
