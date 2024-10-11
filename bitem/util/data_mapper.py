@@ -207,7 +207,7 @@ WHERE place_id IN (SELECT ids
                    FROM bitem.get_entities(
                            ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
                            196063
-                        ));   
+                        )) AND place_id NOT IN (SELECT e.id FROM model.entity e JOIN model.link l ON e.id = l.domain_id WHERE l.range_id IN (222268));   
     """
     g.cursor.execute(sql)
 

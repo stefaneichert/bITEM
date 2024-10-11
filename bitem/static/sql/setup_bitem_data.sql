@@ -904,7 +904,7 @@ BEGIN
               FROM (SELECT DISTINCT REPLACE(openatlas_class_name, 'object_location', 'place') as class_,
                                     name,
                                     id,
-                                    NULLIF(description, '') AS      description,
+                                    NULLIF(description, '')                                   AS description,
                                     mainfirst,
                                     mainlast,
                                     JSONB_AGG(jsonb_strip_nulls(jsonb_build_object('_label',
@@ -928,7 +928,7 @@ BEGIN
                                                                                            '{197086, 197088}'),
                                                                                    'specification',
                                                                                    NULLIF(bitem.get_involvement(origin_id, id, property_code), '[{}]')
-                                                                ))) connections
+                                                                )))                              connections
                     FROM bitem.get_connection_ids(current_id)
                     GROUP BY class_, description, name, id, mainfirst, mainlast
                     ORDER BY class_, id) c
@@ -942,6 +942,21 @@ BEGIN
                                     AND f.openatlas_class_name = 'file'
                                   GROUP BY l.range_id) i
                                  ON i.ent_id = c.id) a
+        WHERE a.id IN (SELECT ids
+                       FROM bitem.get_entities(
+                               ARRAY ['person', 'group', 'artifact', 'place', 'acquisition', 'event', 'activity', 'creation', 'move', 'production', 'modification'],
+                               196063
+                            )
+                       UNION ALL
+                       SELECT location_id
+                       FROM bitem.geometries
+                       UNION ALL
+                       SELECT place_id
+                       FROM bitem.geometries)
+          AND a.id NOT IN (SELECT e.id
+                           FROM model.entity e
+                                    JOIN model.link l ON e.id = l.domain_id
+                           WHERE l.range_id IN (222268))
         GROUP BY a.class_;
 END;
 $$;
