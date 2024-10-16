@@ -952,7 +952,9 @@ BEGIN
                        FROM bitem.geometries
                        UNION ALL
                        SELECT place_id
-                       FROM bitem.geometries)
+                       FROM bitem.geometries
+                       UNION ALL
+                       SELECT id FROM model.entity WHERE openatlas_class_name = 'type')
           AND a.id NOT IN (SELECT e.id
                            FROM model.entity e
                                     JOIN model.link l ON e.id = l.domain_id

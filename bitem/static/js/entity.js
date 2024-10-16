@@ -652,7 +652,7 @@ function addMuuri(data) {
         both = false;
     }
 
-    headlineBox.innerHTML += '<h4>' + getLabelTranslation(data) + '</h4>'
+    headlineBox.innerHTML += '<h4 title="'+classTitle+'">'+classIcon + getLabelTranslation(data) + '</h4>'
 
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
