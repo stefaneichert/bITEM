@@ -1,3 +1,8 @@
+window.addEventListener('load', function () {
+  timeline.redraw();
+});
+
+
 // Filter the connections to include only "place" class connections
 const mapData = data.connections.filter((connection) =>
   ["place"].includes(connection.class)
@@ -100,7 +105,7 @@ const cleanedGroupedArray = groupedArray.filter(
 );
 console.log(cleanedGroupedArray);
 
-const map = L.map("map").setView([45.644, 13.756], 13);
+const map = L.map("map").setView([45.644, 13.756], 2.5); // Adjust the zoom level here
 
 var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -109,11 +114,8 @@ var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 });
 osm.addTo(map);
 
-var baseMaps = {
-  "Open Street Map": osm,
-};
-L.control.layers(baseMaps).addTo(map);
 
+// Function to transform date strings into Date objects
 function transformDate(dateString) {
   if (!dateString) {
     console.error("Invalid date string:", dateString);
@@ -126,27 +128,13 @@ function transformDate(dateString) {
   return new Date(year, month, day);
 }
 
-console.log(cleanedGroupedArray);
 
-// get min and max date for timeline boundaries
-//Function to add a few month before and after the first event
 
-function addmonths(date, months) {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() + months);
-  return d;
-}
 
-const dates = cleanedGroupedArray.flatMap((item) => [new Date(item.begin), new Date(item.end)]);
+// Ensure startDate and endDate are defined
+let startDate, endDate;
 
-const minDate = new Date(Math.min(...dates));
-const maxDate = new Date(Math.max(...dates));
-
-const adjustedMinDate = addmonths(minDate, -3);
-const adjustedMaxDate = addmonths(maxDate, 3);
-const startDate = addmonths(minDate, -1);
-const endDate = addmonths(minDate, 12);
-
+// Validate and transform timeline data
 const timelineData = cleanedGroupedArray
   .map((item) => {
     if (!item.begin || !item.end) {
@@ -159,16 +147,42 @@ const timelineData = cleanedGroupedArray
     }
     const place = item.places;
 
+    const start = transformDate(item.begin);
+    const end = transformDate(item.end);
+
+    // Validate the transformed dates
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      console.error("Invalid date for item:", item);
+      return null;
+    }
+
+    // Set startDate and endDate if not already set
+    if (!startDate || start < startDate) {
+      startDate = start;
+    }
+    if (!endDate || end > endDate) {
+      endDate = end;
+    }
+
     return {
       oid: item.origin_id,
       content: getTypeTranslation(item.origin),
-      start: transformDate(item.begin),
-      end: transformDate(item.end),
+      start: start,
+      end: end,
       place: place,
     };
   })
   .filter((item) => item !== null);
-console.log(timelineData);
+
+console.log("startDate:", startDate);
+console.log("endDate:", endDate);
+
+if (!startDate || !endDate) {
+  console.error("startDate or endDate is not defined");
+  // Handle the error appropriately, e.g., set default values or exit
+  startDate = new Date(); // Default to current date
+  endDate = new Date(); // Default to current date
+}
 
 const items = new vis.DataSet(
   timelineData.map((item) => {
@@ -176,13 +190,11 @@ const items = new vis.DataSet(
     const end = new Date(item.end);
     const duration = (end - start) / (1000 * 60 * 60 * 24); // Convert duration to days
 
-    item.title = `${
-      item.content
-    } (${start.toDateString()} - ${end.toDateString()})`;
+    item.title = `${item.content} (${start.toDateString()} - ${end.toDateString()})`;
 
     item.id = item.oid;
 
-    if (duration < 7) {
+    if (duration < 1) {
       item.type = "point";
     } else {
       item.type = "range";
@@ -190,6 +202,10 @@ const items = new vis.DataSet(
     return item;
   })
 );
+
+// Define adjustedMinDate and adjustedMaxDate
+const adjustedMinDate = new Date(startDate.getTime() - 1000 * 60 * 60 * 24 * 30); // 30 days before startDate
+const adjustedMaxDate = new Date(endDate.getTime() + 1000 * 60 * 60 * 24 * 30); // 30 days after endDate
 
 const options = {
   height: "25vh",
@@ -208,19 +224,31 @@ const options = {
   },
   orientation: "bottom",
   template: function (item, element, data) {
-    if (item.type === "point" || item.type === "range") {
-      return "";
+    if (item.type === "range") {
+      // Create a div to hold the content with a tooltip
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'vis-item-content';
+      contentDiv.title = item.content; // Set the tooltip text
+      contentDiv.innerText = item.content; // Set the visible text
+      return contentDiv.outerHTML;
     }
     return item.content;
   },
 };
-// Function to add markers to the map
+
 const timelineElement = document.getElementById("timeline");
 const timeline = new vis.Timeline(timelineElement, items, options);
+
+// Set the initial zoom level
+const initialStart = startDate;
+const initialEnd = new Date(startDate.getTime() + 1000 * 60 * 60 * 24 * 30); // 30 days after startDate
+timeline.setWindow(initialStart, initialEnd);
 
 window.addEventListener('load', () => {
   timeline.redraw();
 });
+
+
 
 var oldMarkers = [];
 
@@ -369,7 +397,7 @@ mapData[0].nodes.forEach(function (place) {
               <ul>${eventsHtml}</ul>
             `;
 
-            marker.bindPopup(popupContent).openPopup();
+            marker.bindPopup(popupContent);
             pointnotyetfound = false;
 
             // Store marker in mapMarkers object
@@ -389,7 +417,6 @@ mapData[0].nodes.forEach(function (place) {
 });
 
 // Function to create details div
-
 const detailsContainer = document.getElementById("detailsContainer");
 const detailsContent = document.getElementById("detailsContent");
 const closeBtn = document.getElementById("closeBtn");
@@ -443,6 +470,11 @@ function makeDraggable(element) {
 function showDetailsContainer(content) {
   detailsContent.innerHTML = content;
   detailsContainer.classList.remove("hidden");
+
+  // Reset the position of the details container
+  detailsContainer.style.top = '56px'; // Aligns it to the map's top
+  detailsContainer.style.left = 'auto'; // Reset left position
+  detailsContainer.style.right = '0'; // Dock it to the right side of the viewport
 }
 
 // Function to hide details container
@@ -509,43 +541,79 @@ function populateContainer(id) {
     });
 }
 
-// Timeline click event listener
+// Function to show the popover
+function showPopover(event, item) {
+  const popover = document.getElementById("timelinePopover");
+  const flyToLocationBtn = document.getElementById("flyToLocationBtn");
+  const showDetailsBtn = document.getElementById("showDetailsBtn");
+
+  // Position the popover near the clicked timeline item
+  const rect = event.target.getBoundingClientRect();
+  popover.style.top = `${rect.top + window.scrollY + rect.height}px`;
+  popover.style.left = `${rect.left + window.scrollX}px`;
+  popover.style.display = "block";
+
+  // Add event listeners to the buttons
+  flyToLocationBtn.onclick = () => {
+    flyToLocation(item);
+    hidePopover();
+  };
+
+  showDetailsBtn.onclick = () => {
+    showDetails(item);
+    hidePopover();
+  };
+}
+
+// Function to hide the popover
+function hidePopover() {
+  const popover = document.getElementById("timelinePopover");
+  popover.style.display = "none";
+}
+
+// Function to fly to the location on the map
+function flyToLocation(item) {
+  resetMarkers();
+
+  const view = [];
+
+  item.place.forEach(function (place) {
+    highlightMarker(place.spatialinfo.properties.id);
+    const marker = mapMarkers[place.spatialinfo.properties.id];
+    if (marker) {
+      view.push(marker.getLatLng());
+    }
+  });
+
+  if (view.length > 0) {
+    const bounds = L.latLngBounds(view);
+    if (view.length > 1) {
+      map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    } else {
+      const singleMarker = 8;
+      map.flyTo(view[0], singleMarker, {
+        animate: true,
+        duration: 5,
+      });
+    }
+  }
+}
+
+// Function to show the details container
+function showDetails(item) {
+  const content = `<h3>${item.content}</h3>`;
+  showDetailsContainer(content);
+  populateContainer(item.oid);
+}
+
+// Timeline single-click event listener for showing the popover
 document.getElementById("timeline").onclick = function (event) {
-  var props = timeline.getEventProperties(event); //Not only 2 places (origin/destination), there could be many more places that are connected to the event.
+  var props = timeline.getEventProperties(event); // Get properties of the clicked event
   console.log("Clicked item:", props.item);
   if (props.item) {
     var clickedItem = timelineData.find((item) => item.oid === props.item);
     if (clickedItem) {
-      resetMarkers();
-
-      const view = [];
-
-      clickedItem.place.forEach(function (place) {
-        highlightMarker(place.spatialinfo.properties.id);
-        const marker = mapMarkers[place.spatialinfo.properties.id];
-        if (marker) {
-          view.push(marker.getLatLng());
-        }
-      });
-
-      if (view.length > 0) {
-        const bounds = L.latLngBounds(view);
-        if (view.length > 1) {
-          map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-        } else {
-          const singleMarker = 8;
-          map.flyTo(view[0], singleMarker, {
-            animate: true,
-            duration: 5,
-          });
-        }
-      }
-
-      const content = `
-        <h3>${clickedItem.content}</h3>
-      `;
-      showDetailsContainer(content);
-      populateContainer(clickedItem.oid);
+      showPopover(event, clickedItem);
     } else {
       console.error("Item not found in timelineData.");
     }
@@ -553,6 +621,14 @@ document.getElementById("timeline").onclick = function (event) {
     console.error("No item clicked.");
   }
 };
+
+// Hide the popover when clicking outside of it
+document.addEventListener("click", function (event) {
+  const popover = document.getElementById("timelinePopover");
+  if (!popover.contains(event.target) && !event.target.closest(".vis-item")) {
+    hidePopover();
+  }
+});
 
 const resizer = document.querySelector(".resizer");
 const timelineContainer = document.getElementById("timeline-container");
@@ -595,6 +671,10 @@ function initResizerFn(resizer, timelineContainer) {
 
 initResizerFn(document.querySelector(".resizer"), timelineContainer);
 
+window.addEventListener('load', function () {
+  timeline.redraw();
+});
+
 document.getElementById("toggleTimelineBtn").addEventListener("click", function() {
   const timelineContainer = document.getElementById("timeline-container");
 
@@ -604,12 +684,13 @@ document.getElementById("toggleTimelineBtn").addEventListener("click", function(
     timelineContainer.style.display = "none";
   }
 
-  // If you want the timeline to redraw itself after being shown
+  // Redraw the timeline after being shown
   if (timelineContainer.style.display === "block") {
-    timeline.redraw(); // Redraw the timeline to fit the full screen height
+    setTimeout(() => {
+      timeline.redraw();
+    }, 100); // Delay to ensure the container is fully visible
   }
 });
-
 
 
 function mobileTimeline() {
@@ -630,4 +711,4 @@ function mobileTimeline() {
 
 // Call resizeTimeline on page load and whenever the window is resized
 window.addEventListener('resize', mobileTimeline);
-mobileTimeline(); // Initial call on page load
+mobileTimeline();
