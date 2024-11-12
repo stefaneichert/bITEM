@@ -16,26 +16,28 @@
 </script>
 
 <main>
-    <div id="map"></div>
+    <div id="map">
+        <button id="toggleTimelineBtn" class="toggle-timeline-btn">Timeline on/off</button>
+    </div>
     <div id="timeline-container">
         <div class="resizer"></div>
         <div id="timeline"></div>
     </div>
+    <div id="timelinePopover" class="popover hidden">
+        <div class="popover-content">
+          <button id="flyToLocationBtn" class="popover-btn">Fly to location</button>
+          <button id="showDetailsBtn" class="popover-btn">Show details</button>
+        </div>
+      </div>
     <div id="detailsContainer" class="draggable hidden">
-        <div class="header">draggable
-          <span id="closeBtn" style="
-          width: 100%;
-          text-align: right;
-          margin-right: 1rem;
-          ">X</span>
+        <div class="header">
+            <img src="/static/images/placeholder_img/drag.png" alt="Draggable" class="header-image">
+            <span id="closeBtn" class="close-btn">X</span>
         </div>
         <div id="spinner" class="spinner hidden"></div>
         <div id="detailsContent"></div>
     </div>
-    <button id="toggleTimelineBtn">Timeline on/off</button>
 </main>
-
-   
 
 <script src="/static/js/storymap.js"></script>
 {% endblock %}
