@@ -657,6 +657,8 @@ function addMuuri(data) {
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
       <div class="card">
+      ${data.image ? `<img src="${data.image.path}" alt="...">` : ''}
+      ${!data.image && data.images[0]? `<img src="${data.images[0].path}" alt="...">` : ''}
         <div class="card-body">
             <h3 class="card-title">${getLabelTranslation(data)}</h3>
             ${getAliases(data)}
