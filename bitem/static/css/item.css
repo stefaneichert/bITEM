@@ -456,14 +456,16 @@ body {
 }
 
 .story-btn-text {
-    opacity: 0;
+    width: 100%;
     position: absolute;
-    left: 35%;
+    left: 0;
+    text-align: center;
     top: 37%;
     padding-left: 1rem;
     padding-right: 1rem;
     font-size: 3rem;
     font-weight: 700;
+    pointer-events: none;
 }
 
 .story-card:hover .story-btn-img {

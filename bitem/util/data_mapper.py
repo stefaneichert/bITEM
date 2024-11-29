@@ -290,6 +290,7 @@ def makeItemTable(id=None, prop=None):
                                                      196063
                                              ))
                            AND NOT data -> 'casestudies' @> '[222268]');
+        DELETE FROM bitem.tbl_allitems WHERE id IN (SELECT domain_id FROM model.link WHERE range_id = 222268)
     """
 
     g.cursor.execute(sql_delete)

@@ -57,7 +57,7 @@ def entity(entity_id: int, format_=None):
             icon, title = value['icon'], value['title']
 
 
-    return render_template("/entity/entity.html", data=data,
+    return render_template("/entity/entity.html", data=data, id=entity_id,
                            translations=translations.translations, icon=icon, title=title,
                            events=app.config['VIEW_CLASSES']['events'])
 

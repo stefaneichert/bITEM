@@ -2,42 +2,60 @@
 {% block content %}
 
 <link rel="stylesheet" href="/static/vendor/node_modules/leaflet/dist/leaflet.css"/>
-<link rel="stylesheet" href="/static/vendor/node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
-<link rel="stylesheet" href="/static/vendor/node_modules/swiper/swiper-bundle.min.css"/>
 <link rel="stylesheet" href="/static/vendor/node_modules/vis-timeline/styles/vis-timeline-graph2d.min.css"/>
 <link rel="stylesheet" href="/static/css/storymap.css"/>
 
 <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
-<script src="/static/vendor/node_modules/swiper/swiper-bundle.min.js"></script>
 <script src="/static/vendor/node_modules/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js"></script>
 
 <script>
-    const data = {{ data | tojson }};
+    const data = {{data | tojson}};
+    const id = {{ id }};
 </script>
 
 <main>
+    <div id="mobile-container"></div>
     <div id="map">
-        <button id="toggleTimelineBtn" class="toggle-timeline-btn">Timeline on/off</button>
+        <a class="nav-btn move-btn nav-btn-next next-btn storylink" onclick="moveToAdjacentItems(true)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="whitesmoke" class="bi bi-arrow-right"
+                 viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+            </svg>
+        </a>
+        <a class="nav-btn move-btn nav-btn-prev prev-btn storylink" onclick="moveToAdjacentItems(false)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="whitesmoke" class="bi bi-arrow-left"
+                 viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                      d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+            </svg>
+        </a>
     </div>
     <div id="timeline-container">
-        <div class="resizer"></div>
         <div id="timeline"></div>
     </div>
-    <div id="timelinePopover" class="popover hidden">
-        <div class="popover-content">
-          <button id="flyToLocationBtn" class="popover-btn">Fly to location</button>
-          <button id="showDetailsBtn" class="popover-btn">Show details</button>
-        </div>
-      </div>
-    <div id="detailsContainer" class="draggable hidden">
-        <div class="header">
-            <img src="/static/images/placeholder_img/drag.png" alt="Draggable" class="header-image">
-            <span id="closeBtn" class="close-btn">X</span>
-        </div>
+    <div id="detailsContainer" class="hidden">
+        <div id="close-container" style="display: flex; width: 100%; justify-content: flex-end"></div>
         <div id="spinner" class="spinner hidden"></div>
         <div id="detailsContent"></div>
     </div>
+
+    <div class="modal fade" id="startModal" tabindex="-1" aria-labelledby="startModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div id="image-cont" class="modal-body">
+                <div class="overlay">
+                    <div class="mod-spacer"></div>
+                    <div id="startModalContent">Your overlay text here</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </main>
 
+<script src="/static/js/settimedata.js"></script>
 <script src="/static/js/storymap.js"></script>
+
 {% endblock %}

@@ -1,3 +1,5 @@
+
+
 const Clmarkers = L.markerClusterGroup({singleMarkerMode: true, maxClusterRadius: 1})
 let mapindex = 0;
 let network
@@ -6,7 +8,7 @@ let nodesDataset
 let edgesDataset
 let allNodes
 let allEdges
-
+const timelineData = makeMapData(data, id).timelineData
 
 const filterClasses = document.getElementById('filterClasses')
 const headlineBox = document.getElementById('headlineBox')
@@ -223,7 +225,7 @@ function makeStorymapBtn() {
     });
 
 // Output the counts
-    if (totalCount >= 2) {
+    if (totalCount >= 3) {
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
         itemTemplate.dataset.order = "2";
@@ -242,6 +244,28 @@ function makeStorymapBtn() {
       `;
         grid.add(itemTemplate)
     }
+
+    if (timelineData.length >= 4) {
+        const itemTemplate = document.createElement('div');
+        itemTemplate.className = 'item';
+        itemTemplate.dataset.order = "2";
+
+        itemTemplate.innerHTML = `
+        <div class="item-content item-content-story item-content-main">
+          <div class="card story-card">
+            <div>
+            <a class="tile-link bitem-text" href="/storymap/${data.id}">
+            <img class="story-btn-img" src="/static/images/assets/storymap.png">
+            <span class="story-btn-text">Storymap</span>            
+            </a>
+            </div>
+          </div>
+        </div>
+      `;
+        grid.add(itemTemplate)
+    }
+
+
 
 }
 
@@ -404,7 +428,6 @@ function setmap() {
 
 function setvideo(videoFile) {
     let newid = videoFile.replace('.mp4', 'id')
-    console.log(newid)
     const itemTemplate = document.createElement('div');
     itemTemplate.className = 'item';
     itemTemplate.dataset.order = "4";
@@ -657,8 +680,8 @@ function addMuuri(data) {
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
       <div class="card">
-      ${data.image ? `<img src="${data.image.path}" alt="...">` : ''}
-      ${!data.image && data.images ? `<img src="${data.images[0].path}" alt="...">` : ''}
+      ${data.image ? `<img src="${(data.image.path).split('/full/')[0] + '/full/max/0/default.jpg'}" alt="...">` : ''}
+      ${!data.image && data.images ? `<img src="${(data.images[0].path).split('/full/')[0] + '/full/max/0/default.jpg'}" alt="...">` : ''}
         <div class="card-body">
             <h3 class="card-title">${getLabelTranslation(data)}</h3>
             ${getAliases(data)}

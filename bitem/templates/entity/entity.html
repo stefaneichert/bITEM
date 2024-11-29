@@ -8,6 +8,7 @@
     const eventList = {{ events | tojson}}
     const classIcon = '{{ icon | safe}}'
     const classTitle = "{{ title | safe}}"
+    const id = {{ id }}
 </script>
 <link rel="stylesheet" href="/static/css/item.css"/>
 <script src="/static/vendor/node_modules/leaflet/dist/leaflet.js"></script>
@@ -50,6 +51,7 @@
     </div>
 </div>
 
+<script src="/static/js/settimedata.js"></script>
 <script src="/static/js/entity.js"></script>
 
 
