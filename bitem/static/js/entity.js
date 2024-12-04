@@ -8,7 +8,10 @@ let nodesDataset
 let edgesDataset
 let allNodes
 let allEdges
-const timelineData = makeMapData(data, id).timelineData
+
+let timelineData = []
+
+if (makeMapData(data, id))  timelineData = makeMapData(data, id).timelineData
 
 const filterClasses = document.getElementById('filterClasses')
 const headlineBox = document.getElementById('headlineBox')

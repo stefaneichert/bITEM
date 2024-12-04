@@ -42,140 +42,147 @@ function makeMapData(data, id) {
         ["place"].includes(connection.class)
     );
     let myTimeEntity = [];
+    console.log(mapData)
+
+    if (mapData[0]) {
 
 // Process each node in the filtered connections
-    for (const place in mapData[0].nodes) {
-        let dateThere = false;
-        let placeThere = false;
-        if (mapData[0].nodes[place].spatialinfo) {
-            if (
-                typeof mapData[0].nodes[place].spatialinfo.geometry.geometries[0]
-                    .coordinates !== "undefined"
-            ) {
-                placeThere = true;
+        for (const place in mapData[0].nodes) {
+            let dateThere = false;
+            let placeThere = false;
+            if (mapData[0].nodes[place].spatialinfo) {
+                if (
+                    typeof mapData[0].nodes[place].spatialinfo.geometry.geometries[0]
+                        .coordinates !== "undefined"
+                ) {
+                    placeThere = true;
 
-                mapData[0].nodes[place].involvement.forEach((node) => {
-                    let dateThere = false;
+                    mapData[0].nodes[place].involvement.forEach((node) => {
+                        let dateThere = false;
 
-                    if (node.begin) {
-                        dateThere = true;
-                        node.beginDBP = calculateTimeBP(node.begin);
-                    }
-                    if (node.end) {
-                        dateThere = true;
-                        node.endDBP = calculateTimeBP(node.end);
-                    }
-                    if (node.endDBP && node.beginDBP) {
-                        node.duration = node.beginDBP - node.endDBP;
-                    }
-                    if (dateThere) {
-                        node.spatialinfo = mapData[0].nodes[place].spatialinfo;
-                    }
-                    if (dateThere && placeThere) {
-                        myTimeEntity.push(node);
-                    }
-                });
+                        if (node.begin) {
+                            dateThere = true;
+                            node.beginDBP = calculateTimeBP(node.begin);
+                        }
+                        if (node.end) {
+                            dateThere = true;
+                            node.endDBP = calculateTimeBP(node.end);
+                        }
+                        if (node.endDBP && node.beginDBP) {
+                            node.duration = node.beginDBP - node.endDBP;
+                        }
+                        if (dateThere) {
+                            node.spatialinfo = mapData[0].nodes[place].spatialinfo;
+                        }
+                        if (dateThere && placeThere) {
+                            myTimeEntity.push(node);
+                        }
+                    });
+                }
             }
         }
-    }
 
-    sortedDates = myTimeEntity.sort((a, b) => {
-        const aBeginSort = a.beginDBP || a.endDBP;
-        const bBeginSort = b.beginDBP || b.endDBP;
-        if (aBeginSort !== bBeginSort) {
-            return aBeginSort - bBeginSort;
-        } else {
-            const aEndSort = a.endDBP || a.beginDBP;
-            const bEndSort = b.endDBP || b.beginDBP;
-            return aEndSort - bEndSort;
-        }
-    });
+        sortedDates = myTimeEntity.sort((a, b) => {
+            const aBeginSort = a.beginDBP || a.endDBP;
+            const bBeginSort = b.beginDBP || b.endDBP;
+            if (aBeginSort !== bBeginSort) {
+                return aBeginSort - bBeginSort;
+            } else {
+                const aEndSort = a.endDBP || a.beginDBP;
+                const bEndSort = b.endDBP || b.beginDBP;
+                return aEndSort - bEndSort;
+            }
+        });
 
-    const groupedArray = groupByIdenticalKeys(sortedDates);
+        const groupedArray = groupByIdenticalKeys(sortedDates);
 
 // Remove entry with undefined begin/end
-    const cleanedGroupedArray = groupedArray.filter(
-        (item) => item.begin !== undefined || item.end !== undefined
-    );
+        const cleanedGroupedArray = groupedArray.filter(
+            (item) => item.begin !== undefined || item.end !== undefined
+        );
 
-    // Ensure startDate and endDate are defined
-let startDate, endDate;
+        // Ensure startDate and endDate are defined
+        let startDate, endDate;
 
 // Validate and transform timeline data
-const timelineData = cleanedGroupedArray
-    .map((item) => {
-        if (!item.begin && !item.end) {
-            console.error("Missing begin or end date for item:", item);
-            return null;
+        const timelineData = cleanedGroupedArray
+            .map((item) => {
+                if (!item.begin && !item.end) {
+                    console.error("Missing begin or end date for item:", item);
+                    return null;
+                }
+
+                if (item.begin && !item.end) {
+                    item.end = item.begin
+                }
+
+                if (item.end && !item.begin) {
+                    item.begin = item.end
+                }
+
+                if (typeof item.places[0] === "undefined") {
+                    console.error("No Origin", item);
+                    return null;
+                }
+                const place = item.places;
+
+                const start = transformDate(item.begin);
+                const end = transformDate(item.end);
+
+                const startstring = makeLocalDate(item.begin).localdate;
+                const endstring = makeLocalDate(item.end).localdate;
+                // Validate the transformed dates
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    console.error("Invalid date for item:", item);
+                    return null;
+                }
+
+                if (item.origin_id === id) return null
+
+                // Set startDate and endDate if not already set
+                if (!startDate || start < startDate) {
+                    startDate = start;
+                }
+                if (!endDate || end > endDate) {
+                    endDate = end;
+                }
+
+                let invo = ''
+                let connector = ', '
+                let i = 1
+                for (const place of item.places) {
+                    if (i === item.places.length) connector = ''
+                    invo += getTypeTranslation(place.property) + connector
+                    i += 1
+                }
+
+                return {
+                    oid: item.origin_id,
+                    content: getTypeTranslation(item.origin),
+                    start: start,
+                    end: end,
+                    involvement: invo,
+                    startstring: startstring,
+                    endstring: endstring,
+                    place: place,
+                };
+            })
+            .filter((item) => item !== null);
+
+        if (!startDate || !endDate) {
+            console.error("startDate or endDate is not defined");
+            // Handle the error appropriately, e.g., set default values or exit
+            startDate = new Date(); // Default to current date
+            endDate = new Date(); // Default to current date
         }
 
-        if (item.begin && !item.end) {
-            item.end = item.begin
-        }
 
-        if (item.end && !item.begin) {
-            item.begin = item.end
-        }
+        returnData = {'timelineData': timelineData, 'startDate': startDate, 'endDate': endDate, 'mapData': mapData}
 
-        if (typeof item.places[0] === "undefined") {
-            console.error("No Origin", item);
-            return null;
-        }
-        const place = item.places;
-
-        const start = transformDate(item.begin);
-        const end = transformDate(item.end);
-
-        const startstring = makeLocalDate(item.begin).localdate;
-        const endstring = makeLocalDate(item.end).localdate;
-        // Validate the transformed dates
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-            console.error("Invalid date for item:", item);
-            return null;
-        }
-
-        if (item.origin_id === id) return null
-
-        // Set startDate and endDate if not already set
-        if (!startDate || start < startDate) {
-            startDate = start;
-        }
-        if (!endDate || end > endDate) {
-            endDate = end;
-        }
-
-        let invo = ''
-        let connector = ', '
-        let i = 1
-        for (const place of item.places) {
-            if (i === item.places.length) connector = ''
-            invo += getTypeTranslation(place.property) + connector
-            i += 1
-        }
-
-        return {
-            oid: item.origin_id,
-            content: getTypeTranslation(item.origin),
-            start: start,
-            end: end,
-            involvement: invo,
-            startstring: startstring,
-            endstring: endstring,
-            place: place,
-        };
-    })
-    .filter((item) => item !== null);
-
-if (!startDate || !endDate) {
-    console.error("startDate or endDate is not defined");
-    // Handle the error appropriately, e.g., set default values or exit
-    startDate = new Date(); // Default to current date
-    endDate = new Date(); // Default to current date
-}
-
-    returnData = {'timelineData': timelineData, 'startDate': startDate, 'endDate': endDate, 'mapData':mapData}
-
-    return returnData
+        return returnData
+    } else {
+        return null
+    }
 
 }
 
