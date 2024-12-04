@@ -195,7 +195,7 @@ function enlarge3d(model, poster, name) {
     const modalThreeD = new bootstrap.Modal('#info-modal')
 
 
-    id = model.replace('.glb', '')
+    let id = model.replace('.glb', '')
 
     var closedModalHashStateId = "#modalClosed";
     var openModalHashStateId = "#modalOpen";
