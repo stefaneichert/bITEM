@@ -39,6 +39,10 @@ body {
     transition: opacity 0.3s !important;
 }
 
+.btn-panel {
+    cursor: pointer;
+}
+
 #network-cont *:hover + .img-btn, #network-cont *:hover + .img-btn > i {
     opacity: 0.8;
     transition: opacity 0.3s !important;
