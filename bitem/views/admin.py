@@ -19,7 +19,8 @@ def admin() -> str:
 @app.route('/admin/synchronise/<id>/<prop>')
 @login_required
 def synchronise(id: Optional[int] = None, prop: Optional[str] = None) -> str:
-    iiiftools.makeFileList()
-    data_mapper.makeGeomTable()
+    if not id:
+        iiiftools.makeFileList()
+        data_mapper.makeGeomTable()
     data_mapper.makeItemTable(id, prop)
     return render_template("/admin/admin.html")

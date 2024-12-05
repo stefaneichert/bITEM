@@ -232,6 +232,7 @@ function makeStorymapBtn() {
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
         itemTemplate.dataset.order = "2";
+        itemTemplate.dataset.class = "main";
 
         itemTemplate.innerHTML = `
         <div class="item-content item-content-story item-content-main">
@@ -252,6 +253,7 @@ function makeStorymapBtn() {
         const itemTemplate = document.createElement('div');
         itemTemplate.className = 'item';
         itemTemplate.dataset.order = "2";
+        itemTemplate.dataset.class = "main";
 
         itemTemplate.innerHTML = `
         <div class="item-content item-content-story item-content-main">
@@ -1133,7 +1135,6 @@ function getSources(sourceConnections) {
     return itemTemplate
 }
 
-
 function getMatchingNodes(referenceSystems, data) {
     const nodes = [];
 
@@ -1168,7 +1169,6 @@ function getMatchingNodes(referenceSystems, data) {
     }
     return returnHtml;
 }
-
 
 function setEvents(current_data) {
 
@@ -1334,7 +1334,6 @@ function makeEnts(data, array) {
 
     return allEnts
 }
-
 
 function setEnts(current_data, class_, order) {
     const itemTemplate = document.createElement('div');
