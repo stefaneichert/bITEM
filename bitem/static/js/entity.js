@@ -685,8 +685,8 @@ function addMuuri(data) {
     itemTemplate.innerHTML = `
     <div class="item-content item-content-main">
       <div class="card">
-      ${data.image ? `<img src="${(data.image.path).split('/full/')[0] + '/full/max/0/default.jpg'}" alt="...">` : ''}
-      ${!data.image && data.images ? `<img src="${(data.images[0].path).split('/full/')[0] + '/full/max/0/default.jpg'}" alt="...">` : ''}
+      ${data.image ? `<img src="${(data.image.path).split('/full/')[0] + '/full/max/0/default.png'}" alt="...">` : ''}
+      ${!data.image && data.images ? `<img src="${(data.images[0].path).split('/full/')[0] + '/full/max/0/default.png'}" alt="...">` : ''}
         <div class="card-body">
             <h3 class="card-title">${getLabelTranslation(data)}</h3>
             ${getAliases(data)}
@@ -1493,7 +1493,7 @@ function setEnts(current_data, class_, order) {
 function returnImage(height, id) {
     let filetype = '.' + id.split('.')[1]
     if (imageExtensions.includes(filetype)) {
-        let path = iiifUrl + id + '/full/,' + height + '/0/default.jpg'
+        let path = iiifUrl + id + '/full/,' + height + '/0/default.png'
         let img = `<img src="${path}" loading="eager">`
         return img
     }

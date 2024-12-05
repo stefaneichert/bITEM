@@ -65,12 +65,12 @@ if (model) {
 
 //set image as background if no model
 let image = data.image
-if (image) mainImage = iiifUrl + data.image.id + '/full/max/0/default.jpg'
+if (image) mainImage = iiifUrl + data.image.id + '/full/max/0/default.png'
 if (image && !model) {
     const itemTemplate = document.createElement('div');
     itemTemplate.className = "image-container"
     itemTemplate.innerHTML = `
-        <img loading="lazy"  class="title-image" src="${iiifUrl + data.image.id}/full/max/0/default.jpg">
+        <img loading="lazy"  class="title-image" src="${iiifUrl + data.image.id}/full/max/0/default.png">
     `
     startSlide.appendChild(itemTemplate);
 }
@@ -273,10 +273,10 @@ function createSlides(dataToUse, class_) {
         if (node.images) {
             imageToAdd = `
         <div class="image-container">
-        <img loading="lazy" class="title-image" src="${iiifUrl + node.images[Math.floor(Math.random() * node.images.length)]}/full/max/0/default.jpg">
+        <img loading="lazy" class="title-image" src="${iiifUrl + node.images[Math.floor(Math.random() * node.images.length)]}/full/max/0/default.png">
         </div>
         `;
-            sideImage = '<img loading="lazy"  class="main-image" src="' + iiifUrl + node.images[Math.floor(Math.random() * node.images.length)] + '/full/max/0/default.jpg">'
+            sideImage = '<img loading="lazy"  class="main-image" src="' + iiifUrl + node.images[Math.floor(Math.random() * node.images.length)] + '/full/max/0/default.png">'
         }
 
         let previous = ''

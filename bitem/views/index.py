@@ -85,7 +85,7 @@ def index():
                         """)
         cs_image = g.cursor.fetchone()
         if cs_image:
-            casestudy['image'] = app.config['IIIF_URL'] + '/' + cs_image.filename + '/full/max/0/default.jpg'
+            casestudy['image'] = app.config['IIIF_URL'] + '/' + cs_image.filename + '/full/max/0/default.png'
 
         g.cursor.execute(f"""
             SELECT      jsonb_strip_nulls(jsonb_build_object('name', name,

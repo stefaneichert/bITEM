@@ -51,7 +51,7 @@ def presi(id: int):
             file = None
             if result:
                 if result.mimetype == 'img':
-                    file = iiifUrl + result.filename + '/full/max/0/default.jpg'
+                    file = iiifUrl + result.filename + '/full/max/0/default.png'
                 if result.mimetype == '3d' and result.filename.endswith('.glb'):
                     file = app.config['OPENATLAS_UPLOAD_FOLDER'] + '/' + result.filename
                 return {'mime': result.mimetype, 'file': file}

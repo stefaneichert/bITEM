@@ -60,12 +60,12 @@ if (!mobile) {
                 let html = `<div><h4>${getLabelTranslation(data)}</h4></div>`;
                 const element = document.getElementById('image-cont');
                 if (data.image) {
-                    element.style.backgroundImage = `url('${data.image.path.split('/full/')[0]}/full/max/0/default.jpg')`;
+                    element.style.backgroundImage = `url('${data.image.path.split('/full/')[0]}/full/max/0/default.png')`;
                 }
                 if (!data.image && data.images) {
-                    element.style.backgroundImage = `url('${data.images[0].path.split('/full/')[0]}/full/max/0/default.jpg')`;
+                    element.style.backgroundImage = `url('${data.images[0].path.split('/full/')[0]}/full/max/0/default.png')`;
                 }
-                //${!data.image && data.images ? `<img src="${(data.images[0].path).split('/full/')[0] + '/full/max/0/default.jpg'}" alt="...">` : ''}
+                //${!data.image && data.images ? `<img src="${(data.images[0].path).split('/full/')[0] + '/full/max/0/default.png'}" alt="...">` : ''}
 
                 if (data.start) {
                     html += `<div style="display: flex; justify-content: center">`
