@@ -14,7 +14,8 @@
 <script src="/static/vendor/node_modules/vis-timeline/standalone/umd/vis-timeline-graph2d.min.js"></script>
 
 <script>
-    const data = {{ data | tojson }};
+    const data = {{ data | tojson }}
+    ;
 </script>
 
 <main>
@@ -26,20 +27,24 @@
             </div>
             <div class="swiper-pagination"></div>
             <div class="swiper-button-touch-container" id="touchNavs">
-                <a class="swiper-button-touch d-none" id="touchBackbutton" href="/view/{{data.id}}"><i class="bi bi-box-arrow-right"></i></a>
+                <a class="d-none nav-btn move-btn nav-btn-out storylink" id="touchBackbutton"
+                   href="/view/{{data.id}}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                         class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                </a>
             </div>
             <div class="swiper-button swiper-button-left"><i class="bi bi-arrow-left"></i></div>
             <div class="swiper-button swiper-button-right"><i class="bi bi-arrow-right"></i></div>
             <div class="swiper-button swiper-button-hover"><i class="bi bi-dpad"></i></div>
-        </div> 
+        </div>
 
     </div>
 
 
-
-
 </main>
-   
+
 
 <script src="/static/js/story.js"></script>
 {% endblock %}

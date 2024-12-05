@@ -293,7 +293,7 @@
 
     .text-objects {
         top: 7rem;
-        max-height: calc(100vh - 10rem);
+        max-height: calc(100vh - 7rem);
         font-size: 2rem;
     }
 }
@@ -551,3 +551,26 @@ ul:nth-child(1) {
     
 }
 
+.storylink {
+    margin-right: 0.8rem;
+    z-index: 1000;
+    color: whitesmoke!important;
+    display: inline-flex;
+    max-width: fit-content;
+    justify-content: center;
+    padding: 0.7rem 0.7rem;
+    text-decoration: none;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    border: 2px solid whitesmoke;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -ms-transition: 0.5s;
+    -o-transition: 0.5s;
+    transition: 0.5s;
+    transition: background-color 0.5s ease
+}
+
+.storylink:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}

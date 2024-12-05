@@ -14,22 +14,36 @@
 </script>
 
 <main>
-    <div id="mobile-container"></div>
-    <div id="map">
-        <a class="nav-btn move-btn nav-btn-next next-btn storylink" onclick="moveToAdjacentItems(true)">
+    <div id="mobile-container">
+        <a class="nav-btn move-btn nav-btn-in storylink" title="{{_('zoom in')|uc_first}}" onclick="map.zoomIn()">
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+</svg>
+        </a>
+
+        <a class="nav-btn move-btn nav-btn-out storylink" title="{{_('zoom out')|uc_first}}" onclick="map.zoomOut()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"/>
+</svg>
+        </a>
+
+        <a class="nav-btn move-btn nav-btn-next next-btn storylink" title="{{_('next')|uc_first}}" onclick="moveToAdjacentItems(true)">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="whitesmoke" class="bi bi-arrow-right"
                  viewBox="0 0 16 16">
                 <path fill-rule="evenodd"
                       d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
             </svg>
         </a>
-        <a class="nav-btn move-btn nav-btn-prev prev-btn storylink" onclick="moveToAdjacentItems(false)">
+        <a class="nav-btn move-btn nav-btn-prev prev-btn storylink" title="{{_('previous')|uc_first}}" onclick="moveToAdjacentItems(false)">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="whitesmoke" class="bi bi-arrow-left"
                  viewBox="0 0 16 16">
                 <path fill-rule="evenodd"
                       d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
             </svg>
         </a>
+    </div>
+
+    <div id="map">
     </div>
     <div id="timeline-container">
         <div id="timeline"></div>

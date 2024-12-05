@@ -1032,22 +1032,26 @@ function getTypes(data) {
 
     typeConnections.forEach((connection) => {
         connection.nodes.forEach((node) => {
+            console.log(node)
             const entry = {
                 name: node._label,
                 root: getTypeTranslation(node.root_type)
             };
+            entry.unit = '';
 
-            if (node.involvement && node.involvement[0] && node.involvement[0].info) {
-                entry.value = node.involvement[0].info;
+            if (node.involvement && node.involvement[0] && node.involvement[0].specification) {
+                entry.value = node.involvement[0].specification[0].info;
+                entry.unit = node.content.description
             } else {
                 entry.value = ''
+                if (node.content) {
+                    if (node.content[language]) {
+                        entry.unit = ' - ' + node.content[language]
+                    } else {entry.unit = ' - ' + node.content.description}
+                }
             }
 
-            if (node.content && node.content.description) {
-                entry.unit = node.content.description;
-            } else {
-                entry.unit = ''
-            }
+            console.log(entry)
 
             result.push(entry);
         });
